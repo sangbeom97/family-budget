@@ -179,25 +179,72 @@ export default function Home() {
   };
 
   // 필터링
-  const filteredItems =
-    filter === "all"
-      ? items
-      : items.filter(
-          (item) =>
-            item.spend_type === filter
-        );
+// 필터링
+const filteredItems =
+  filter === "all"
+    ? items
+    : filter === "allowance"
+    ? items.filter(
+        (item) =>
+          item.category === "용돈"
+      )
+    : items.filter(
+        (item) =>
+          item.spend_type === filter
+      );
 
-  // 총합
-  const total = filteredItems.reduce(
-    (sum, item) => {
-      if (item.type === "income") {
-        return sum + item.amount;
-      }
+{/* 필터 */}
+<div className="flex gap-2 mb-4 flex-wrap">
+  <button
+    onClick={() => setFilter("all")}
+    className={`px-3 py-2 rounded-xl font-medium ${
+      filter === "all"
+        ? "bg-black text-white"
+        : "bg-white text-gray-700"
+    }`}
+  >
+    전체
+  </button>
 
-      return sum - item.amount;
-    },
-    0
-  );
+  <button
+    onClick={() =>
+      setFilter("fixed")
+    }
+    className={`px-3 py-2 rounded-xl font-medium ${
+      filter === "fixed"
+        ? "bg-black text-white"
+        : "bg-white text-gray-700"
+    }`}
+  >
+    고정지출
+  </button>
+
+  <button
+    onClick={() =>
+      setFilter("variable")
+    }
+    className={`px-3 py-2 rounded-xl font-medium ${
+      filter === "variable"
+        ? "bg-black text-white"
+        : "bg-white text-gray-700"
+    }`}
+  >
+    변동지출
+  </button>
+
+  <button
+    onClick={() =>
+      setFilter("allowance")
+    }
+    className={`px-3 py-2 rounded-xl font-medium ${
+      filter === "allowance"
+        ? "bg-black text-white"
+        : "bg-white text-gray-700"
+    }`}
+  >
+    용돈
+  </button>
+</div>
 
   // 차트 데이터
   const categoryData = Object.values(
@@ -292,6 +339,17 @@ export default function Home() {
           >
             변동지출
           </button>
+
+          <button
+            onClick={() => setFilter("allowance")}
+            className={`px-3 py-2 rounded-xl font-medium ${
+              filter === "allowance"
+                ? "bg-black text-white"
+                : "bg-white text-gray-700"
+  }`}
+>
+  용돈
+</button>
         </div>
 
         {/* 월 선택 */}
