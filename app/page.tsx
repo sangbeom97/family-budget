@@ -393,6 +393,56 @@ export default function Home() {
   const total =
     incomeTotal -
     expenseTotal;
+    // 변동예산 총합
+const variableBudgetTotal =
+  variableCategories.reduce(
+    (sum, category) =>
+      sum +
+      Number(
+        budgets[
+          category
+        ] || 0
+      ),
+    0
+  );
+
+// 남은 변동예산
+const remainVariableBudget =
+  variableCategories.reduce(
+    (sum, category) => {
+      const spent =
+        items
+          .filter(
+            (item) =>
+              item.category ===
+                category &&
+              item.type ===
+                "expense"
+          )
+          .reduce(
+            (
+              acc,
+              item
+            ) =>
+              acc +
+              item.amount,
+            0
+          );
+
+      const budget =
+        Number(
+          budgets[
+            category
+          ] || 0
+        );
+
+      return (
+        sum +
+        (budget - spent)
+      );
+    },
+    0
+  );
 
   return (
     <main className="min-h-screen bg-gray-100 p-4 md:p-6">
@@ -536,6 +586,27 @@ export default function Home() {
                 <h2 className="text-2xl font-bold">
                   ₩
                   {total.toLocaleString()}
+                </h2>
+              </div>
+              <div className="bg-white p-5 rounded-2xl shadow">
+                <p className="text-sm text-gray-500">
+                  변동예산
+                </p>
+
+                <h2 className="text-2xl font-bold text-purple-600 mt-2">
+                  ₩
+    {variableBudgetTotal.toLocaleString()}
+                </h2>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl shadow">
+                <p className="text-sm text-gray-500">
+                  남은 변동예산
+                </p>
+
+                <h2 className="text-2xl font-bold text-orange-500 mt-2">
+                  ₩
+                  {remainVariableBudget.toLocaleString()}
                 </h2>
               </div>
             </div>
