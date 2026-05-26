@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 import {
-  PieChart,
-  Pie,
-  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
@@ -39,7 +40,7 @@ export default function Home() {
   const [type, setType] =
     useState("expense");
 
-  // 수입 카테고리
+ // 수입 카테고리
   const incomeCategories = [
     "급여",
     "상여",
@@ -385,6 +386,7 @@ export default function Home() {
 
         {/* 상단 */}
         <div className="grid md:grid-cols-2 gap-4 mb-4">
+          {/* 잔액 */}
           <div className="bg-white rounded-2xl p-5 shadow">
             <p className="text-gray-700 text-sm font-medium">
               현재 잔액
@@ -395,44 +397,31 @@ export default function Home() {
             </h2>
           </div>
 
+          {/* 바 차트 */}
           <div className="bg-white rounded-2xl p-5 shadow">
             <h3 className="font-semibold mb-4 text-gray-800">
               카테고리별 지출
             </h3>
 
-            <div className="h-52">
+            <div className="h-64">
               <ResponsiveContainer
                 width="100%"
                 height="100%"
               >
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    dataKey="value"
-                    nameKey="name"
-                    outerRadius={70}
-                    label
-                  >
-                    {categoryData.map(
-                      (_, index) => (
-                        <Cell
-                          key={index}
-                          fill={
-                            [
-                              "#ef4444",
-                              "#3b82f6",
-                              "#22c55e",
-                              "#f59e0b",
-                              "#8b5cf6",
-                            ][index % 5]
-                          }
-                        />
-                      )
-                    )}
-                  </Pie>
+                <BarChart
+                  data={categoryData}
+                >
+                  <XAxis dataKey="name" />
+
+                  <YAxis />
 
                   <Tooltip />
-                </PieChart>
+
+                  <Bar
+                    dataKey="value"
+                    radius={[10, 10, 0, 0]}
+                  />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
