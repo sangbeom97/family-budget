@@ -43,7 +43,12 @@ export default function Home() {
   const [type, setType] =
     useState("expense");
 
-   // 수입 카테고리
+  const [editId, setEditId] =
+    useState<number | null>(
+      null
+    );
+
+  // 수입 카테고리
   const incomeCategories = [
     "급여",
     "상여",
@@ -58,7 +63,7 @@ export default function Home() {
     "보험료",
     "교통/차량(고정)",
     "헌금",
-    '구독',
+    "구독",
   ];
 
   // 변동지출 카테고리
@@ -86,7 +91,7 @@ export default function Home() {
 
   // 저축 카테고리
   const savingCategories = [
-    "에적금",
+    "예적금",
     "현금성통장",
     "투자",
     "연금저축",
@@ -94,7 +99,7 @@ export default function Home() {
   ];
 
   const [category, setCategory] =
-    useState("식비");
+    useState("식비(통상)");
 
   const [spendType, setSpendType] =
     useState("variable");
@@ -224,6 +229,62 @@ export default function Home() {
     fetchItems();
   };
 
+  // 수정 시작
+  const startEdit = (
+    item: Item
+  ) => {
+    setEditId(item.id);
+
+    setName(item.name);
+
+    setAmount(
+      item.amount.toString()
+    );
+
+    setType(item.type);
+
+    setCategory(item.category);
+
+    setDate(item.date);
+
+    setSpendType(
+      item.spend_type
+    );
+  };
+
+  // 수정 저장
+  const updateItem = async () => {
+    if (!editId) return;
+
+    const { error } =
+      await supabase
+        .from("transactions")
+        .update({
+          name,
+          amount: Number(amount),
+          type,
+          category,
+          date,
+          spend_type:
+            type === "income"
+              ? "income"
+              : spendType,
+        })
+        .eq("id", editId);
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    setEditId(null);
+
+    setName("");
+    setAmount("");
+
+    fetchItems();
+  };
+
   // 삭제
   const deleteItem = async (
     id: number
@@ -343,112 +404,60 @@ export default function Home() {
 
         {/* 필터 */}
         <div className="flex gap-2 mb-4 flex-wrap">
-          <button
-            onClick={() => {
-              setFilter("all");
-            }}
-            className={`px-3 py-2 rounded-xl font-medium ${
-              filter === "all"
-                ? "bg-black text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            전체
-          </button>
+          {[
+            [
+              "all",
+              "전체",
+            ],
+            [
+              "income",
+              "수입",
+            ],
+            [
+              "fixed",
+              "고정지출",
+            ],
+            [
+              "variable",
+              "변동지출",
+            ],
+            [
+              "allowance",
+              "용돈",
+            ],
+            [
+              "saving",
+              "저축",
+            ],
+          ].map(
+            ([value, label]) => (
+              <button
+                key={value}
+                onClick={() => {
+                  setFilter(
+                    value
+                  );
 
-          <button
-            onClick={() => {
-              setFilter("income");
-              setType("income");
-              setSpendType(
-                "income"
-              );
-            }}
-            className={`px-3 py-2 rounded-xl font-medium ${
-              filter ===
-              "income"
-                ? "bg-black text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            수입
-          </button>
-
-          <button
-            onClick={() => {
-              setFilter("fixed");
-              setSpendType(
-                "fixed"
-              );
-              setType("expense");
-            }}
-            className={`px-3 py-2 rounded-xl font-medium ${
-              filter ===
-              "fixed"
-                ? "bg-black text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            고정지출
-          </button>
-
-          <button
-            onClick={() => {
-              setFilter(
-                "variable"
-              );
-              setSpendType(
-                "variable"
-              );
-              setType("expense");
-            }}
-            className={`px-3 py-2 rounded-xl font-medium ${
-              filter ===
-              "variable"
-                ? "bg-black text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            변동지출
-          </button>
-
-          <button
-            onClick={() => {
-              setFilter(
-                "allowance"
-              );
-              setSpendType(
-                "allowance"
-              );
-              setType("expense");
-            }}
-            className={`px-3 py-2 rounded-xl font-medium ${
-              filter ===
-              "allowance"
-                ? "bg-black text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            용돈
-          </button>
-
-          <button
-            onClick={() => {
-              setFilter("saving");
-              setSpendType(
-                "saving"
-              );
-              setType("expense");
-            }}
-            className={`px-3 py-2 rounded-xl font-medium ${
-              filter ===
-              "saving"
-                ? "bg-black text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            저축
-          </button>
+                  if (
+                    value !==
+                    "all"
+                  ) {
+                    setSpendType(
+                      value
+                    );
+                  }
+                }}
+                className={`px-3 py-2 rounded-xl font-medium ${
+                  filter ===
+                  value
+                    ? "bg-black text-white"
+                    : "bg-white text-gray-700"
+                }`}
+              >
+                {label}
+              </button>
+            )
+          )}
         </div>
 
         {/* 월 선택 */}
@@ -471,7 +480,6 @@ export default function Home() {
 
         {/* 상단 */}
         <div className="grid md:grid-cols-2 gap-4 mb-4">
-          {/* 잔액 */}
           <div className="bg-white rounded-2xl p-5 shadow">
             <p className="text-gray-700 text-sm font-medium">
               현재 잔액
@@ -483,7 +491,6 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* 차트 */}
           <div className="bg-white rounded-2xl p-5 shadow">
             <h3 className="font-semibold mb-4 text-gray-800">
               카테고리별 지출
@@ -513,7 +520,9 @@ export default function Home() {
         {/* 입력 */}
         <div className="bg-white rounded-2xl p-5 shadow mb-4">
           <h3 className="font-semibold mb-4 text-gray-800">
-            내역 추가
+            {editId
+              ? "내역 수정"
+              : "내역 추가"}
           </h3>
 
           <div className="grid md:grid-cols-6 gap-3">
@@ -622,24 +631,37 @@ export default function Home() {
           </div>
 
           <button
-            onClick={addItem}
+            onClick={
+              editId
+                ? updateItem
+                : addItem
+            }
             className="w-full mt-4 bg-black text-white py-3 rounded-xl font-semibold"
           >
-            추가하기
+            {editId
+              ? "수정하기"
+              : "추가하기"}
           </button>
         </div>
 
         {/* 화면 */}
         {view === "list" ? (
           <ListView
-            items={filteredItems}
+            items={
+              filteredItems
+            }
             deleteItem={
               deleteItem
+            }
+            startEdit={
+              startEdit
             }
           />
         ) : (
           <CalendarView
-            items={filteredItems}
+            items={
+              filteredItems
+            }
             selectedMonth={
               selectedMonth
             }
