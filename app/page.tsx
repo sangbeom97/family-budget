@@ -595,14 +595,7 @@ export default function Home() {
                     />
                     <Tooltip />
 
-                    <Bar dataKey="사용금액" />
-
                     <Bar dataKey="남은예산" />
-
-                    <Bar
-                      dataKey="남은예산"
-                      stackId="a"
-                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
