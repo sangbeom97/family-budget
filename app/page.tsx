@@ -341,10 +341,7 @@ export default function Home() {
           name: category,
           사용금액: spent,
           남은예산:
-            budget - spent > 0
-              ? budget -
-                spent
-              : 0,
+            budget - spent,
         };
       }
     );
@@ -557,7 +554,12 @@ export default function Home() {
                     }
                   >
                     <XAxis dataKey="name" />
-                    <YAxis />
+                    <YAxis
+                      domain={[
+                        "auto",
+                        "auto",
+                      ]}
+                    />
                     <Tooltip />
                     <Bar dataKey="value" />
                   </BarChart>
