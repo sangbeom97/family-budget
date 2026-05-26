@@ -53,7 +53,6 @@ export default function Home() {
       null
     );
 
-  // 예산 state
   const [budgets, setBudgets] =
     useState<Record<
       string,
@@ -374,7 +373,7 @@ export default function Home() {
     incomeTotal -
     expenseTotal;
 
-  // 차트 데이터
+  // 카테고리별 지출 데이터
   const categoryData =
     Object.values(
       filteredItems.reduce(
@@ -405,6 +404,48 @@ export default function Home() {
         },
         {} as any
       )
+    );
+
+  // 예산 대비 데이터
+  const budgetCompareData =
+    variableCategories.map(
+      (category) => {
+        const spent =
+          filteredItems
+            .filter(
+              (item) =>
+                item.category ===
+                  category &&
+                item.type ===
+                  "expense"
+            )
+            .reduce(
+              (
+                sum,
+                item
+              ) =>
+                sum +
+                item.amount,
+              0
+            );
+
+        const budget =
+          Number(
+            budgets[
+              category
+            ] || 0
+          );
+
+        return {
+          name: category,
+          사용금액: spent,
+          남은예산:
+            budget - spent > 0
+              ? budget -
+                spent
+              : 0,
+        };
+      }
     );
 
   return (
@@ -570,7 +611,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 차트 */}
+            {/* 카테고리별 지출 */}
             <div className="bg-white rounded-2xl p-5 shadow mb-4">
               <h3 className="font-semibold mb-4 text-gray-800">
                 카테고리별 지출
@@ -590,6 +631,40 @@ export default function Home() {
                     <YAxis />
                     <Tooltip />
                     <Bar dataKey="value" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* 예산 대비 차트 */}
+            <div className="bg-white rounded-2xl p-5 shadow mb-4">
+              <h3 className="font-semibold mb-4 text-gray-800">
+                예산 대비 사용 현황
+              </h3>
+
+              <div className="h-72 min-w-0">
+                <ResponsiveContainer
+                  width="100%"
+                  height={280}
+                >
+                  <BarChart
+                    data={
+                      budgetCompareData
+                    }
+                  >
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+
+                    <Bar
+                      dataKey="사용금액"
+                      stackId="a"
+                    />
+
+                    <Bar
+                      dataKey="남은예산"
+                      stackId="a"
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
