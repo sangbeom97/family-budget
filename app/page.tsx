@@ -54,6 +54,7 @@ export default function Home() {
     "보험료",
     "교통/차량(고정)",
     "헌금",
+    '맴버쉽',
     "식비(통상)",
     "식비(통상외)",
     "생활",
@@ -467,15 +468,11 @@ export default function Home() {
               className="border rounded-xl px-3 py-2 text-gray-800"
             >
               <option value="fixed">
-                고정
+                고정지출
               </option>
 
               <option value="variable">
-                변동
-              </option>
-
-              <option value="variable">
-                용돈
+                변동지출
               </option>
             </select>
           </div>
