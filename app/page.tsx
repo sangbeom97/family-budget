@@ -39,22 +39,26 @@ export default function Home() {
   const [type, setType] =
     useState("expense");
 
-  const categories = [
+  // 수입 카테고리
+  const incomeCategories = [
     "급여",
     "상여",
     "수당",
     "기타수입",
-    "에적금",
-    "현금성통장",
-    "투자",
-    "연금저축",
-    "주택청약",
+  ];
+
+  // 고정지출 카테고리
+  const fixedCategories = [
     "주거비",
     "통신비",
     "보험료",
     "교통/차량(고정)",
     "헌금",
-    '맴버쉽',
+    '구독',
+  ];
+
+  // 변동지출 카테고리
+  const variableCategories = [
     "식비(통상)",
     "식비(통상외)",
     "생활",
@@ -68,8 +72,21 @@ export default function Home() {
     "경조/선물",
     "교회",
     "기타지출",
-    "희원용돈",
+  ];
+
+  // 용돈 카테고리
+  const allowanceCategories = [
     "상범용돈",
+    "희원용돈",
+  ];
+
+  // 저축 카테고리
+  const savingCategories = [
+    "에적금",
+    "현금성통장",
+    "투자",
+    "연금저축",
+    "주택청약",
   ];
 
   const [category, setCategory] =
@@ -77,6 +94,18 @@ export default function Home() {
 
   const [spendType, setSpendType] =
     useState("variable");
+
+  // 현재 카테고리 자동 변경
+  const currentCategories =
+    type === "income"
+      ? incomeCategories
+      : spendType === "fixed"
+      ? fixedCategories
+      : spendType === "allowance"
+      ? allowanceCategories
+      : spendType === "saving"
+      ? savingCategories
+      : variableCategories;
 
   const today = new Date()
     .toISOString()
@@ -117,7 +146,9 @@ export default function Home() {
       .select("*")
       .gte("date", start)
       .lte("date", end)
-      .order("date", { ascending: false });
+      .order("date", {
+        ascending: false,
+      });
 
     if (error) {
       console.log(error);
@@ -130,6 +161,11 @@ export default function Home() {
   useEffect(() => {
     fetchItems();
   }, [selectedMonth]);
+
+  // spendType/type 변경 시 category 자동 변경
+  useEffect(() => {
+    setCategory(currentCategories[0]);
+  }, [spendType, type]);
 
   // 추가
   const addItem = async () => {
@@ -165,7 +201,9 @@ export default function Home() {
   };
 
   // 삭제
-  const deleteItem = async (id: number) => {
+  const deleteItem = async (
+    id: number
+  ) => {
     const { error } = await supabase
       .from("transactions")
       .delete()
@@ -183,11 +221,6 @@ export default function Home() {
   const filteredItems =
     filter === "all"
       ? items
-      : filter === "allowance"
-      ? items.filter(
-          (item) =>
-            item.category === "용돈"
-        )
       : items.filter(
           (item) =>
             item.spend_type === filter
@@ -263,9 +296,9 @@ export default function Home() {
         {/* 필터 */}
         <div className="flex gap-2 mb-4 flex-wrap">
           <button
-            onClick={() =>
-              setFilter("all")
-            }
+            onClick={() => {
+              setFilter("all");
+            }}
             className={`px-3 py-2 rounded-xl font-medium ${
               filter === "all"
                 ? "bg-black text-white"
@@ -276,9 +309,10 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() =>
-              setFilter("fixed")
-            }
+            onClick={() => {
+              setFilter("fixed");
+              setSpendType("fixed");
+            }}
             className={`px-3 py-2 rounded-xl font-medium ${
               filter === "fixed"
                 ? "bg-black text-white"
@@ -289,9 +323,10 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() =>
-              setFilter("variable")
-            }
+            onClick={() => {
+              setFilter("variable");
+              setSpendType("variable");
+            }}
             className={`px-3 py-2 rounded-xl font-medium ${
               filter === "variable"
                 ? "bg-black text-white"
@@ -302,9 +337,10 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() =>
-              setFilter("allowance")
-            }
+            onClick={() => {
+              setFilter("allowance");
+              setSpendType("allowance");
+            }}
             className={`px-3 py-2 rounded-xl font-medium ${
               filter === "allowance"
                 ? "bg-black text-white"
@@ -312,6 +348,20 @@ export default function Home() {
             }`}
           >
             용돈
+          </button>
+
+          <button
+            onClick={() => {
+              setFilter("saving");
+              setSpendType("saving");
+            }}
+            className={`px-3 py-2 rounded-xl font-medium ${
+              filter === "saving"
+                ? "bg-black text-white"
+                : "bg-white text-gray-700"
+            }`}
+          >
+            저축
           </button>
         </div>
 
@@ -335,7 +385,6 @@ export default function Home() {
 
         {/* 상단 */}
         <div className="grid md:grid-cols-2 gap-4 mb-4">
-          {/* 잔액 */}
           <div className="bg-white rounded-2xl p-5 shadow">
             <p className="text-gray-700 text-sm font-medium">
               현재 잔액
@@ -346,7 +395,6 @@ export default function Home() {
             </h2>
           </div>
 
-          {/* 차트 */}
           <div className="bg-white rounded-2xl p-5 shadow">
             <h3 className="font-semibold mb-4 text-gray-800">
               카테고리별 지출
@@ -451,11 +499,13 @@ export default function Home() {
               }
               className="border rounded-xl px-3 py-2 text-gray-800"
             >
-              {categories.map((item) => (
-                <option key={item}>
-                  {item}
-                </option>
-              ))}
+              {currentCategories.map(
+                (item) => (
+                  <option key={item}>
+                    {item}
+                  </option>
+                )
+              )}
             </select>
 
             <select
@@ -473,6 +523,14 @@ export default function Home() {
 
               <option value="variable">
                 변동지출
+              </option>
+
+              <option value="allowance">
+                용돈
+              </option>
+
+              <option value="saving">
+                저축
               </option>
             </select>
           </div>
