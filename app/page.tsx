@@ -14,6 +14,7 @@ import {
 
 import ListView from "@/components/ListView";
 import CalendarView from "@/components/CalendarView";
+import FridgeView from "@/components/FridgeView";
 
 type Item = {
   id: number;
@@ -26,6 +27,9 @@ type Item = {
 };
 
 export default function Home() {
+  const [mainTab, setMainTab] =
+    useState("account");
+
   const [items, setItems] = useState<Item[]>([]);
 
   const [view, setView] =
@@ -400,318 +404,404 @@ export default function Home() {
           상범/희원 가계부
         </h1>
 
-        {/* 탭 */}
-        <div className="flex gap-2 mb-4">
+        {/* 메인 탭 */}
+        <div className="flex gap-2 mb-6">
           <button
             onClick={() =>
-              setView("list")
-            }
-            className={`px-4 py-2 rounded-xl font-medium ${
-              view === "list"
-                ? "bg-black text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            리스트
-          </button>
-
-          <button
-            onClick={() =>
-              setView(
-                "calendar"
+              setMainTab(
+                "account"
               )
             }
             className={`px-4 py-2 rounded-xl font-medium ${
-              view ===
-              "calendar"
+              mainTab ===
+              "account"
                 ? "bg-black text-white"
                 : "bg-white text-gray-700"
             }`}
           >
-            달력
+            가계부
+          </button>
+
+          <button
+            onClick={() =>
+              setMainTab(
+                "fridge"
+              )
+            }
+            className={`px-4 py-2 rounded-xl font-medium ${
+              mainTab ===
+              "fridge"
+                ? "bg-black text-white"
+                : "bg-white text-gray-700"
+            }`}
+          >
+            냉장고
           </button>
         </div>
 
-        {/* 필터 */}
-        <div className="flex gap-2 mb-4 flex-wrap">
-          {[
-            ["all", "전체"],
-            ["income", "수입"],
-            ["fixed", "고정지출"],
-            ["variable", "변동지출"],
-            ["allowance", "용돈"],
-            ["saving", "저축"],
-          ].map(
-            ([value, label]) => (
+        {mainTab ===
+          "account" && (
+          <>
+            {/* 탭 */}
+            <div className="flex gap-2 mb-4">
               <button
-                key={value}
-                onClick={() => {
-                  setFilter(
-                    value
-                  );
-
-                  if (
-                    value !==
-                    "all"
-                  ) {
-                    setSpendType(
-                      value
-                    );
-                  }
-                }}
-                className={`px-3 py-2 rounded-xl font-medium ${
-                  filter ===
-                  value
+                onClick={() =>
+                  setView(
+                    "list"
+                  )
+                }
+                className={`px-4 py-2 rounded-xl font-medium ${
+                  view ===
+                  "list"
                     ? "bg-black text-white"
                     : "bg-white text-gray-700"
                 }`}
               >
-                {label}
+                리스트
               </button>
-            )
-          )}
-        </div>
 
-        {/* 월 선택 */}
-        <div className="bg-white rounded-2xl p-5 shadow mb-4">
-          <p className="text-sm text-gray-700 mb-2 font-medium">
-            조회 월
-          </p>
-
-          <input
-            type="month"
-            value={selectedMonth}
-            onChange={(e) =>
-              setSelectedMonth(
-                e.target.value
-              )
-            }
-            className="border rounded-xl px-3 py-2 text-gray-800"
-          />
-        </div>
-
-        {/* 통계 카드 */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-white rounded-2xl p-5 shadow">
-            <p className="text-sm text-gray-500">
-              총 수입
-            </p>
-
-            <h2 className="text-2xl font-bold text-blue-600 mt-2">
-              ₩
-              {incomeTotal.toLocaleString()}
-            </h2>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5 shadow">
-            <p className="text-sm text-gray-500">
-              총 지출
-            </p>
-
-            <h2 className="text-2xl font-bold text-red-500 mt-2">
-              ₩
-              {expenseTotal.toLocaleString()}
-            </h2>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5 shadow">
-            <p className="text-sm text-gray-500">
-              총 저축
-            </p>
-
-            <h2 className="text-2xl font-bold text-green-600 mt-2">
-              ₩
-              {savingTotal.toLocaleString()}
-            </h2>
-          </div>
-
-          <div className="bg-white rounded-2xl p-5 shadow">
-            <p className="text-sm text-gray-500">
-              실사용 잔액
-            </p>
-
-            <h2 className="text-2xl font-bold mt-2">
-              ₩
-              {total.toLocaleString()}
-            </h2>
-          </div>
-        </div>
-
-        {/* 차트 */}
-        <div className="bg-white rounded-2xl p-5 shadow mb-4">
-          <h3 className="font-semibold mb-4 text-gray-800">
-            카테고리별 지출
-          </h3>
-
-          <div className="h-64">
-            <ResponsiveContainer
-              width="100%"
-              height="100%"
-            >
-              <BarChart
-                data={categoryData}
+              <button
+                onClick={() =>
+                  setView(
+                    "calendar"
+                  )
+                }
+                className={`px-4 py-2 rounded-xl font-medium ${
+                  view ===
+                  "calendar"
+                    ? "bg-black text-white"
+                    : "bg-white text-gray-700"
+                }`}
               >
-                <XAxis dataKey="name" />
+                달력
+              </button>
+            </div>
 
-                <YAxis />
+            {/* 필터 */}
+            <div className="flex gap-2 mb-4 flex-wrap">
+              {[
+                [
+                  "all",
+                  "전체",
+                ],
+                [
+                  "income",
+                  "수입",
+                ],
+                [
+                  "fixed",
+                  "고정지출",
+                ],
+                [
+                  "variable",
+                  "변동지출",
+                ],
+                [
+                  "allowance",
+                  "용돈",
+                ],
+                [
+                  "saving",
+                  "저축",
+                ],
+              ].map(
+                ([
+                  value,
+                  label,
+                ]) => (
+                  <button
+                    key={value}
+                    onClick={() => {
+                      setFilter(
+                        value
+                      );
 
-                <Tooltip />
-
-                <Bar dataKey="value" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* 입력 */}
-        <div className="bg-white rounded-2xl p-5 shadow mb-4">
-          <h3 className="font-semibold mb-4 text-gray-800">
-            {editId
-              ? "내역 수정"
-              : "내역 추가"}
-          </h3>
-
-          <div className="grid md:grid-cols-6 gap-3">
-            <input
-              type="text"
-              placeholder="항목명"
-              value={name}
-              onChange={(e) =>
-                setName(
-                  e.target.value
-                )
-              }
-              className="border rounded-xl px-3 py-2 text-gray-800"
-            />
-
-            <input
-              type="number"
-              placeholder="금액"
-              value={amount}
-              onChange={(e) =>
-                setAmount(
-                  e.target.value
-                )
-              }
-              className="border rounded-xl px-3 py-2 text-gray-800"
-            />
-
-            <input
-              type="date"
-              value={date}
-              onChange={(e) =>
-                setDate(
-                  e.target.value
-                )
-              }
-              className="border rounded-xl px-3 py-2 text-gray-800"
-            />
-
-            <select
-              value={type}
-              onChange={(e) =>
-                setType(
-                  e.target.value
-                )
-              }
-              className="border rounded-xl px-3 py-2 text-gray-800"
-            >
-              <option value="expense">
-                지출
-              </option>
-
-              <option value="income">
-                수입
-              </option>
-            </select>
-
-            <select
-              value={category}
-              onChange={(e) =>
-                setCategory(
-                  e.target.value
-                )
-              }
-              className="border rounded-xl px-3 py-2 text-gray-800"
-            >
-              {currentCategories.map(
-                (item) => (
-                  <option
-                    key={item}
+                      if (
+                        value !==
+                        "all"
+                      ) {
+                        setSpendType(
+                          value
+                        );
+                      }
+                    }}
+                    className={`px-3 py-2 rounded-xl font-medium ${
+                      filter ===
+                      value
+                        ? "bg-black text-white"
+                        : "bg-white text-gray-700"
+                    }`}
                   >
-                    {item}
-                  </option>
+                    {label}
+                  </button>
                 )
               )}
-            </select>
+            </div>
 
-            <select
-              value={spendType}
-              onChange={(e) =>
-                setSpendType(
-                  e.target.value
-                )
-              }
-              className="border rounded-xl px-3 py-2 text-gray-800"
-            >
-              <option value="fixed">
-                고정지출
-              </option>
+            {/* 월 선택 */}
+            <div className="bg-white rounded-2xl p-5 shadow mb-4">
+              <p className="text-sm text-gray-700 mb-2 font-medium">
+                조회 월
+              </p>
 
-              <option value="variable">
-                변동지출
-              </option>
+              <input
+                type="month"
+                value={
+                  selectedMonth
+                }
+                onChange={(e) =>
+                  setSelectedMonth(
+                    e.target.value
+                  )
+                }
+                className="border rounded-xl px-3 py-2 text-gray-800"
+              />
+            </div>
 
-              <option value="allowance">
-                용돈
-              </option>
+            {/* 통계 카드 */}
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-white rounded-2xl p-5 shadow">
+                <p className="text-sm text-gray-500">
+                  총 수입
+                </p>
 
-              <option value="saving">
-                저축
-              </option>
+                <h2 className="text-2xl font-bold text-blue-600 mt-2">
+                  ₩
+                  {incomeTotal.toLocaleString()}
+                </h2>
+              </div>
 
-              <option value="income">
-                수입
-              </option>
-            </select>
-          </div>
+              <div className="bg-white rounded-2xl p-5 shadow">
+                <p className="text-sm text-gray-500">
+                  총 지출
+                </p>
 
-          <button
-            onClick={
-              editId
-                ? updateItem
-                : addItem
-            }
-            className="w-full mt-4 bg-black text-white py-3 rounded-xl font-semibold"
-          >
-            {editId
-              ? "수정하기"
-              : "추가하기"}
-          </button>
-        </div>
+                <h2 className="text-2xl font-bold text-red-500 mt-2">
+                  ₩
+                  {expenseTotal.toLocaleString()}
+                </h2>
+              </div>
 
-        {/* 화면 */}
-        {view === "list" ? (
-          <ListView
-            items={
-              filteredItems
-            }
-            deleteItem={
-              deleteItem
-            }
-            startEdit={
-              startEdit
-            }
-          />
-        ) : (
-          <CalendarView
-            items={
-              filteredItems
-            }
-            selectedMonth={
-              selectedMonth
-            }
-          />
+              <div className="bg-white rounded-2xl p-5 shadow">
+                <p className="text-sm text-gray-500">
+                  총 저축
+                </p>
+
+                <h2 className="text-2xl font-bold text-green-600 mt-2">
+                  ₩
+                  {savingTotal.toLocaleString()}
+                </h2>
+              </div>
+
+              <div className="bg-white rounded-2xl p-5 shadow">
+                <p className="text-sm text-gray-500">
+                  실사용 잔액
+                </p>
+
+                <h2 className="text-2xl font-bold mt-2">
+                  ₩
+                  {total.toLocaleString()}
+                </h2>
+              </div>
+            </div>
+
+            {/* 차트 */}
+            <div className="bg-white rounded-2xl p-5 shadow mb-4">
+              <h3 className="font-semibold mb-4 text-gray-800">
+                카테고리별 지출
+              </h3>
+
+              <div className="h-64">
+                <ResponsiveContainer
+                  width="100%"
+                  height="100%"
+                >
+                  <BarChart
+                    data={
+                      categoryData
+                    }
+                  >
+                    <XAxis dataKey="name" />
+
+                    <YAxis />
+
+                    <Tooltip />
+
+                    <Bar dataKey="value" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* 입력 */}
+            <div className="bg-white rounded-2xl p-5 shadow mb-4">
+              <h3 className="font-semibold mb-4 text-gray-800">
+                {editId
+                  ? "내역 수정"
+                  : "내역 추가"}
+              </h3>
+
+              <div className="grid md:grid-cols-6 gap-3">
+                <input
+                  type="text"
+                  placeholder="항목명"
+                  value={name}
+                  onChange={(e) =>
+                    setName(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2 text-gray-800"
+                />
+
+                <input
+                  type="number"
+                  placeholder="금액"
+                  value={amount}
+                  onChange={(e) =>
+                    setAmount(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2 text-gray-800"
+                />
+
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) =>
+                    setDate(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2 text-gray-800"
+                />
+
+                <select
+                  value={type}
+                  onChange={(e) =>
+                    setType(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2 text-gray-800"
+                >
+                  <option value="expense">
+                    지출
+                  </option>
+
+                  <option value="income">
+                    수입
+                  </option>
+                </select>
+
+                <select
+                  value={category}
+                  onChange={(e) =>
+                    setCategory(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2 text-gray-800"
+                >
+                  {currentCategories.map(
+                    (
+                      item
+                    ) => (
+                      <option
+                        key={
+                          item
+                        }
+                      >
+                        {item}
+                      </option>
+                    )
+                  )}
+                </select>
+
+                <select
+                  value={
+                    spendType
+                  }
+                  onChange={(e) =>
+                    setSpendType(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2 text-gray-800"
+                >
+                  <option value="fixed">
+                    고정지출
+                  </option>
+
+                  <option value="variable">
+                    변동지출
+                  </option>
+
+                  <option value="allowance">
+                    용돈
+                  </option>
+
+                  <option value="saving">
+                    저축
+                  </option>
+
+                  <option value="income">
+                    수입
+                  </option>
+                </select>
+              </div>
+
+              <button
+                onClick={
+                  editId
+                    ? updateItem
+                    : addItem
+                }
+                className="w-full mt-4 bg-black text-white py-3 rounded-xl font-semibold"
+              >
+                {editId
+                  ? "수정하기"
+                  : "추가하기"}
+              </button>
+            </div>
+
+            {/* 화면 */}
+            {view ===
+            "list" ? (
+              <ListView
+                items={
+                  filteredItems
+                }
+                deleteItem={
+                  deleteItem
+                }
+                startEdit={
+                  startEdit
+                }
+              />
+            ) : (
+              <CalendarView
+                items={
+                  filteredItems
+                }
+                selectedMonth={
+                  selectedMonth
+                }
+              />
+            )}
+          </>
+        )}
+
+        {mainTab ===
+          "fridge" && (
+          <FridgeView />
         )}
       </div>
     </main>
