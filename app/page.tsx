@@ -229,7 +229,7 @@ export default function Home() {
     <main className="min-h-screen bg-gray-100 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-extrabold mb-6 text-black tracking-tight">
-          우리집 가계부
+          상범/희원 가계부
         </h1>
 
         {/* 탭 */}
