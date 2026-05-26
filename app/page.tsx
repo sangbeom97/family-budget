@@ -115,7 +115,6 @@ export default function Home() {
   const [spendType, setSpendType] =
     useState("variable");
 
-  // 현재 카테고리 자동 변경
   const currentCategories =
     type === "income"
       ? incomeCategories
@@ -143,7 +142,7 @@ export default function Home() {
   const [selectedMonth, setSelectedMonth] =
     useState(currentMonth);
 
-  // 데이터 불러오기
+  // 거래내역 불러오기
   const fetchItems = async () => {
     const startDate = new Date(
       `${selectedMonth}-01`
@@ -181,11 +180,50 @@ export default function Home() {
     setItems(data || []);
   };
 
+  // 예산 불러오기
+  const fetchBudgets =
+    async () => {
+      const {
+        data,
+        error,
+      } = await supabase
+        .from("budgets")
+        .select("*")
+        .eq(
+          "month",
+          selectedMonth
+        );
+
+      if (error) {
+        console.log(error);
+        return;
+      }
+
+      const budgetMap:
+        Record<
+          string,
+          string
+        > = {};
+
+      data.forEach(
+        (item: any) => {
+          budgetMap[
+            item.category
+          ] =
+            item.amount.toString();
+        }
+      );
+
+      setBudgets(
+        budgetMap
+      );
+    };
+
   useEffect(() => {
     fetchItems();
+    fetchBudgets();
   }, [selectedMonth]);
 
-  // 카테고리 자동 변경
   useEffect(() => {
     setCategory(
       currentCategories[0]
@@ -296,6 +334,54 @@ export default function Home() {
     fetchItems();
   };
 
+  // 예산 저장
+  const saveBudget =
+    async (
+      category: string,
+      value: string
+    ) => {
+      setBudgets({
+        ...budgets,
+        [category]: value,
+      });
+
+      const { data } =
+        await supabase
+          .from("budgets")
+          .select("*")
+          .eq(
+            "category",
+            category
+          )
+          .eq(
+            "month",
+            selectedMonth
+          )
+          .single();
+
+      if (data) {
+        await supabase
+          .from("budgets")
+          .update({
+            amount:
+              Number(value),
+          })
+          .eq("id", data.id);
+      } else {
+        await supabase
+          .from("budgets")
+          .insert([
+            {
+              category,
+              amount:
+                Number(value),
+              month:
+                selectedMonth,
+            },
+          ]);
+      }
+    };
+
   // 삭제
   const deleteItem = async (
     id: number
@@ -375,35 +461,34 @@ export default function Home() {
 
   // 카테고리별 지출 데이터
   const categoryData =
-    Object.values(
-      filteredItems.reduce(
-        (acc, item) => {
-          if (
-            item.type !==
-              "expense" ||
-            item.spend_type ===
-              "saving"
-          ) {
-            return acc;
-          }
+    variableCategories.map(
+      (category) => {
+        const total =
+          filteredItems
+            .filter(
+              (item) =>
+                item.category ===
+                  category &&
+                item.type ===
+                  "expense" &&
+                item.spend_type !==
+                  "saving"
+            )
+            .reduce(
+              (
+                sum,
+                item
+              ) =>
+                sum +
+                item.amount,
+              0
+            );
 
-          if (
-            !acc[item.category]
-          ) {
-            acc[item.category] =
-              {
-                name: item.category,
-                value: 0,
-              };
-          }
-
-          acc[item.category].value +=
-            item.amount;
-
-          return acc;
-        },
-        {} as any
-      )
+        return {
+          name: category,
+          value: total,
+        };
+      }
     );
 
   // 예산 대비 데이터
@@ -454,443 +539,6 @@ export default function Home() {
         <h1 className="text-4xl font-extrabold mb-6 text-black tracking-tight">
           무계획 속 계획
         </h1>
-
-        {/* 메인 탭 */}
-        <div className="flex gap-2 mb-6">
-          <button
-            onClick={() =>
-              setMainTab(
-                "account"
-              )
-            }
-            className={`px-4 py-2 rounded-xl font-medium ${
-              mainTab ===
-              "account"
-                ? "bg-black text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            가계부
-          </button>
-
-          <button
-            onClick={() =>
-              setMainTab(
-                "fridge"
-              )
-            }
-            className={`px-4 py-2 rounded-xl font-medium ${
-              mainTab ===
-              "fridge"
-                ? "bg-black text-white"
-                : "bg-white text-gray-700"
-            }`}
-          >
-            냉장고
-          </button>
-        </div>
-
-        {mainTab ===
-          "account" && (
-          <>
-            {/* 리스트/달력/예산 탭 */}
-            <div className="flex gap-2 mb-4">
-              <button
-                onClick={() =>
-                  setView(
-                    "list"
-                  )
-                }
-                className={`px-4 py-2 rounded-xl font-medium ${
-                  view ===
-                  "list"
-                    ? "bg-black text-white"
-                    : "bg-white text-gray-700"
-                }`}
-              >
-                리스트
-              </button>
-
-              <button
-                onClick={() =>
-                  setView(
-                    "calendar"
-                  )
-                }
-                className={`px-4 py-2 rounded-xl font-medium ${
-                  view ===
-                  "calendar"
-                    ? "bg-black text-white"
-                    : "bg-white text-gray-700"
-                }`}
-              >
-                달력
-              </button>
-
-              <button
-                onClick={() =>
-                  setView(
-                    "budget"
-                  )
-                }
-                className={`px-4 py-2 rounded-xl font-medium ${
-                  view ===
-                  "budget"
-                    ? "bg-black text-white"
-                    : "bg-white text-gray-700"
-                }`}
-              >
-                예산
-              </button>
-            </div>
-
-            {/* 월 선택 */}
-            <div className="bg-white rounded-2xl p-5 shadow mb-4">
-              <p className="text-sm text-gray-700 mb-2 font-medium">
-                조회 월
-              </p>
-
-              <input
-                type="month"
-                value={
-                  selectedMonth
-                }
-                onChange={(e) =>
-                  setSelectedMonth(
-                    e.target.value
-                  )
-                }
-                className="border rounded-xl px-3 py-2 text-gray-800"
-              />
-            </div>
-
-            {/* 통계 카드 */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="bg-white rounded-2xl p-5 shadow">
-                <p className="text-sm text-gray-500">
-                  총 수입
-                </p>
-
-                <h2 className="text-2xl font-bold text-blue-600 mt-2">
-                  ₩
-                  {incomeTotal.toLocaleString()}
-                </h2>
-              </div>
-
-              <div className="bg-white rounded-2xl p-5 shadow">
-                <p className="text-sm text-gray-500">
-                  총 지출
-                </p>
-
-                <h2 className="text-2xl font-bold text-red-500 mt-2">
-                  ₩
-                  {expenseTotal.toLocaleString()}
-                </h2>
-              </div>
-
-              <div className="bg-white rounded-2xl p-5 shadow">
-                <p className="text-sm text-gray-500">
-                  총 저축
-                </p>
-
-                <h2 className="text-2xl font-bold text-green-600 mt-2">
-                  ₩
-                  {savingTotal.toLocaleString()}
-                </h2>
-              </div>
-
-              <div className="bg-white rounded-2xl p-5 shadow">
-                <p className="text-sm text-gray-500">
-                  실사용 잔액
-                </p>
-
-                <h2 className="text-2xl font-bold mt-2">
-                  ₩
-                  {total.toLocaleString()}
-                </h2>
-              </div>
-            </div>
-
-            {/* 카테고리별 지출 */}
-            <div className="bg-white rounded-2xl p-5 shadow mb-4">
-              <h3 className="font-semibold mb-4 text-gray-800">
-                카테고리별 지출
-              </h3>
-
-              <div className="h-64 min-w-0">
-                <ResponsiveContainer
-                  width="100%"
-                  height={250}
-                >
-                  <BarChart
-                    data={
-                      categoryData
-                    }
-                  >
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="value" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* 예산 대비 차트 */}
-            <div className="bg-white rounded-2xl p-5 shadow mb-4">
-              <h3 className="font-semibold mb-4 text-gray-800">
-                예산 대비 사용 현황
-              </h3>
-
-              <div className="h-72 min-w-0">
-                <ResponsiveContainer
-                  width="100%"
-                  height={280}
-                >
-                  <BarChart
-                    data={
-                      budgetCompareData
-                    }
-                  >
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-
-                    <Bar
-                      dataKey="사용금액"
-                      stackId="a"
-                    />
-
-                    <Bar
-                      dataKey="남은예산"
-                      stackId="a"
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* 입력 */}
-            <div className="bg-white rounded-2xl p-5 shadow mb-4">
-              <h3 className="font-semibold mb-4 text-gray-800">
-                {editId
-                  ? "내역 수정"
-                  : "내역 추가"}
-              </h3>
-
-              <div className="grid md:grid-cols-6 gap-3">
-                <input
-                  type="text"
-                  placeholder="항목명"
-                  value={name}
-                  onChange={(e) =>
-                    setName(
-                      e.target
-                        .value
-                    )
-                  }
-                  className="border rounded-xl px-3 py-2 text-gray-800"
-                />
-
-                <input
-                  type="number"
-                  placeholder="금액"
-                  value={amount}
-                  onChange={(e) =>
-                    setAmount(
-                      e.target
-                        .value
-                    )
-                  }
-                  className="border rounded-xl px-3 py-2 text-gray-800"
-                />
-
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) =>
-                    setDate(
-                      e.target
-                        .value
-                    )
-                  }
-                  className="border rounded-xl px-3 py-2 text-gray-800"
-                />
-
-                <select
-                  value={type}
-                  onChange={(e) =>
-                    setType(
-                      e.target
-                        .value
-                    )
-                  }
-                  className="border rounded-xl px-3 py-2 text-gray-800"
-                >
-                  <option value="expense">
-                    지출
-                  </option>
-
-                  <option value="income">
-                    수입
-                  </option>
-                </select>
-
-                <select
-                  value={category}
-                  onChange={(e) =>
-                    setCategory(
-                      e.target
-                        .value
-                    )
-                  }
-                  className="border rounded-xl px-3 py-2 text-gray-800"
-                >
-                  {currentCategories.map(
-                    (
-                      item
-                    ) => (
-                      <option
-                        key={
-                          item
-                        }
-                      >
-                        {item}
-                      </option>
-                    )
-                  )}
-                </select>
-
-                <select
-                  value={
-                    spendType
-                  }
-                  onChange={(e) =>
-                    setSpendType(
-                      e.target
-                        .value
-                    )
-                  }
-                  className="border rounded-xl px-3 py-2 text-gray-800"
-                >
-                  <option value="fixed">
-                    고정지출
-                  </option>
-
-                  <option value="variable">
-                    변동지출
-                  </option>
-
-                  <option value="allowance">
-                    용돈
-                  </option>
-
-                  <option value="saving">
-                    저축
-                  </option>
-
-                  <option value="income">
-                    수입
-                  </option>
-                </select>
-              </div>
-
-              <button
-                onClick={
-                  editId
-                    ? updateItem
-                    : addItem
-                }
-                className="w-full mt-4 bg-black text-white py-3 rounded-xl font-semibold"
-              >
-                {editId
-                  ? "수정하기"
-                  : "추가하기"}
-              </button>
-            </div>
-
-            {/* 화면 */}
-            {view === "list" ? (
-              <ListView
-                items={
-                  filteredItems
-                }
-                deleteItem={
-                  deleteItem
-                }
-                startEdit={
-                  startEdit
-                }
-              />
-            ) : view ===
-              "calendar" ? (
-              <CalendarView
-                items={
-                  filteredItems
-                }
-                selectedMonth={
-                  selectedMonth
-                }
-              />
-            ) : (
-              <div className="bg-white rounded-2xl p-5 shadow">
-                <h3 className="font-semibold mb-4 text-gray-800">
-                  카테고리별 예산
-                </h3>
-
-                <div className="space-y-3">
-                  {variableCategories.map(
-                    (
-                      category
-                    ) => (
-                      <div
-                        key={
-                          category
-                        }
-                        className="flex items-center gap-3"
-                      >
-                        <div className="w-40 text-sm font-medium">
-                          {
-                            category
-                          }
-                        </div>
-
-                        <input
-                          type="number"
-                          placeholder="예산 입력"
-                          value={
-                            budgets[
-                              category
-                            ] || ""
-                          }
-                          onChange={(
-                            e
-                          ) =>
-                            setBudgets(
-                              {
-                                ...budgets,
-                                [category]:
-                                  e
-                                    .target
-                                    .value,
-                              }
-                            )
-                          }
-                          className="flex-1 border rounded-xl px-3 py-2 text-gray-800"
-                        />
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-            )}
-          </>
-        )}
-
-        {mainTab ===
-          "fridge" && (
-          <FridgeView />
-        )}
       </div>
     </main>
   );
