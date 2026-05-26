@@ -473,6 +473,10 @@ export default function Home() {
               <option value="variable">
                 변동
               </option>
+
+              <option value="variable">
+                용돈
+              </option>
             </select>
           </div>
 
