@@ -30,7 +30,8 @@ export default function Home() {
   const [mainTab, setMainTab] =
     useState("account");
 
-  const [items, setItems] = useState<Item[]>([]);
+  const [items, setItems] =
+    useState<Item[]>([]);
 
   const [view, setView] =
     useState("list");
@@ -51,6 +52,13 @@ export default function Home() {
     useState<number | null>(
       null
     );
+
+  // 예산 state
+  const [budgets, setBudgets] =
+    useState<Record<
+      string,
+      string
+    >>({});
 
   // 수입 카테고리
   const incomeCategories = [
@@ -114,9 +122,11 @@ export default function Home() {
       ? incomeCategories
       : spendType === "fixed"
       ? fixedCategories
-      : spendType === "allowance"
+      : spendType ===
+        "allowance"
       ? allowanceCategories
-      : spendType === "saving"
+      : spendType ===
+        "saving"
       ? savingCategories
       : variableCategories;
 
@@ -442,7 +452,7 @@ export default function Home() {
         {mainTab ===
           "account" && (
           <>
-            {/* 리스트/달력 탭 */}
+            {/* 리스트/달력/예산 탭 */}
             <div className="flex gap-2 mb-4">
               <button
                 onClick={() =>
@@ -475,67 +485,22 @@ export default function Home() {
               >
                 달력
               </button>
-            </div>
 
-            {/* 필터 */}
-            <div className="flex gap-2 mb-4 flex-wrap">
-              {[
-                [
-                  "all",
-                  "전체",
-                ],
-                [
-                  "income",
-                  "수입",
-                ],
-                [
-                  "fixed",
-                  "고정지출",
-                ],
-                [
-                  "variable",
-                  "변동지출",
-                ],
-                [
-                  "allowance",
-                  "용돈",
-                ],
-                [
-                  "saving",
-                  "저축",
-                ],
-              ].map(
-                ([
-                  value,
-                  label,
-                ]) => (
-                  <button
-                    key={value}
-                    onClick={() => {
-                      setFilter(
-                        value
-                      );
-
-                      if (
-                        value !==
-                        "all"
-                      ) {
-                        setSpendType(
-                          value
-                        );
-                      }
-                    }}
-                    className={`px-3 py-2 rounded-xl font-medium ${
-                      filter ===
-                      value
-                        ? "bg-black text-white"
-                        : "bg-white text-gray-700"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                )
-              )}
+              <button
+                onClick={() =>
+                  setView(
+                    "budget"
+                  )
+                }
+                className={`px-4 py-2 rounded-xl font-medium ${
+                  view ===
+                  "budget"
+                    ? "bg-black text-white"
+                    : "bg-white text-gray-700"
+                }`}
+              >
+                예산
+              </button>
             </div>
 
             {/* 월 선택 */}
@@ -622,11 +587,8 @@ export default function Home() {
                     }
                   >
                     <XAxis dataKey="name" />
-
                     <YAxis />
-
                     <Tooltip />
-
                     <Bar dataKey="value" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -773,8 +735,7 @@ export default function Home() {
             </div>
 
             {/* 화면 */}
-            {view ===
-            "list" ? (
+            {view === "list" ? (
               <ListView
                 items={
                   filteredItems
@@ -786,7 +747,8 @@ export default function Home() {
                   startEdit
                 }
               />
-            ) : (
+            ) : view ===
+              "calendar" ? (
               <CalendarView
                 items={
                   filteredItems
@@ -795,6 +757,57 @@ export default function Home() {
                   selectedMonth
                 }
               />
+            ) : (
+              <div className="bg-white rounded-2xl p-5 shadow">
+                <h3 className="font-semibold mb-4 text-gray-800">
+                  카테고리별 예산
+                </h3>
+
+                <div className="space-y-3">
+                  {variableCategories.map(
+                    (
+                      category
+                    ) => (
+                      <div
+                        key={
+                          category
+                        }
+                        className="flex items-center gap-3"
+                      >
+                        <div className="w-40 text-sm font-medium">
+                          {
+                            category
+                          }
+                        </div>
+
+                        <input
+                          type="number"
+                          placeholder="예산 입력"
+                          value={
+                            budgets[
+                              category
+                            ] || ""
+                          }
+                          onChange={(
+                            e
+                          ) =>
+                            setBudgets(
+                              {
+                                ...budgets,
+                                [category]:
+                                  e
+                                    .target
+                                    .value,
+                              }
+                            )
+                          }
+                          className="flex-1 border rounded-xl px-3 py-2 text-gray-800"
+                        />
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
             )}
           </>
         )}
