@@ -34,13 +34,16 @@ export default function Home() {
   const [filter, setFilter] =
     useState("all");
 
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
+  const [name, setName] =
+    useState("");
+
+  const [amount, setAmount] =
+    useState("");
 
   const [type, setType] =
     useState("expense");
 
- // 수입 카테고리
+   // 수입 카테고리
   const incomeCategories = [
     "급여",
     "상여",
@@ -122,7 +125,7 @@ export default function Home() {
   const [selectedMonth, setSelectedMonth] =
     useState(currentMonth);
 
-  // 불러오기
+  // 데이터 불러오기
   const fetchItems = async () => {
     const startDate = new Date(
       `${selectedMonth}-01`
@@ -142,14 +145,15 @@ export default function Home() {
       .toISOString()
       .split("T")[0];
 
-    const { data, error } = await supabase
-      .from("transactions")
-      .select("*")
-      .gte("date", start)
-      .lte("date", end)
-      .order("date", {
-        ascending: false,
-      });
+    const { data, error } =
+      await supabase
+        .from("transactions")
+        .select("*")
+        .gte("date", start)
+        .lte("date", end)
+        .order("date", {
+          ascending: false,
+        });
 
     if (error) {
       console.log(error);
@@ -163,9 +167,24 @@ export default function Home() {
     fetchItems();
   }, [selectedMonth]);
 
-  // spendType/type 변경 시 category 자동 변경
+  // 카테고리 자동 변경
   useEffect(() => {
-    setCategory(currentCategories[0]);
+    setCategory(
+      currentCategories[0]
+    );
+
+    // 수입 선택 시
+    if (type === "income") {
+      setSpendType("income");
+    }
+
+    // 지출로 다시 변경 시
+    if (
+      type === "expense" &&
+      spendType === "income"
+    ) {
+      setSpendType("variable");
+    }
   }, [spendType, type]);
 
   // 추가
@@ -177,18 +196,22 @@ export default function Home() {
       return;
     }
 
-    const { error } = await supabase
-      .from("transactions")
-      .insert([
-        {
-          name,
-          amount: Number(amount),
-          type,
-          category,
-          spend_type: spendType,
-          date,
-        },
-      ]);
+    const { error } =
+      await supabase
+        .from("transactions")
+        .insert([
+          {
+            name,
+            amount: Number(amount),
+            type,
+            category,
+            spend_type:
+              type === "income"
+                ? "income"
+                : spendType,
+            date,
+          },
+        ]);
 
     if (error) {
       console.log(error);
@@ -205,10 +228,11 @@ export default function Home() {
   const deleteItem = async (
     id: number
   ) => {
-    const { error } = await supabase
-      .from("transactions")
-      .delete()
-      .eq("id", id);
+    const { error } =
+      await supabase
+        .from("transactions")
+        .delete()
+        .eq("id", id);
 
     if (error) {
       console.log(error);
@@ -224,41 +248,59 @@ export default function Home() {
       ? items
       : items.filter(
           (item) =>
-            item.spend_type === filter
+            item.spend_type ===
+            filter
         );
 
   // 총합
-  const total = filteredItems.reduce(
-    (sum, item) => {
-      if (item.type === "income") {
-        return sum + item.amount;
-      }
+  const total =
+    filteredItems.reduce(
+      (sum, item) => {
+        if (
+          item.type === "income"
+        ) {
+          return (
+            sum + item.amount
+          );
+        }
 
-      return sum - item.amount;
-    },
-    0
-  );
+        return (
+          sum - item.amount
+        );
+      },
+      0
+    );
 
   // 차트 데이터
-  const categoryData = Object.values(
-    filteredItems.reduce((acc, item) => {
-      if (item.type !== "expense") {
-        return acc;
-      }
+  const categoryData =
+    Object.values(
+      filteredItems.reduce(
+        (acc, item) => {
+          if (
+            item.type !==
+            "expense"
+          ) {
+            return acc;
+          }
 
-      if (!acc[item.category]) {
-        acc[item.category] = {
-          name: item.category,
-          value: 0,
-        };
-      }
+          if (
+            !acc[item.category]
+          ) {
+            acc[item.category] =
+              {
+                name: item.category,
+                value: 0,
+              };
+          }
 
-      acc[item.category].value +=
-        item.amount;
+          acc[item.category].value +=
+            item.amount;
 
-      return acc;
-    }, {} as any)
-  );
+          return acc;
+        },
+        {} as any
+      )
+    );
 
   return (
     <main className="min-h-screen bg-gray-100 p-4 md:p-6">
@@ -270,7 +312,9 @@ export default function Home() {
         {/* 탭 */}
         <div className="flex gap-2 mb-4">
           <button
-            onClick={() => setView("list")}
+            onClick={() =>
+              setView("list")
+            }
             className={`px-4 py-2 rounded-xl font-medium ${
               view === "list"
                 ? "bg-black text-white"
@@ -282,10 +326,13 @@ export default function Home() {
 
           <button
             onClick={() =>
-              setView("calendar")
+              setView(
+                "calendar"
+              )
             }
             className={`px-4 py-2 rounded-xl font-medium ${
-              view === "calendar"
+              view ===
+              "calendar"
                 ? "bg-black text-white"
                 : "bg-white text-gray-700"
             }`}
@@ -311,11 +358,33 @@ export default function Home() {
 
           <button
             onClick={() => {
-              setFilter("fixed");
-              setSpendType("fixed");
+              setFilter("income");
+              setType("income");
+              setSpendType(
+                "income"
+              );
             }}
             className={`px-3 py-2 rounded-xl font-medium ${
-              filter === "fixed"
+              filter ===
+              "income"
+                ? "bg-black text-white"
+                : "bg-white text-gray-700"
+            }`}
+          >
+            수입
+          </button>
+
+          <button
+            onClick={() => {
+              setFilter("fixed");
+              setSpendType(
+                "fixed"
+              );
+              setType("expense");
+            }}
+            className={`px-3 py-2 rounded-xl font-medium ${
+              filter ===
+              "fixed"
                 ? "bg-black text-white"
                 : "bg-white text-gray-700"
             }`}
@@ -325,11 +394,17 @@ export default function Home() {
 
           <button
             onClick={() => {
-              setFilter("variable");
-              setSpendType("variable");
+              setFilter(
+                "variable"
+              );
+              setSpendType(
+                "variable"
+              );
+              setType("expense");
             }}
             className={`px-3 py-2 rounded-xl font-medium ${
-              filter === "variable"
+              filter ===
+              "variable"
                 ? "bg-black text-white"
                 : "bg-white text-gray-700"
             }`}
@@ -339,11 +414,17 @@ export default function Home() {
 
           <button
             onClick={() => {
-              setFilter("allowance");
-              setSpendType("allowance");
+              setFilter(
+                "allowance"
+              );
+              setSpendType(
+                "allowance"
+              );
+              setType("expense");
             }}
             className={`px-3 py-2 rounded-xl font-medium ${
-              filter === "allowance"
+              filter ===
+              "allowance"
                 ? "bg-black text-white"
                 : "bg-white text-gray-700"
             }`}
@@ -354,10 +435,14 @@ export default function Home() {
           <button
             onClick={() => {
               setFilter("saving");
-              setSpendType("saving");
+              setSpendType(
+                "saving"
+              );
+              setType("expense");
             }}
             className={`px-3 py-2 rounded-xl font-medium ${
-              filter === "saving"
+              filter ===
+              "saving"
                 ? "bg-black text-white"
                 : "bg-white text-gray-700"
             }`}
@@ -393,11 +478,12 @@ export default function Home() {
             </p>
 
             <h2 className="text-3xl font-bold mt-2">
-              ₩{total.toLocaleString()}
+              ₩
+              {total.toLocaleString()}
             </h2>
           </div>
 
-          {/* 바 차트 */}
+          {/* 차트 */}
           <div className="bg-white rounded-2xl p-5 shadow">
             <h3 className="font-semibold mb-4 text-gray-800">
               카테고리별 지출
@@ -417,10 +503,7 @@ export default function Home() {
 
                   <Tooltip />
 
-                  <Bar
-                    dataKey="value"
-                    radius={[10, 10, 0, 0]}
-                  />
+                  <Bar dataKey="value" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -439,7 +522,9 @@ export default function Home() {
               placeholder="항목명"
               value={name}
               onChange={(e) =>
-                setName(e.target.value)
+                setName(
+                  e.target.value
+                )
               }
               className="border rounded-xl px-3 py-2 text-gray-800"
             />
@@ -449,7 +534,9 @@ export default function Home() {
               placeholder="금액"
               value={amount}
               onChange={(e) =>
-                setAmount(e.target.value)
+                setAmount(
+                  e.target.value
+                )
               }
               className="border rounded-xl px-3 py-2 text-gray-800"
             />
@@ -458,7 +545,9 @@ export default function Home() {
               type="date"
               value={date}
               onChange={(e) =>
-                setDate(e.target.value)
+                setDate(
+                  e.target.value
+                )
               }
               className="border rounded-xl px-3 py-2 text-gray-800"
             />
@@ -466,7 +555,9 @@ export default function Home() {
             <select
               value={type}
               onChange={(e) =>
-                setType(e.target.value)
+                setType(
+                  e.target.value
+                )
               }
               className="border rounded-xl px-3 py-2 text-gray-800"
             >
@@ -490,7 +581,9 @@ export default function Home() {
             >
               {currentCategories.map(
                 (item) => (
-                  <option key={item}>
+                  <option
+                    key={item}
+                  >
                     {item}
                   </option>
                 )
@@ -521,6 +614,10 @@ export default function Home() {
               <option value="saving">
                 저축
               </option>
+
+              <option value="income">
+                수입
+              </option>
             </select>
           </div>
 
@@ -536,12 +633,16 @@ export default function Home() {
         {view === "list" ? (
           <ListView
             items={filteredItems}
-            deleteItem={deleteItem}
+            deleteItem={
+              deleteItem
+            }
           />
         ) : (
           <CalendarView
             items={filteredItems}
-            selectedMonth={selectedMonth}
+            selectedMonth={
+              selectedMonth
+            }
           />
         )}
       </div>
