@@ -178,12 +178,10 @@ export default function Home() {
       currentCategories[0]
     );
 
-    // 수입 선택 시
     if (type === "income") {
       setSpendType("income");
     }
 
-    // 지출로 다시 변경 시
     if (
       type === "expense" &&
       spendType === "income"
@@ -313,24 +311,54 @@ export default function Home() {
             filter
         );
 
-  // 총합
-  const total =
-    filteredItems.reduce(
-      (sum, item) => {
-        if (
-          item.type === "income"
-        ) {
-          return (
-            sum + item.amount
-          );
-        }
+  // 총 수입
+  const incomeTotal =
+    filteredItems
+      .filter(
+        (item) =>
+          item.type ===
+          "income"
+      )
+      .reduce(
+        (sum, item) =>
+          sum + item.amount,
+        0
+      );
 
-        return (
-          sum - item.amount
-        );
-      },
-      0
-    );
+  // 총 지출 (저축 제외)
+  const expenseTotal =
+    filteredItems
+      .filter(
+        (item) =>
+          item.type ===
+            "expense" &&
+          item.spend_type !==
+            "saving"
+      )
+      .reduce(
+        (sum, item) =>
+          sum + item.amount,
+        0
+      );
+
+  // 총 저축
+  const savingTotal =
+    filteredItems
+      .filter(
+        (item) =>
+          item.spend_type ===
+          "saving"
+      )
+      .reduce(
+        (sum, item) =>
+          sum + item.amount,
+        0
+      );
+
+  // 실사용 잔액
+  const total =
+    incomeTotal -
+    expenseTotal;
 
   // 차트 데이터
   const categoryData =
@@ -339,7 +367,9 @@ export default function Home() {
         (acc, item) => {
           if (
             item.type !==
-            "expense"
+              "expense" ||
+            item.spend_type ===
+              "saving"
           ) {
             return acc;
           }
@@ -405,30 +435,12 @@ export default function Home() {
         {/* 필터 */}
         <div className="flex gap-2 mb-4 flex-wrap">
           {[
-            [
-              "all",
-              "전체",
-            ],
-            [
-              "income",
-              "수입",
-            ],
-            [
-              "fixed",
-              "고정지출",
-            ],
-            [
-              "variable",
-              "변동지출",
-            ],
-            [
-              "allowance",
-              "용돈",
-            ],
-            [
-              "saving",
-              "저축",
-            ],
+            ["all", "전체"],
+            ["income", "수입"],
+            ["fixed", "고정지출"],
+            ["variable", "변동지출"],
+            ["allowance", "용돈"],
+            ["saving", "저축"],
           ].map(
             ([value, label]) => (
               <button
@@ -478,42 +490,76 @@ export default function Home() {
           />
         </div>
 
-        {/* 상단 */}
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
+        {/* 통계 카드 */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="bg-white rounded-2xl p-5 shadow">
-            <p className="text-gray-700 text-sm font-medium">
-              현재 잔액
+            <p className="text-sm text-gray-500">
+              총 수입
             </p>
 
-            <h2 className="text-3xl font-bold mt-2">
+            <h2 className="text-2xl font-bold text-blue-600 mt-2">
               ₩
-              {total.toLocaleString()}
+              {incomeTotal.toLocaleString()}
             </h2>
           </div>
 
           <div className="bg-white rounded-2xl p-5 shadow">
-            <h3 className="font-semibold mb-4 text-gray-800">
-              카테고리별 지출
-            </h3>
+            <p className="text-sm text-gray-500">
+              총 지출
+            </p>
 
-            <div className="h-64">
-              <ResponsiveContainer
-                width="100%"
-                height="100%"
+            <h2 className="text-2xl font-bold text-red-500 mt-2">
+              ₩
+              {expenseTotal.toLocaleString()}
+            </h2>
+          </div>
+
+          <div className="bg-white rounded-2xl p-5 shadow">
+            <p className="text-sm text-gray-500">
+              총 저축
+            </p>
+
+            <h2 className="text-2xl font-bold text-green-600 mt-2">
+              ₩
+              {savingTotal.toLocaleString()}
+            </h2>
+          </div>
+
+          <div className="bg-white rounded-2xl p-5 shadow">
+            <p className="text-sm text-gray-500">
+              실사용 잔액
+            </p>
+
+            <h2 className="text-2xl font-bold mt-2">
+              ₩
+              {total.toLocaleString()}
+            </h2>
+          </div>
+        </div>
+
+        {/* 차트 */}
+        <div className="bg-white rounded-2xl p-5 shadow mb-4">
+          <h3 className="font-semibold mb-4 text-gray-800">
+            카테고리별 지출
+          </h3>
+
+          <div className="h-64">
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+            >
+              <BarChart
+                data={categoryData}
               >
-                <BarChart
-                  data={categoryData}
-                >
-                  <XAxis dataKey="name" />
+                <XAxis dataKey="name" />
 
-                  <YAxis />
+                <YAxis />
 
-                  <Tooltip />
+                <Tooltip />
 
-                  <Bar dataKey="value" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+                <Bar dataKey="value" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
