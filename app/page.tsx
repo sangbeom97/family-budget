@@ -40,16 +40,35 @@ export default function Home() {
     useState("expense");
 
   const categories = [
-    "식비",
-    "교통",
-    "쇼핑",
-    "월급",
-    "기타",
-    "데이트",
-    "구독",
+    "급여",
+    "상여",
+    "수당",
+    "기타수입",
+    "에적금",
+    "현금성통장",
+    "투자",
+    "연금저축",
+    "주택청약",
+    "주거비",
+    "통신비",
+    "보험료",
+    "교통/차량(고정)",
+    "헌금",
+    "식비(통상)",
+    "식비(통상외)",
     "생활",
-    "병원",
-    "여행",
+    "꾸밈비",
+    "교통/차량(변동)",
+    "의료",
+    "건강",
+    "문화/여가",
+    "여행/숙박",
+    "교육/학습",
+    "경조/선물",
+    "교회",
+    "기타지출",
+    "희원용돈",
+    "상범용돈",
   ];
 
   const [category, setCategory] =
@@ -433,6 +452,10 @@ export default function Home() {
 
               <option value="variable">
                 변동
+              </option>
+
+              <option value="variable">
+                용돈
               </option>
             </select>
           </div>
