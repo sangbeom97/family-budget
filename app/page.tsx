@@ -179,72 +179,30 @@ export default function Home() {
   };
 
   // 필터링
-// 필터링
-const filteredItems =
-  filter === "all"
-    ? items
-    : filter === "allowance"
-    ? items.filter(
-        (item) =>
-          item.category === "용돈"
-      )
-    : items.filter(
-        (item) =>
-          item.spend_type === filter
-      );
+  const filteredItems =
+    filter === "all"
+      ? items
+      : filter === "allowance"
+      ? items.filter(
+          (item) =>
+            item.category === "용돈"
+        )
+      : items.filter(
+          (item) =>
+            item.spend_type === filter
+        );
 
-{/* 필터 */}
-<div className="flex gap-2 mb-4 flex-wrap">
-  <button
-    onClick={() => setFilter("all")}
-    className={`px-3 py-2 rounded-xl font-medium ${
-      filter === "all"
-        ? "bg-black text-white"
-        : "bg-white text-gray-700"
-    }`}
-  >
-    전체
-  </button>
+  // 총합
+  const total = filteredItems.reduce(
+    (sum, item) => {
+      if (item.type === "income") {
+        return sum + item.amount;
+      }
 
-  <button
-    onClick={() =>
-      setFilter("fixed")
-    }
-    className={`px-3 py-2 rounded-xl font-medium ${
-      filter === "fixed"
-        ? "bg-black text-white"
-        : "bg-white text-gray-700"
-    }`}
-  >
-    고정지출
-  </button>
-
-  <button
-    onClick={() =>
-      setFilter("variable")
-    }
-    className={`px-3 py-2 rounded-xl font-medium ${
-      filter === "variable"
-        ? "bg-black text-white"
-        : "bg-white text-gray-700"
-    }`}
-  >
-    변동지출
-  </button>
-
-  <button
-    onClick={() =>
-      setFilter("allowance")
-    }
-    className={`px-3 py-2 rounded-xl font-medium ${
-      filter === "allowance"
-        ? "bg-black text-white"
-        : "bg-white text-gray-700"
-    }`}
-  >
-    용돈
-  </button>
-</div>
+      return sum - item.amount;
+    },
+    0
+  );
 
   // 차트 데이터
   const categoryData = Object.values(
@@ -271,7 +229,7 @@ const filteredItems =
     <main className="min-h-screen bg-gray-100 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-extrabold mb-6 text-black tracking-tight">
-          상범/희원 가계부
+          우리집 가계부
         </h1>
 
         {/* 탭 */}
@@ -302,9 +260,11 @@ const filteredItems =
         </div>
 
         {/* 필터 */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-4 flex-wrap">
           <button
-            onClick={() => setFilter("all")}
+            onClick={() =>
+              setFilter("all")
+            }
             className={`px-3 py-2 rounded-xl font-medium ${
               filter === "all"
                 ? "bg-black text-white"
@@ -341,15 +301,17 @@ const filteredItems =
           </button>
 
           <button
-            onClick={() => setFilter("allowance")}
+            onClick={() =>
+              setFilter("allowance")
+            }
             className={`px-3 py-2 rounded-xl font-medium ${
               filter === "allowance"
                 ? "bg-black text-white"
                 : "bg-white text-gray-700"
-  }`}
->
-  용돈
-</button>
+            }`}
+          >
+            용돈
+          </button>
         </div>
 
         {/* 월 선택 */}
@@ -510,10 +472,6 @@ const filteredItems =
 
               <option value="variable">
                 변동
-              </option>
-
-              <option value="variable">
-                용돈
               </option>
             </select>
           </div>
