@@ -36,9 +36,6 @@ export default function Home() {
   const [view, setView] =
     useState("list");
 
-  const [filter, setFilter] =
-    useState("all");
-
   const [name, setName] =
     useState("");
 
@@ -48,9 +45,24 @@ export default function Home() {
   const [type, setType] =
     useState("expense");
 
-  const [editId, setEditId] =
-    useState<number | null>(
-      null
+  const [category, setCategory] =
+    useState("식비(통상)");
+
+  const [spendType, setSpendType] =
+    useState("variable");
+
+  const [date, setDate] =
+    useState(
+      new Date()
+        .toISOString()
+        .split("T")[0]
+    );
+
+  const [selectedMonth, setSelectedMonth] =
+    useState(
+      new Date()
+        .toISOString()
+        .slice(0, 7)
     );
 
   const [budgets, setBudgets] =
@@ -59,7 +71,7 @@ export default function Home() {
       string
     >>({});
 
-  // 수입 카테고리
+  // 카테고리
   const incomeCategories = [
     "급여",
     "상여",
@@ -67,7 +79,6 @@ export default function Home() {
     "기타수입",
   ];
 
-  // 고정지출 카테고리
   const fixedCategories = [
     "주거비",
     "통신비",
@@ -77,7 +88,6 @@ export default function Home() {
     "구독",
   ];
 
-  // 변동지출 카테고리
   const variableCategories = [
     "식비(통상)",
     "식비(통상외)",
@@ -94,13 +104,11 @@ export default function Home() {
     "기타지출",
   ];
 
-  // 용돈 카테고리
   const allowanceCategories = [
     "상범용돈",
     "희원용돈",
   ];
 
-  // 저축 카테고리
   const savingCategories = [
     "예적금",
     "현금성통장",
@@ -108,12 +116,6 @@ export default function Home() {
     "연금저축",
     "주택청약",
   ];
-
-  const [category, setCategory] =
-    useState("식비(통상)");
-
-  const [spendType, setSpendType] =
-    useState("variable");
 
   const currentCategories =
     type === "income"
@@ -127,20 +129,6 @@ export default function Home() {
         "saving"
       ? savingCategories
       : variableCategories;
-
-  const today = new Date()
-    .toISOString()
-    .split("T")[0];
-
-  const [date, setDate] =
-    useState(today);
-
-  const currentMonth = new Date()
-    .toISOString()
-    .slice(0, 7);
-
-  const [selectedMonth, setSelectedMonth] =
-    useState(currentMonth);
 
   // 거래내역 불러오기
   const fetchItems = async () => {
@@ -162,7 +150,7 @@ export default function Home() {
       .toISOString()
       .split("T")[0];
 
-    const { data, error } =
+    const { data } =
       await supabase
         .from("transactions")
         .select("*")
@@ -172,32 +160,20 @@ export default function Home() {
           ascending: false,
         });
 
-    if (error) {
-      console.log(error);
-      return;
-    }
-
     setItems(data || []);
   };
 
   // 예산 불러오기
   const fetchBudgets =
     async () => {
-      const {
-        data,
-        error,
-      } = await supabase
-        .from("budgets")
-        .select("*")
-        .eq(
-          "month",
-          selectedMonth
-        );
-
-      if (error) {
-        console.log(error);
-        return;
-      }
+      const { data } =
+        await supabase
+          .from("budgets")
+          .select("*")
+          .eq(
+            "month",
+            selectedMonth
+          );
 
       const budgetMap:
         Record<
@@ -205,7 +181,7 @@ export default function Home() {
           string
         > = {};
 
-      data.forEach(
+      data?.forEach(
         (item: any) => {
           budgetMap[
             item.category
@@ -224,109 +200,27 @@ export default function Home() {
     fetchBudgets();
   }, [selectedMonth]);
 
-  useEffect(() => {
-    setCategory(
-      currentCategories[0]
-    );
-
-    if (type === "income") {
-      setSpendType("income");
-    }
-
-    if (
-      type === "expense" &&
-      spendType === "income"
-    ) {
-      setSpendType("variable");
-    }
-  }, [spendType, type]);
-
   // 추가
   const addItem = async () => {
-    if (
-      name.trim() === "" ||
-      amount.trim() === ""
-    ) {
+    if (!name || !amount)
       return;
-    }
 
-    const { error } =
-      await supabase
-        .from("transactions")
-        .insert([
-          {
-            name,
-            amount: Number(amount),
-            type,
-            category,
-            spend_type:
-              type === "income"
-                ? "income"
-                : spendType,
-            date,
-          },
-        ]);
-
-    if (error) {
-      console.log(error);
-      return;
-    }
-
-    setName("");
-    setAmount("");
-
-    fetchItems();
-  };
-
-  // 수정 시작
-  const startEdit = (
-    item: Item
-  ) => {
-    setEditId(item.id);
-
-    setName(item.name);
-
-    setAmount(
-      item.amount.toString()
-    );
-
-    setType(item.type);
-
-    setCategory(item.category);
-
-    setDate(item.date);
-
-    setSpendType(
-      item.spend_type
-    );
-  };
-
-  // 수정 저장
-  const updateItem = async () => {
-    if (!editId) return;
-
-    const { error } =
-      await supabase
-        .from("transactions")
-        .update({
+    await supabase
+      .from("transactions")
+      .insert([
+        {
           name,
-          amount: Number(amount),
+          amount:
+            Number(amount),
           type,
           category,
-          date,
           spend_type:
             type === "income"
               ? "income"
               : spendType,
-        })
-        .eq("id", editId);
-
-    if (error) {
-      console.log(error);
-      return;
-    }
-
-    setEditId(null);
+          date,
+        },
+      ]);
 
     setName("");
     setAmount("");
@@ -382,89 +276,12 @@ export default function Home() {
       }
     };
 
-  // 삭제
-  const deleteItem = async (
-    id: number
-  ) => {
-    const { error } =
-      await supabase
-        .from("transactions")
-        .delete()
-        .eq("id", id);
-
-    if (error) {
-      console.log(error);
-      return;
-    }
-
-    fetchItems();
-  };
-
-  // 필터링
-  const filteredItems =
-    filter === "all"
-      ? items
-      : items.filter(
-          (item) =>
-            item.spend_type ===
-            filter
-        );
-
-  // 총 수입
-  const incomeTotal =
-    filteredItems
-      .filter(
-        (item) =>
-          item.type ===
-          "income"
-      )
-      .reduce(
-        (sum, item) =>
-          sum + item.amount,
-        0
-      );
-
-  // 총 지출
-  const expenseTotal =
-    filteredItems
-      .filter(
-        (item) =>
-          item.type ===
-            "expense" &&
-          item.spend_type !==
-            "saving"
-      )
-      .reduce(
-        (sum, item) =>
-          sum + item.amount,
-        0
-      );
-
-  // 총 저축
-  const savingTotal =
-    filteredItems
-      .filter(
-        (item) =>
-          item.spend_type ===
-          "saving"
-      )
-      .reduce(
-        (sum, item) =>
-          sum + item.amount,
-        0
-      );
-
-  // 실사용 잔액
-  const total =
-    incomeTotal -
-    expenseTotal;
-
-  // 카테고리별 지출 데이터
+  // 차트 데이터
   const categoryData =
     variableCategories.map(
       (category) => {
         const total =
-          filteredItems
+          items
             .filter(
               (item) =>
                 item.category ===
@@ -491,12 +308,11 @@ export default function Home() {
       }
     );
 
-  // 예산 대비 데이터
   const budgetCompareData =
     variableCategories.map(
       (category) => {
         const spent =
-          filteredItems
+          items
             .filter(
               (item) =>
                 item.category ===
@@ -533,12 +349,441 @@ export default function Home() {
       }
     );
 
+  const incomeTotal =
+    items
+      .filter(
+        (item) =>
+          item.type ===
+          "income"
+      )
+      .reduce(
+        (sum, item) =>
+          sum + item.amount,
+        0
+      );
+
+  const expenseTotal =
+    items
+      .filter(
+        (item) =>
+          item.type ===
+            "expense" &&
+          item.spend_type !==
+            "saving"
+      )
+      .reduce(
+        (sum, item) =>
+          sum + item.amount,
+        0
+      );
+
+  const savingTotal =
+    items
+      .filter(
+        (item) =>
+          item.spend_type ===
+          "saving"
+      )
+      .reduce(
+        (sum, item) =>
+          sum + item.amount,
+        0
+      );
+
+  const total =
+    incomeTotal -
+    expenseTotal;
+
   return (
     <main className="min-h-screen bg-gray-100 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-extrabold mb-6 text-black tracking-tight">
+        <h1 className="text-4xl font-extrabold mb-6 text-black">
           무계획 속 계획
         </h1>
+
+        {/* 메인탭 */}
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() =>
+              setMainTab(
+                "account"
+              )
+            }
+            className={`px-4 py-2 rounded-xl ${
+              mainTab ===
+              "account"
+                ? "bg-black text-white"
+                : "bg-white"
+            }`}
+          >
+            가계부
+          </button>
+
+          <button
+            onClick={() =>
+              setMainTab(
+                "fridge"
+              )
+            }
+            className={`px-4 py-2 rounded-xl ${
+              mainTab ===
+              "fridge"
+                ? "bg-black text-white"
+                : "bg-white"
+            }`}
+          >
+            냉장고
+          </button>
+        </div>
+
+        {mainTab ===
+          "account" && (
+          <>
+            {/* 탭 */}
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={() =>
+                  setView(
+                    "list"
+                  )
+                }
+                className={`px-4 py-2 rounded-xl ${
+                  view === "list"
+                    ? "bg-black text-white"
+                    : "bg-white"
+                }`}
+              >
+                리스트
+              </button>
+
+              <button
+                onClick={() =>
+                  setView(
+                    "calendar"
+                  )
+                }
+                className={`px-4 py-2 rounded-xl ${
+                  view ===
+                  "calendar"
+                    ? "bg-black text-white"
+                    : "bg-white"
+                }`}
+              >
+                달력
+              </button>
+
+              <button
+                onClick={() =>
+                  setView(
+                    "budget"
+                  )
+                }
+                className={`px-4 py-2 rounded-xl ${
+                  view ===
+                  "budget"
+                    ? "bg-black text-white"
+                    : "bg-white"
+                }`}
+              >
+                예산
+              </button>
+            </div>
+
+            {/* 월 */}
+            <div className="bg-white p-5 rounded-2xl shadow mb-4">
+              <input
+                type="month"
+                value={
+                  selectedMonth
+                }
+                onChange={(e) =>
+                  setSelectedMonth(
+                    e.target.value
+                  )
+                }
+                className="border rounded-xl px-3 py-2"
+              />
+            </div>
+
+            {/* 카드 */}
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="bg-white p-5 rounded-2xl shadow">
+                총 수입
+                <h2 className="text-2xl font-bold text-blue-600">
+                  ₩
+                  {incomeTotal.toLocaleString()}
+                </h2>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl shadow">
+                총 지출
+                <h2 className="text-2xl font-bold text-red-500">
+                  ₩
+                  {expenseTotal.toLocaleString()}
+                </h2>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl shadow">
+                총 저축
+                <h2 className="text-2xl font-bold text-green-600">
+                  ₩
+                  {savingTotal.toLocaleString()}
+                </h2>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl shadow">
+                실사용 잔액
+                <h2 className="text-2xl font-bold">
+                  ₩
+                  {total.toLocaleString()}
+                </h2>
+              </div>
+            </div>
+
+            {/* 그래프 */}
+            <div className="bg-white rounded-2xl p-5 shadow mb-4">
+              <h3 className="font-bold mb-4">
+                카테고리별 지출
+              </h3>
+
+              <div className="h-72">
+                <ResponsiveContainer
+                  width="100%"
+                  height="100%"
+                >
+                  <BarChart
+                    data={
+                      categoryData
+                    }
+                  >
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* 예산 그래프 */}
+            <div className="bg-white rounded-2xl p-5 shadow mb-4">
+              <h3 className="font-bold mb-4">
+                예산 대비 사용 현황
+              </h3>
+
+              <div className="h-72">
+                <ResponsiveContainer
+                  width="100%"
+                  height="100%"
+                >
+                  <BarChart
+                    data={
+                      budgetCompareData
+                    }
+                  >
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+
+                    <Bar
+                      dataKey="사용금액"
+                      stackId="a"
+                    />
+
+                    <Bar
+                      dataKey="남은예산"
+                      stackId="a"
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* 입력 */}
+            <div className="bg-white p-5 rounded-2xl shadow mb-4">
+              <div className="grid md:grid-cols-6 gap-3">
+                <input
+                  type="text"
+                  placeholder="항목명"
+                  value={name}
+                  onChange={(e) =>
+                    setName(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2"
+                />
+
+                <input
+                  type="number"
+                  placeholder="금액"
+                  value={amount}
+                  onChange={(e) =>
+                    setAmount(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2"
+                />
+
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) =>
+                    setDate(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2"
+                />
+
+                <select
+                  value={type}
+                  onChange={(e) =>
+                    setType(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2"
+                >
+                  <option value="expense">
+                    지출
+                  </option>
+
+                  <option value="income">
+                    수입
+                  </option>
+                </select>
+
+                <select
+                  value={category}
+                  onChange={(e) =>
+                    setCategory(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2"
+                >
+                  {currentCategories.map(
+                    (item) => (
+                      <option
+                        key={item}
+                      >
+                        {item}
+                      </option>
+                    )
+                  )}
+                </select>
+
+                <select
+                  value={
+                    spendType
+                  }
+                  onChange={(e) =>
+                    setSpendType(
+                      e.target
+                        .value
+                    )
+                  }
+                  className="border rounded-xl px-3 py-2"
+                >
+                  <option value="fixed">
+                    고정지출
+                  </option>
+
+                  <option value="variable">
+                    변동지출
+                  </option>
+
+                  <option value="allowance">
+                    용돈
+                  </option>
+
+                  <option value="saving">
+                    저축
+                  </option>
+                </select>
+              </div>
+
+              <button
+                onClick={addItem}
+                className="w-full bg-black text-white rounded-xl py-3 mt-4"
+              >
+                추가하기
+              </button>
+            </div>
+
+            {/* 화면 */}
+            {view === "list" ? (
+              <ListView
+                items={items}
+                deleteItem={() => {}}
+                startEdit={() => {}}
+              />
+            ) : view ===
+              "calendar" ? (
+              <CalendarView
+                items={items}
+                selectedMonth={
+                  selectedMonth
+                }
+              />
+            ) : (
+              <div className="bg-white p-5 rounded-2xl shadow">
+                <h3 className="font-bold mb-4">
+                  카테고리별 예산
+                </h3>
+
+                <div className="space-y-3">
+                  {variableCategories.map(
+                    (
+                      category
+                    ) => (
+                      <div
+                        key={
+                          category
+                        }
+                        className="flex gap-3 items-center"
+                      >
+                        <div className="w-40">
+                          {
+                            category
+                          }
+                        </div>
+
+                        <input
+                          type="number"
+                          value={
+                            budgets[
+                              category
+                            ] || ""
+                          }
+                          onChange={(e) =>
+                            saveBudget(
+                              category,
+                              e.target.value
+                            )
+                          }
+                          className="flex-1 border rounded-xl px-3 py-2"
+                        />
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {mainTab ===
+          "fridge" && (
+          <FridgeView />
+        )}
       </div>
     </main>
   );
