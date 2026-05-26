@@ -39,6 +39,19 @@ export default function Home() {
   const [type, setType] =
     useState("expense");
 
+  const categories = [
+    "식비",
+    "교통",
+    "쇼핑",
+    "월급",
+    "기타",
+    "데이트",
+    "구독",
+    "생활",
+    "병원",
+    "여행",
+  ];
+
   const [category, setCategory] =
     useState("식비");
 
@@ -189,7 +202,7 @@ export default function Home() {
   );
 
   return (
-    <main className="min-h-screen bg-gray-100 p-6">
+    <main className="min-h-screen bg-gray-100 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">
           우리집 가계부
@@ -199,10 +212,10 @@ export default function Home() {
         <div className="flex gap-2 mb-4">
           <button
             onClick={() => setView("list")}
-            className={`px-4 py-2 rounded-xl ${
+            className={`px-4 py-2 rounded-xl font-medium ${
               view === "list"
                 ? "bg-black text-white"
-                : "bg-white"
+                : "bg-white text-gray-700"
             }`}
           >
             리스트
@@ -212,10 +225,10 @@ export default function Home() {
             onClick={() =>
               setView("calendar")
             }
-            className={`px-4 py-2 rounded-xl ${
+            className={`px-4 py-2 rounded-xl font-medium ${
               view === "calendar"
                 ? "bg-black text-white"
-                : "bg-white"
+                : "bg-white text-gray-700"
             }`}
           >
             달력
@@ -226,10 +239,10 @@ export default function Home() {
         <div className="flex gap-2 mb-4">
           <button
             onClick={() => setFilter("all")}
-            className={`px-3 py-2 rounded-xl ${
+            className={`px-3 py-2 rounded-xl font-medium ${
               filter === "all"
                 ? "bg-black text-white"
-                : "bg-white"
+                : "bg-white text-gray-700"
             }`}
           >
             전체
@@ -239,10 +252,10 @@ export default function Home() {
             onClick={() =>
               setFilter("fixed")
             }
-            className={`px-3 py-2 rounded-xl ${
+            className={`px-3 py-2 rounded-xl font-medium ${
               filter === "fixed"
                 ? "bg-black text-white"
-                : "bg-white"
+                : "bg-white text-gray-700"
             }`}
           >
             고정지출
@@ -252,10 +265,10 @@ export default function Home() {
             onClick={() =>
               setFilter("variable")
             }
-            className={`px-3 py-2 rounded-xl ${
+            className={`px-3 py-2 rounded-xl font-medium ${
               filter === "variable"
                 ? "bg-black text-white"
-                : "bg-white"
+                : "bg-white text-gray-700"
             }`}
           >
             변동지출
@@ -264,7 +277,7 @@ export default function Home() {
 
         {/* 월 선택 */}
         <div className="bg-white rounded-2xl p-5 shadow mb-4">
-          <p className="text-sm text-gray-500 mb-2">
+          <p className="text-sm text-gray-700 mb-2 font-medium">
             조회 월
           </p>
 
@@ -276,7 +289,7 @@ export default function Home() {
                 e.target.value
               )
             }
-            className="border rounded-xl px-3 py-2"
+            className="border rounded-xl px-3 py-2 text-gray-800"
           />
         </div>
 
@@ -284,18 +297,18 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-4 mb-4">
           {/* 잔액 */}
           <div className="bg-white rounded-2xl p-5 shadow">
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-700 text-sm font-medium">
               현재 잔액
             </p>
 
-            <h2 className="text-2xl font-bold mt-2">
+            <h2 className="text-3xl font-bold mt-2">
               ₩{total.toLocaleString()}
             </h2>
           </div>
 
           {/* 차트 */}
           <div className="bg-white rounded-2xl p-5 shadow">
-            <h3 className="font-semibold mb-4">
+            <h3 className="font-semibold mb-4 text-gray-800">
               카테고리별 지출
             </h3>
 
@@ -339,7 +352,7 @@ export default function Home() {
 
         {/* 입력 */}
         <div className="bg-white rounded-2xl p-5 shadow mb-4">
-          <h3 className="font-semibold mb-4">
+          <h3 className="font-semibold mb-4 text-gray-800">
             내역 추가
           </h3>
 
@@ -351,7 +364,7 @@ export default function Home() {
               onChange={(e) =>
                 setName(e.target.value)
               }
-              className="border rounded-xl px-3 py-2"
+              className="border rounded-xl px-3 py-2 text-gray-800"
             />
 
             <input
@@ -361,7 +374,7 @@ export default function Home() {
               onChange={(e) =>
                 setAmount(e.target.value)
               }
-              className="border rounded-xl px-3 py-2"
+              className="border rounded-xl px-3 py-2 text-gray-800"
             />
 
             <input
@@ -370,7 +383,7 @@ export default function Home() {
               onChange={(e) =>
                 setDate(e.target.value)
               }
-              className="border rounded-xl px-3 py-2"
+              className="border rounded-xl px-3 py-2 text-gray-800"
             />
 
             <select
@@ -378,7 +391,7 @@ export default function Home() {
               onChange={(e) =>
                 setType(e.target.value)
               }
-              className="border rounded-xl px-3 py-2"
+              className="border rounded-xl px-3 py-2 text-gray-800"
             >
               <option value="expense">
                 지출
@@ -396,13 +409,13 @@ export default function Home() {
                   e.target.value
                 )
               }
-              className="border rounded-xl px-3 py-2"
+              className="border rounded-xl px-3 py-2 text-gray-800"
             >
-              <option>식비</option>
-              <option>교통</option>
-              <option>쇼핑</option>
-              <option>월급</option>
-              <option>기타</option>
+              {categories.map((item) => (
+                <option key={item}>
+                  {item}
+                </option>
+              ))}
             </select>
 
             <select
@@ -412,7 +425,7 @@ export default function Home() {
                   e.target.value
                 )
               }
-              className="border rounded-xl px-3 py-2"
+              className="border rounded-xl px-3 py-2 text-gray-800"
             >
               <option value="fixed">
                 고정
@@ -426,7 +439,7 @@ export default function Home() {
 
           <button
             onClick={addItem}
-            className="w-full mt-4 bg-black text-white py-2 rounded-xl"
+            className="w-full mt-4 bg-black text-white py-3 rounded-xl font-semibold"
           >
             추가하기
           </button>
