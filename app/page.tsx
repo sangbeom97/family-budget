@@ -251,7 +251,7 @@ export default function Home() {
             "month",
             selectedMonth
           )
-          .single();
+          .maybeSingle();
 
       if (data) {
         await supabase
