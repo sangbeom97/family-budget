@@ -314,37 +314,40 @@ export default function Home() {
         const spent =
           items
             .filter(
-              (item) =>
+             (item) =>
                 item.category ===
                   category &&
                 item.type ===
-                  "expense"
+                 "expense"
             )
-            .reduce(
-              (
+           .reduce(
+             (
                 sum,
-                item
+               item
               ) =>
                 sum +
                 item.amount,
-              0
-            );
+             0
+           );
 
         const budget =
-          Number(
-            budgets[
+         Number(
+           budgets[
               category
-            ] || 0
-          );
+           ] || 0
+         );
 
-        return {
-          name: category,
-          사용금액: spent,
-          남은예산:
-            budget - spent,
-        };
-      }
-    );
+      return {
+        name: category,
+
+        사용금액: spent,
+
+        // 음수 허용
+        남은예산:
+          budget - spent,
+      };
+    }
+  );
 
   const incomeTotal =
     items
@@ -584,13 +587,17 @@ export default function Home() {
                     }
                   >
                     <XAxis dataKey="name" />
-                    <YAxis />
+                    <YAxis
+                      domain={[
+                        "auto",
+                        "auto",
+                      ]}
+                    />
                     <Tooltip />
 
-                    <Bar
-                      dataKey="사용금액"
-                      stackId="a"
-                    />
+                    <Bar dataKey="사용금액" />
+
+                    <Bar dataKey="남은예산" />
 
                     <Bar
                       dataKey="남은예산"
