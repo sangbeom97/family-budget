@@ -252,7 +252,7 @@ export default function Home() {
           category,
           spend_type:
             type === "income"
-              ? "null"
+              ? null
               : spendType,
           date,
         },
@@ -471,9 +471,6 @@ export default function Home() {
   const total =
     incomeTotal -
     expenseTotal;
-  const total =
-  incomeTotal -
-  expenseTotal;
 
 // 연요약용
 const selectedYear =
@@ -1084,10 +1081,10 @@ const remainVariableBudget =
     </div>
   </div>
 
-) : view === "list" ? (
+
             
             
-            {view === "list" ? (
+            ){view === "list" ? (
               <ListView
                 items={filteredItems}
                 deleteItem={
