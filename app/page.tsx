@@ -220,7 +220,7 @@ export default function Home() {
           category,
           spend_type:
             type === "income"
-              ? "income"
+              ? "null"
               : spendType,
           date,
         },
