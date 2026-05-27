@@ -1147,7 +1147,13 @@ const remainVariableBudget =
                         "auto",
                       ]}
                     />
-                    <Tooltip />
+                    <Tooltip
+  formatter={(value) =>
+    `₩${Number(
+      value
+    ).toLocaleString()}`
+  }
+/>
                     <Bar dataKey="value" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -1178,7 +1184,13 @@ const remainVariableBudget =
                         "auto",
                       ]}
                     />
-                    <Tooltip />
+                    <Tooltip
+  formatter={(value) =>
+    `₩${Number(
+      value
+    ).toLocaleString()}`
+  }
+/>
 
                     <Bar dataKey="남은예산">
                       {budgetCompareData.map(
@@ -1356,7 +1368,13 @@ const remainVariableBudget =
         >
           <XAxis dataKey="month" />
           <YAxis />
-          <Tooltip />
+          <Tooltip
+  formatter={(value) =>
+    `₩${Number(
+      value
+    ).toLocaleString()}`
+  }
+/>
 
           <Bar
             dataKey="지출"
@@ -1383,7 +1401,13 @@ const remainVariableBudget =
         >
           <XAxis dataKey="month" />
           <YAxis />
-          <Tooltip />
+          <Tooltip
+  formatter={(value) =>
+    `₩${Number(
+      value
+    ).toLocaleString()}`
+  }
+/>
 
           <Bar
             dataKey="저축률"
@@ -1410,7 +1434,13 @@ const remainVariableBudget =
         >
           <XAxis dataKey="month" />
           <YAxis />
-          <Tooltip />
+          <Tooltip
+  formatter={(value) =>
+    `₩${Number(
+      value
+    ).toLocaleString()}`
+  }
+/>
 
           <Bar
             dataKey="수입"
