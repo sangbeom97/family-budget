@@ -60,6 +60,12 @@ export default function Home() {
   const [filter, setFilter] =
   useState("all");
 
+  const [search, setSearch] =
+  useState("");
+
+  const [categoryFilter, setCategoryFilter] =
+  useState("all");
+
   const [date, setDate] =
     useState(
       new Date()
@@ -419,13 +425,34 @@ export default function Home() {
   );
 
   const filteredItems =
-  filter === "all"
-    ? items
-    : items.filter(
-        (item) =>
-          item.spend_type ===
-          filter
+  items.filter((item) => {
+
+    const filterMatch =
+      filter === "all"
+        ? true
+        : item.spend_type ===
+          filter;
+
+    const searchMatch =
+      item.name.includes(
+        search
       );
+
+    const categoryMatch =
+      categoryFilter ===
+      "all"
+        ? true
+        : item.category ===
+          categoryFilter;
+
+    return (
+      filterMatch &&
+      searchMatch &&
+      categoryMatch
+    );
+  });
+
+  
 
   const incomeTotal =
     items
@@ -864,6 +891,108 @@ const remainVariableBudget =
   </button>
 
 </div>
+
+            <div className="flex items-center gap-2 mb-4">
+
+  <button
+    onClick={() => {
+      const date = new Date(
+        selectedMonth + "-01"
+      );
+
+      date.setMonth(
+        date.getMonth() - 1
+      );
+
+      setSelectedMonth(
+        date
+          .toISOString()
+          .slice(0, 7)
+      );
+    }}
+    className="bg-white px-3 py-2 rounded-xl shadow"
+  >
+    ◀
+  </button>
+
+  <input
+    type="month"
+    value={selectedMonth}
+    onChange={(e) =>
+      setSelectedMonth(
+        e.target.value
+      )
+    }
+    className="border rounded-xl px-3 py-2"
+  />
+
+  <button
+    onClick={() => {
+      const date = new Date(
+        selectedMonth + "-01"
+      );
+
+      date.setMonth(
+        date.getMonth() + 1
+      );
+
+      setSelectedMonth(
+        date
+          .toISOString()
+          .slice(0, 7)
+      );
+    }}
+    className="bg-white px-3 py-2 rounded-xl shadow"
+  >
+    ▶
+  </button>
+
+</div>
+
+
+
+{/* 검색 */}
+<input
+  type="text"
+  placeholder="검색"
+  value={search}
+  onChange={(e) =>
+    setSearch(
+      e.target.value
+    )
+  }
+  className="border rounded-xl px-3 py-2 mb-4 w-full"
+/>
+
+{/* 카테고리 필터 */}
+<select
+  value={categoryFilter}
+  onChange={(e) =>
+    setCategoryFilter(
+      e.target.value
+    )
+  }
+  className="border rounded-xl px-3 py-2 mb-4 w-full"
+>
+  <option value="all">
+    전체 카테고리
+  </option>
+
+  {[
+    ...fixedCategories,
+    ...variableCategories,
+    ...savingCategories,
+  ].map((category) => (
+    <option
+      key={category}
+      value={category}
+    >
+      {category}
+    </option>
+  ))}
+</select>
+
+
 
             {/* 카드 */}
             <div className="grid grid-cols-2 gap-3 mb-4">
