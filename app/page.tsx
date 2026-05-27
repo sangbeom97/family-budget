@@ -714,7 +714,7 @@ const remainVariableBudget =
   );
 
   return (
-    <main className="min-h-screen bg-gray-100 p-4 md:p-6">
+    <main className="min-h-screen bg-zinc-200 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-extrabold mb-6 text-black">
           무계획 속 계획
@@ -728,11 +728,11 @@ const remainVariableBudget =
                 "account"
               )
             }
-            className={`px-4 py-2 rounded-xl ${
+            className={`px-4 py-2 rounded-xl border border-gray-300 shadow-sm font-medium ${
               mainTab ===
               "account"
                 ? "bg-black text-white"
-                : "bg-white"
+                : "bg-white/95 border border-gray-300 shadow-sm"
             }`}
           >
             가계부
@@ -744,11 +744,11 @@ const remainVariableBudget =
                 "fridge"
               )
             }
-            className={`px-4 py-2 rounded-xl ${
+            className={`px-4 py-2 rounded-xl border border-gray-300 shadow-sm font-medium ${
               mainTab ===
               "fridge"
                 ? "bg-black text-white"
-                : "bg-white"
+                : "bg-white/95 border border-gray-300 shadow-sm"
             }`}
           >
             냉장고
@@ -767,7 +767,7 @@ const remainVariableBudget =
                 className={`px-4 py-2 rounded-xl whitespace-nowrap ${
                   filter === "all"
                     ? "bg-black text-white"
-                    : "bg-white"
+                    : "bg-white/95 border border-gray-300 shadow-sm"
                 }`}
               >
                 전체
@@ -782,7 +782,7 @@ const remainVariableBudget =
                 className={`px-4 py-2 rounded-xl whitespace-nowrap ${
                   filter === "fixed"
                     ? "bg-black text-white"
-                    : "bg-white"
+                    : "bg-white/95 border border-gray-300 shadow-sm"
                 }`}
               >
                 고정지출
@@ -798,7 +798,7 @@ const remainVariableBudget =
                   filter ===
                   "variable"
                     ? "bg-black text-white"
-                    : "bg-white"
+                    : "bg-white/95 border border-gray-300 shadow-sm"
                 }`}
               >
                 변동지출
@@ -814,7 +814,7 @@ const remainVariableBudget =
                   filter ===
                   "allowance"
                     ? "bg-black text-white"
-                    : "bg-white"
+                    : "bg-white/95 border border-gray-300 shadow-sm"
                 }`}
               >
                 용돈
@@ -830,7 +830,7 @@ const remainVariableBudget =
                   filter ===
                   "saving"
                     ? "bg-black text-white"
-                    : "bg-white"
+                    : "bg-white/95 border border-gray-300 shadow-sm"
                 }`}
              >
                저축
@@ -842,10 +842,10 @@ const remainVariableBudget =
     onClick={() =>
       setView("year")
     }
-    className={`px-4 py-2 rounded-xl ${
+    className={`px-4 py-2 rounded-xl border border-gray-300 shadow-sm font-medium ${
       view === "year"
         ? "bg-black text-white"
-        : "bg-white"
+        : "bg-white/95 border border-gray-300 shadow-sm"
     }`}
   >
     연요약
@@ -855,10 +855,10 @@ const remainVariableBudget =
     onClick={() =>
       setView("budget")
     }
-    className={`px-4 py-2 rounded-xl ${
+    className={`px-4 py-2 rounded-xl border border-gray-300 shadow-sm font-medium ${
       view === "budget"
         ? "bg-black text-white"
-        : "bg-white"
+        : "bg-white/95 border border-gray-300 shadow-sm"
     }`}
   >
     예산
@@ -868,10 +868,10 @@ const remainVariableBudget =
     onClick={() =>
       setView("list")
     }
-    className={`px-4 py-2 rounded-xl ${
+    className={`px-4 py-2 rounded-xl border border-gray-300 shadow-sm font-medium ${
       view === "list"
         ? "bg-black text-white"
-        : "bg-white"
+        : "bg-white/95 border border-gray-300 shadow-sm"
     }`}
   >
     리스트
@@ -881,10 +881,10 @@ const remainVariableBudget =
     onClick={() =>
       setView("calendar")
     }
-    className={`px-4 py-2 rounded-xl ${
+    className={`px-4 py-2 rounded-xl border border-gray-300 shadow-sm font-medium ${
       view === "calendar"
         ? "bg-black text-white"
-        : "bg-white"
+        : "bg-white/95 border border-gray-300 shadow-sm"
     }`}
   >
     달력
@@ -910,7 +910,7 @@ const remainVariableBudget =
           .slice(0, 7)
       );
     }}
-    className="bg-white px-3 py-2 rounded-xl shadow-md"
+    className="bg-white/95 px-3 py-2 rounded-xl shadow-md"
   >
     ◀
   </button>
@@ -923,7 +923,7 @@ const remainVariableBudget =
         e.target.value
       )
     }
-    className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
+    className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
   />
 
   <button
@@ -942,7 +942,7 @@ const remainVariableBudget =
           .slice(0, 7)
       );
     }}
-    className="bg-white px-3 py-2 rounded-xl shadow-md"
+    className="bg-white/95 px-3 py-2 rounded-xl shadow-md"
   >
     ▶
   </button>
@@ -961,7 +961,7 @@ const remainVariableBudget =
       e.target.value
     )
   }
-  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
+  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
 />
 
 {/* 카테고리 필터 */}
@@ -972,7 +972,7 @@ const remainVariableBudget =
       e.target.value
     )
   }
-  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
+  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
 >
   <option value="all">
     전체 카테고리
@@ -996,54 +996,54 @@ const remainVariableBudget =
 
             {/* 카드 */}
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="bg-white p-5 rounded-2xl shadow-md">
+              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
                 총 수입
-                <h2 className="text-2xl font-bold text-blue-600">
+                <h2 className="text-2xl font-extrabold text-blue-600">
                   ₩
                   {incomeTotal.toLocaleString()}
                 </h2>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl shadow-md">
+              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
                 총 지출
-                <h2 className="text-2xl font-bold text-red-700">
+                <h2 className="text-2xl font-extrabold text-red-700">
                   ₩
                   {expenseTotal.toLocaleString()}
                 </h2>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl shadow-md">
+              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
                 총 저축
-                <h2 className="text-2xl font-bold text-green-600">
+                <h2 className="text-2xl font-extrabold text-green-600">
                   ₩
                   {savingTotal.toLocaleString()}
                 </h2>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl shadow-md">
+              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
                 실사용 잔액
-                <h2 className="text-2xl font-bold">
+                <h2 className="text-2xl font-extrabold">
                   ₩
                   {total.toLocaleString()}
                 </h2>
               </div>
-              <div className="bg-white p-5 rounded-2xl shadow-md">
+              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
                 <p className="text-sm text-gray-700">
                   변동예산
                 </p>
 
-                <h2 className="text-2xl font-bold text-purple-600 mt-2">
+                <h2 className="text-2xl font-extrabold text-purple-600 mt-2">
                   ₩
     {variableBudgetTotal.toLocaleString()}
                 </h2>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl shadow-md">
+              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
                 <p className="text-sm text-gray-700">
                   남은 변동예산
                 </p>
 
-                <h2 className="text-2xl font-bold text-orange-700 mt-2">
+                <h2 className="text-2xl font-extrabold text-orange-700 mt-2">
                   ₩
                   {remainVariableBudget.toLocaleString()}
                 </h2>
@@ -1051,8 +1051,8 @@ const remainVariableBudget =
             </div>
 
             {/* 그래프 */}
-            <div className="bg-white rounded-2xl p-5 shadow-md mb-4">
-              <h3 className="font-bold mb-4">
+            <div className="bg-white/95 rounded-2xl p-5 shadow-md mb-4">
+              <h3 className="font-extrabold mb-4">
                 카테고리별 지출
               </h3>
 
@@ -1087,8 +1087,8 @@ const remainVariableBudget =
             </div>
 
             {/* 예산 그래프 */}
-            <div className="bg-white rounded-2xl p-5 shadow-md mb-4">
-              <h3 className="font-bold mb-4">
+            <div className="bg-white/95 rounded-2xl p-5 shadow-md mb-4">
+              <h3 className="font-extrabold mb-4">
                 예산 대비 사용 현황
               </h3>
 
@@ -1132,7 +1132,7 @@ const remainVariableBudget =
 
             {view === "list" && (
               <div className="sticky top-2 z-50 bg-gray-100/90 backdrop-blur pb-3">
-              <div className="bg-white p-5 rounded-2xl shadow-md mb-4">
+              <div className="bg-white/95 p-5 rounded-2xl shadow-md mb-4">
               <div className="grid md:grid-cols-6 gap-3">
                 <input
                   type="text"
@@ -1144,7 +1144,7 @@ const remainVariableBudget =
                         .value
                     )
                   }
-                  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
+                  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
                 />
 
                 <input
@@ -1157,7 +1157,7 @@ const remainVariableBudget =
                         .value
                     )
                   }
-                  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
+                  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
                 />
 
                 <input
@@ -1169,7 +1169,7 @@ const remainVariableBudget =
                         .value
                     )
                   }
-                  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
+                  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
                 />
 
                 <select
@@ -1190,7 +1190,7 @@ const remainVariableBudget =
                       );
                     }
                   }}
-                  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
+                  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
                 >
                   <option value="expense">
                     지출
@@ -1209,7 +1209,7 @@ const remainVariableBudget =
                         .value
                     )
                   }
-                  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
+                  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
                 >
                   {currentCategories.map(
                     (item) => (
@@ -1231,7 +1231,7 @@ const remainVariableBudget =
                         e.target.value
                       )
                     }
-                    className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
+                    className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
                   >
                     <option value="fixed">
                       고정지출
@@ -1272,8 +1272,8 @@ const remainVariableBudget =
 
 
                 {/* 월별 지출 */}
-  <div className="bg-white p-5 rounded-2xl shadow-md">
-    <h3 className="font-bold mb-4">
+  <div className="bg-white/95 p-5 rounded-2xl shadow-md">
+    <h3 className="font-extrabold mb-4">
       월별 지출
     </h3>
 
@@ -1299,8 +1299,8 @@ const remainVariableBudget =
   </div>
 
   {/* 월별 저축률 */}
-  <div className="bg-white p-5 rounded-2xl shadow-md">
-    <h3 className="font-bold mb-4">
+  <div className="bg-white/95 p-5 rounded-2xl shadow-md">
+    <h3 className="font-extrabold mb-4">
       월별 저축률
     </h3>
 
@@ -1326,8 +1326,8 @@ const remainVariableBudget =
   </div>
 
   {/* 월별 소비패턴 */}
-  <div className="bg-white p-5 rounded-2xl shadow-md">
-    <h3 className="font-bold mb-4">
+  <div className="bg-white/95 p-5 rounded-2xl shadow-md">
+    <h3 className="font-extrabold mb-4">
       월별 소비패턴
     </h3>
 
@@ -1363,8 +1363,8 @@ const remainVariableBudget =
   </div>
 
   {/* TOP5 */}
-  <div className="bg-white p-5 rounded-2xl shadow-md">
-    <h3 className="font-bold mb-4">
+  <div className="bg-white/95 p-5 rounded-2xl shadow-md">
+    <h3 className="font-extrabold mb-4">
       연간 카테고리 TOP5
     </h3>
 
@@ -1380,7 +1380,7 @@ const remainVariableBudget =
               {item.category}
             </span>
 
-            <span className="font-bold">
+            <span className="font-extrabold">
               ₩
               {item.total.toLocaleString()}
             </span>
@@ -1417,8 +1417,8 @@ const remainVariableBudget =
                 }
               />
             ) : (
-              <div className="bg-white p-5 rounded-2xl shadow-md">
-                <h3 className="font-bold mb-4">
+              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
+                <h3 className="font-extrabold mb-4">
                   카테고리별 예산
                 </h3>
 
@@ -1437,7 +1437,7 @@ const remainVariableBudget =
       {category}
     </span>
 
-    <span className="font-bold">
+    <span className="font-extrabold">
       ₩
       {(
         items
@@ -1545,7 +1545,7 @@ const remainVariableBudget =
           e.target.value
         )
       }
-      className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2 w-32 placeholder:text-gray-500"
+      className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 w-32 placeholder:text-gray-500"
     />
 
     <span className="text-sm text-gray-600">
