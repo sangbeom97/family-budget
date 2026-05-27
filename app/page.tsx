@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import {
   BarChart,
   Bar,
+  Cell,
   XAxis,
   YAxis,
   Tooltip,
@@ -666,7 +667,20 @@ const remainVariableBudget =
                     />
                     <Tooltip />
 
-                    <Bar dataKey="남은예산" />
+                    <Bar dataKey="남은예산">
+                      {budgetCompareData.map(
+                        (entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={
+                              entry.남은예산 >= 0
+                                ? "#2563eb"
+                                : "#ef4444"
+                            }
+                          />
+                        )
+                      )}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
