@@ -1130,8 +1130,8 @@ const remainVariableBudget =
               </div>
             </div>
 
-            {/* 입력 */}
-            <div className="sticky top-0 z-50 bg-gray-100 pb-3">
+            {view === "list" && (
+              <div className="sticky top-2 z-50 bg-gray-100/90 backdrop-blur pb-3">
               <div className="bg-white p-5 rounded-2xl shadow-md mb-4">
               <div className="grid md:grid-cols-6 gap-3">
                 <input
@@ -1262,8 +1262,9 @@ const remainVariableBudget =
               </button>
               </div>
               </div>
+              )}
 
-              {/* 화면 */}
+              /* 화면 */
               {view === "year" ? (
 
                 <div className="space-y-4">
