@@ -351,41 +351,7 @@ export default function Home() {
       }
     };
 
-  // 차트 데이터
-  const categoryData =
-    variableCategories.map(
-      (category) => {
-        const total =
-          (
-            view === "year"
-              ? yearlyItems
-               : items
-          )
-            .filter(
-              (item) =>
-                item.category ===
-                  category &&
-                item.type ===
-                  "expense" &&
-                item.spend_type !==
-                  "saving"
-            )
-            .reduce(
-              (
-                sum,
-                item
-              ) =>
-                sum +
-                item.amount,
-              0
-            );
-
-        return {
-          name: category,
-          value: total,
-        };
-      }
-    );
+  
 
   const budgetCompareData =
     variableCategories.map(
@@ -543,6 +509,41 @@ const yearlyIncome =
       (sum, item) =>
         sum + item.amount,
       0
+    );
+  // 차트 데이터
+  const categoryData =
+    variableCategories.map(
+      (category) => {
+        const total =
+          (
+            view === "year"
+              ? yearlyItems
+               : items
+          )
+            .filter(
+              (item) =>
+                item.category ===
+                  category &&
+                item.type ===
+                  "expense" &&
+                item.spend_type !==
+                  "saving"
+            )
+            .reduce(
+              (
+                sum,
+                item
+              ) =>
+                sum +
+                item.amount,
+              0
+            );
+
+        return {
+          name: category,
+          value: total,
+        };
+      }
     );
 
 const monthlyData = Array.from(
