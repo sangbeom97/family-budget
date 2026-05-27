@@ -1,4 +1,4 @@
-"use client";
+  "use client";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -499,11 +499,25 @@ const yearlyIncome =
       0
     );
 
-const yearlyExpense =
-  // 월별 데이터
+  const yearlyExpense =
+  yearlyItems
+    .filter(
+      (item) =>
+        item.type ===
+          "expense" &&
+        item.spend_type !==
+          "saving"
+    )
+    .reduce(
+      (sum, item) =>
+        sum + item.amount,
+      0
+    );
+
 const monthlyData = Array.from(
   { length: 12 },
   (_, i) => {
+
     const month = `${selectedYear}-${String(
       i + 1
     ).padStart(2, "0")}`;
@@ -620,19 +634,7 @@ const topCategories =
         b.total - a.total
     )
     .slice(0, 5);
-  yearlyItems
-    .filter(
-      (item) =>
-        item.type ===
-          "expense" &&
-        item.spend_type !==
-          "saving"
-    )
-    .reduce(
-      (sum, item) =>
-        sum + item.amount,
-      0
-    );
+  
     // 변동예산 총합
 const variableBudgetTotal =
   variableCategories.reduce(
@@ -1135,36 +1137,7 @@ const remainVariableBudget =
 
   <div className="space-y-4">
 
-  {/* 연간 요약 */}
-  <div className="bg-white p-5 rounded-2xl shadow">
-    <h3 className="font-bold text-xl mb-4">
-      {selectedYear}년 연요약
-    </h3>
 
-    <div className="grid grid-cols-2 gap-4">
-      <div>
-        <p className="text-gray-700">
-          연 총수입
-        </p>
-
-        <h2 className="text-2xl font-bold text-blue-600">
-          ₩
-          {yearlyIncome.toLocaleString()}
-        </h2>
-      </div>
-
-      <div>
-        <p className="text-gray-700">
-          연 총지출
-        </p>
-
-        <h2 className="text-2xl font-bold text-red-500">
-          ₩
-          {yearlyExpense.toLocaleString()}
-        </h2>
-      </div>
-    </div>
-  </div>
 
   {/* 월별 지출 */}
   <div className="bg-white p-5 rounded-2xl shadow">
@@ -1284,38 +1257,11 @@ const remainVariableBudget =
       )}
     </div>
   </div>
-
-</div>
-    <h3 className="font-bold text-xl mb-4">
-      {selectedYear}년 연요약
-    </h3>
-
-    <div className="grid grid-cols-2 gap-4">
-
-      <div>
-        <p className="text-gray-700">
-          연 총수입
-        </p>
-
-        <h2 className="text-2xl font-bold text-blue-600">
-          ₩
-          {yearlyIncome.toLocaleString()}
-        </h2>
       </div>
 
-      <div>
-        <p className="text-gray-700">
-          연 총지출
-        </p>
 
-        <h2 className="text-2xl font-bold text-red-500">
-          ₩
-          {yearlyExpense.toLocaleString()}
-        </h2>
-      </div>
 
-    </div>
-  </div>
+
 
 
             
@@ -1391,5 +1337,8 @@ const remainVariableBudget =
         )}
       </div>
     </main>
+
+
+
   );
 }
