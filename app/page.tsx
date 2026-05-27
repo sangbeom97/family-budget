@@ -883,12 +883,22 @@ const remainVariableBudget =
 
                 <select
                   value={type}
-                  onChange={(e) =>
-                    setType(
-                      e.target
-                        .value
-                    )
-                  }
+                  onChange={(e) => {
+                    const value =
+                      e.target.value;
+
+                    setType(value);
+
+                    if (
+                      value === "income"
+                    ) {
+                      setCategory("급여");
+                    } else {
+                      setCategory(
+                        "식비(통상)"
+                      );
+                    }
+                  }}
                   className="border rounded-xl px-3 py-2"
                 >
                   <option value="expense">
@@ -1010,22 +1020,12 @@ const remainVariableBudget =
                               category
                             ] || ""
                           }
-                          onChange={(e) => {
-                            const value =
-                              e.target.value;
-
-                            setType(value);
-
-                            if (
-                              value === "income"
-                            ) {
-                              setCategory("급여");
-                            } else {
-                              setCategory(
-                                "식비(통상)"
-                              );
-                            }
-                          }}
+                          onChange={(e) =>
+                            saveBudget(
+                              category,
+                              e.target.value
+                            )
+                          }
                           className="flex-1 border rounded-xl px-3 py-2"
                         />
                       </div>
