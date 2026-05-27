@@ -500,6 +500,126 @@ const yearlyIncome =
     );
 
 const yearlyExpense =
+  // 월별 데이터
+const monthlyData = Array.from(
+  { length: 12 },
+  (_, i) => {
+    const month = `${selectedYear}-${String(
+      i + 1
+    ).padStart(2, "0")}`;
+
+    const monthItems =
+      yearlyItems.filter(
+        (item) =>
+          item.date.startsWith(
+            month
+          )
+      );
+
+    const income =
+      monthItems
+        .filter(
+          (item) =>
+            item.type ===
+            "income"
+        )
+        .reduce(
+          (
+            sum,
+            item
+          ) =>
+            sum +
+            item.amount,
+          0
+        );
+
+    const expense =
+      monthItems
+        .filter(
+          (item) =>
+            item.type ===
+              "expense" &&
+            item.spend_type !==
+              "saving"
+        )
+        .reduce(
+          (
+            sum,
+            item
+          ) =>
+            sum +
+            item.amount,
+          0
+        );
+
+    const saving =
+      monthItems
+        .filter(
+          (item) =>
+            item.spend_type ===
+            "saving"
+        )
+        .reduce(
+          (
+            sum,
+            item
+          ) =>
+            sum +
+            item.amount,
+          0
+        );
+
+    return {
+      month: `${i + 1}월`,
+      수입: income,
+      지출: expense,
+      저축: saving,
+
+      저축률:
+        income > 0
+          ? Math.round(
+              (saving /
+                income) *
+                100
+            )
+          : 0,
+    };
+  }
+);
+
+// 연간 TOP5
+const topCategories =
+  variableCategories
+    .map((category) => {
+      const total =
+        yearlyItems
+          .filter(
+            (item) =>
+              item.category ===
+                category &&
+              item.type ===
+                "expense"
+          )
+          .reduce(
+            (
+              sum,
+              item
+            ) =>
+              sum +
+              item.amount,
+            0
+          );
+
+      return {
+        category,
+        total,
+      };
+    })
+    .sort(
+      (a, b) =>
+        b.total - a.total
+    )
+    .slice(0, 5);
   yearlyItems
     .filter(
       (item) =>
@@ -1013,7 +1133,159 @@ const remainVariableBudget =
             {/* 화면 */}
 {view === "year" ? (
 
+  <div className="space-y-4">
+
+  {/* 연간 요약 */}
   <div className="bg-white p-5 rounded-2xl shadow">
+    <h3 className="font-bold text-xl mb-4">
+      {selectedYear}년 연요약
+    </h3>
+
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <p className="text-gray-700">
+          연 총수입
+        </p>
+
+        <h2 className="text-2xl font-bold text-blue-600">
+          ₩
+          {yearlyIncome.toLocaleString()}
+        </h2>
+      </div>
+
+      <div>
+        <p className="text-gray-700">
+          연 총지출
+        </p>
+
+        <h2 className="text-2xl font-bold text-red-500">
+          ₩
+          {yearlyExpense.toLocaleString()}
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  {/* 월별 지출 */}
+  <div className="bg-white p-5 rounded-2xl shadow">
+    <h3 className="font-bold mb-4">
+      월별 지출
+    </h3>
+
+    <div className="h-72">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+      >
+        <BarChart
+          data={monthlyData}
+        >
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip />
+
+          <Bar
+            dataKey="지출"
+            fill="#ef4444"
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+
+  {/* 월별 저축률 */}
+  <div className="bg-white p-5 rounded-2xl shadow">
+    <h3 className="font-bold mb-4">
+      월별 저축률
+    </h3>
+
+    <div className="h-72">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+      >
+        <BarChart
+          data={monthlyData}
+        >
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip />
+
+          <Bar
+            dataKey="저축률"
+            fill="#22c55e"
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+
+  {/* 월별 소비패턴 */}
+  <div className="bg-white p-5 rounded-2xl shadow">
+    <h3 className="font-bold mb-4">
+      월별 소비패턴
+    </h3>
+
+    <div className="h-72">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+      >
+        <BarChart
+          data={monthlyData}
+        >
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip />
+
+          <Bar
+            dataKey="수입"
+            fill="#2563eb"
+          />
+
+          <Bar
+            dataKey="지출"
+            fill="#ef4444"
+          />
+
+          <Bar
+            dataKey="저축"
+            fill="#22c55e"
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+
+  {/* TOP5 */}
+  <div className="bg-white p-5 rounded-2xl shadow">
+    <h3 className="font-bold mb-4">
+      연간 카테고리 TOP5
+    </h3>
+
+    <div className="space-y-3">
+      {topCategories.map(
+        (item, index) => (
+          <div
+            key={item.category}
+            className="flex justify-between border-b pb-2"
+          >
+            <span>
+              {index + 1}.{" "}
+              {item.category}
+            </span>
+
+            <span className="font-bold">
+              ₩
+              {item.total.toLocaleString()}
+            </span>
+          </div>
+        )
+      )}
+    </div>
+  </div>
+
+</div>
     <h3 className="font-bold text-xl mb-4">
       {selectedYear}년 연요약
     </h3>
