@@ -427,6 +427,26 @@ const fetchYearlyItems =
     }
   );
 
+  
+
+  const filteredGraphItems =
+  filter === "all"
+    ? items
+    : items.filter(
+        (item) =>
+          item.spend_type ===
+          filter
+      );
+
+const filteredYearlyGraphItems =
+  filter === "all"
+    ? yearlyItems
+    : yearlyItems.filter(
+        (item) =>
+          item.spend_type ===
+          filter
+      );
+
   const filteredItems =
   filteredGraphItems.filter((item) => {
 
@@ -454,24 +474,6 @@ const fetchYearlyItems =
       categoryMatch
     );
   });
-
-  const filteredGraphItems =
-  filter === "all"
-    ? items
-    : items.filter(
-        (item) =>
-          item.spend_type ===
-          filter
-      );
-
-const filteredYearlyGraphItems =
-  filter === "all"
-    ? yearlyItems
-    : yearlyItems.filter(
-        (item) =>
-          item.spend_type ===
-          filter
-      );
     
 
   
