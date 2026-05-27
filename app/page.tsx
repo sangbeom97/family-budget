@@ -449,6 +449,25 @@ const filteredYearlyGraphItems =
       categoryMatch
     );
   });
+
+  const filteredTotal =
+  filteredItems.reduce(
+    (sum, item) => {
+      if (
+        item.type ===
+        "income"
+      ) {
+        return (
+          sum + item.amount
+        );
+      }
+
+      return (
+        sum - item.amount
+      );
+    },
+    0
+  );
     
   const budgetCompareData =
     graphCategories.map(
@@ -1122,7 +1141,7 @@ const remainVariableBudget =
 
 
 {view !== "year" && (
-  <>
+  <div className="grid md:grid-cols-4 gap-3 mb-4">
     {/* 검색 */}
     <input
       type="text"
@@ -1153,6 +1172,7 @@ const remainVariableBudget =
       {[
         ...fixedCategories,
         ...variableCategories,
+        ...allowanceCategories,
         ...savingCategories,
       ].map((category) => (
         <option
@@ -1163,7 +1183,25 @@ const remainVariableBudget =
         </option>
       ))}
     </select>
-  </>
+  {/* 현재 합계 */}
+    <div className="bg-white/95 border-2 border-gray-300 rounded-xl px-4 py-2 flex items-center justify-between md:col-span-2">
+      <span className="text-sm font-semibold text-gray-700">
+        현재 합계
+      </span>
+
+      <span
+        className={`font-extrabold ${
+          filteredTotal >= 0
+            ? "text-blue-600"
+            : "text-red-600"
+        }`}
+      >
+        ₩
+        {filteredTotal.toLocaleString()}
+      </span>
+    </div>
+
+  </div>
 )}
 
 
