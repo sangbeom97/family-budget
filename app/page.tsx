@@ -1425,7 +1425,6 @@ const remainVariableBudget =
                       category
                     ) => (
                       <div
-                        <div
   key={category}
   className="bg-gray-50 rounded-xl p-3"
 >
@@ -1578,28 +1577,6 @@ const remainVariableBudget =
   </div>
 
 </div>
-                        <div className="w-40">
-                          {
-                            category
-                          }
-                        </div>
-
-                        <input
-                          type="number"
-                          value={
-                            budgets[
-                              category
-                            ] || ""
-                          }
-                          onChange={(e) =>
-                            saveBudget(
-                              category,
-                              e.target.value
-                            )
-                          }
-                          className="flex-1 border rounded-xl px-3 py-2"
-                        />
-                      </div>
                     )
                   )}
                 </div>
@@ -1614,8 +1591,5 @@ const remainVariableBudget =
         )}
       </div>
     </main>
-
-
-
   );
 }
