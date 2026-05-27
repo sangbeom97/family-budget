@@ -356,7 +356,11 @@ export default function Home() {
     variableCategories.map(
       (category) => {
         const total =
-          items
+          (
+            view === "year"
+              ? yearlyItems
+               : items
+          )
             .filter(
               (item) =>
                 item.category ===
@@ -1095,6 +1099,7 @@ const remainVariableBudget =
             </div>
 
             {/* 예산 그래프 */}
+            {view !== "year" && (
             <div className="bg-white/95 rounded-2xl p-5 shadow-md mb-4">
               <h3 className="font-extrabold mb-4">
                 예산 대비 사용 현황
@@ -1137,7 +1142,7 @@ const remainVariableBudget =
                 </ResponsiveContainer>
               </div>
             </div>
-
+            )}
             {view === "list" && (
               <div className="sticky top-2 z-50 bg-gray-100/90 backdrop-blur pb-3">
               <div className="bg-white/95 p-5 rounded-2xl shadow-md mb-4">
