@@ -688,96 +688,60 @@ const remainVariableBudget =
               </button>
             </div>
             <div className="flex gap-2 mb-4">
-              <button
-                onClick={() =>
-                  setView(
-                    "list"
-                  )
-                }
-                className={`px-4 py-2 rounded-xl ${
-                  view === "list"
-                    ? "bg-black text-white"
-                    : "bg-white"
-                }`}
-              >
 
-                <button
-                  onClick={() =>
-                    setView("year")
-                  }
-                  className={`px-4 py-2 rounded-xl ${
-                    view === "year"
-                      ? "bg-black text-white"
-                      : "bg-white"
-                  }`}
-                >
-                 연요약
-                </button>
-                
-                리스트
-              </button>
+  <button
+    onClick={() =>
+      setView("year")
+    }
+    className={`px-4 py-2 rounded-xl ${
+      view === "year"
+        ? "bg-black text-white"
+        : "bg-white"
+    }`}
+  >
+    연요약
+  </button>
 
-              <button
-                onClick={() =>
-                  setView(
-                    "calendar"
-                  )
-                }
-                className={`px-4 py-2 rounded-xl ${
-                  view ===
-                  "calendar"
-                    ? "bg-black text-white"
-                    : "bg-white"
-                }`}
-              >
-                달력
-              </button>
+  <button
+    onClick={() =>
+      setView("budget")
+    }
+    className={`px-4 py-2 rounded-xl ${
+      view === "budget"
+        ? "bg-black text-white"
+        : "bg-white"
+    }`}
+  >
+    예산
+  </button>
 
-              <button
-                onClick={() =>
-                  setView(
-                    "budget"
-                  )
-                }
-                className={`px-4 py-2 rounded-xl ${
-                  view ===
-                  "budget"
-                    ? "bg-black text-white"
-                    : "bg-white"
-                }`}
-              >
-                예산
-              </button>
+  <button
+    onClick={() =>
+      setView("list")
+    }
+    className={`px-4 py-2 rounded-xl ${
+      view === "list"
+        ? "bg-black text-white"
+        : "bg-white"
+    }`}
+  >
+    리스트
+  </button>
 
-              <button
-                onClick={() =>
-                  setView("year")
-                }
-                className={`px-4 py-2 rounded-xl ${
-                  view === "year"
-                    ? "bg-black text-white"
-                    : "bg-white"
-                }`}
-              >
-                연요약
-              </button>
-            </div>
+  <button
+    onClick={() =>
+      setView("calendar")
+    }
+    className={`px-4 py-2 rounded-xl ${
+      view === "calendar"
+        ? "bg-black text-white"
+        : "bg-white"
+    }`}
+  >
+    달력
+  </button>
 
-            {/* 월 */}
-            <div className="bg-white p-5 rounded-2xl shadow mb-4">
-              <input
-                type="month"
-                value={
-                  selectedMonth
-                }
-                onChange={(e) =>
-                  setSelectedMonth(
-                    e.target.value
-                  )
-                }
-                className="border rounded-xl px-3 py-2"
-              />
-            </div>
+</div>
 
             {/* 카드 */}
             <div className="grid grid-cols-2 gap-3 mb-4">
@@ -1084,7 +1048,7 @@ const remainVariableBudget =
 
             
             
-            ){view === "list" ? (
+            ) : view === "list" ? (
               <ListView
                 items={filteredItems}
                 deleteItem={
