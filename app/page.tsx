@@ -1425,11 +1425,159 @@ const remainVariableBudget =
                       category
                     ) => (
                       <div
-                        key={
-                          category
-                        }
-                        className="flex gap-3 items-center"
-                      >
+                        <div
+  key={category}
+  className="bg-gray-50 rounded-xl p-3"
+>
+
+  <div className="flex justify-between mb-2">
+    <span>
+      {category}
+    </span>
+
+    <span className="font-bold">
+      ₩
+      {(
+        items
+          .filter(
+            (item) =>
+              item.category ===
+                category &&
+              item.type ===
+                "expense"
+          )
+          .reduce(
+            (
+              sum,
+              item
+            ) =>
+              sum +
+              item.amount,
+            0
+          )
+      ).toLocaleString()}
+      {" / "}
+      ₩
+      {Number(
+        budgets[
+          category
+        ] || 0
+      ).toLocaleString()}
+    </span>
+  </div>
+
+  {/* Progress */}
+  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+    <div
+      className={`h-3 rounded-full ${
+        (
+          items
+            .filter(
+              (item) =>
+                item.category ===
+                  category &&
+                item.type ===
+                  "expense"
+            )
+            .reduce(
+              (
+                sum,
+                item
+              ) =>
+                sum +
+                item.amount,
+              0
+            ) /
+          Number(
+            budgets[
+              category
+            ] || 1
+          )
+        ) > 1
+          ? "bg-red-500"
+          : "bg-blue-500"
+      }`}
+      style={{
+        width: `${Math.min(
+          (
+            items
+              .filter(
+                (item) =>
+                  item.category ===
+                    category &&
+                  item.type ===
+                    "expense"
+              )
+              .reduce(
+                (
+                  sum,
+                  item
+                ) =>
+                  sum +
+                  item.amount,
+                0
+              ) /
+            Number(
+              budgets[
+                category
+              ] || 1
+            )
+          ) * 100,
+          100
+        )}%`,
+      }}
+    />
+  </div>
+
+  <div className="flex justify-between mt-2">
+    <input
+      type="number"
+      value={
+        budgets[
+          category
+        ] || ""
+      }
+      onChange={(e) =>
+        saveBudget(
+          category,
+          e.target.value
+        )
+      }
+      className="border rounded-xl px-3 py-2 w-32"
+    />
+
+    <span className="text-sm text-gray-600">
+      {Math.round(
+        (
+          items
+            .filter(
+              (item) =>
+                item.category ===
+                  category &&
+                item.type ===
+                  "expense"
+            )
+            .reduce(
+              (
+                sum,
+                item
+              ) =>
+                sum +
+                item.amount,
+              0
+            ) /
+          Number(
+            budgets[
+              category
+            ] || 1
+          )
+        ) * 100
+      )}
+      %
+    </span>
+  </div>
+
+</div>
                         <div className="w-40">
                           {
                             category
