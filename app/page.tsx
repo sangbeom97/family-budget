@@ -155,6 +155,22 @@ export default function Home() {
       ? savingCategories
       : variableCategories;
 
+  const graphCategories =
+  filter === "fixed"
+    ? fixedCategories
+    : filter === "variable"
+    ? variableCategories
+    : filter === "allowance"
+    ? allowanceCategories
+    : filter === "saving"
+    ? savingCategories
+    : [
+        ...fixedCategories,
+        ...variableCategories,
+        ...allowanceCategories,
+        ...savingCategories,
+      ];
+
   // 거래내역 불러오기
   const fetchItems = async () => {
     const startDate = new Date(
@@ -412,9 +428,13 @@ const filteredYearlyGraphItems =
           filter;
 
     const searchMatch =
-      item.name.includes(
-        search
-      );
+  item.name
+    .toLowerCase()
+    .includes(
+      search
+        .trim()
+        .toLowerCase()
+    );
 
     const categoryMatch =
       categoryFilter ===
@@ -431,7 +451,7 @@ const filteredYearlyGraphItems =
   });
     
   const budgetCompareData =
-    variableCategories.map(
+    graphCategories.map(
       (category) => {
         const spent =
           filteredGraphItems
@@ -513,14 +533,15 @@ const filteredYearlyGraphItems =
         0
       );
 
-  const total =
-    incomeTotal -
-    expenseTotal;
+const total =
+  incomeTotal -
+  expenseTotal -
+  savingTotal;
 
 
 
 const yearlyCategoryData =
-  variableCategories.map(
+  graphCategories.map(
     (category) => {
 
       const total =
@@ -595,11 +616,12 @@ const yearlyIncome =
 
 const yearlyTotal =
   yearlyIncome -
-  yearlyExpense;
+  yearlyExpense -
+  yearlySaving;
   
   // 차트 데이터
   const categoryData =
-    variableCategories.map(
+    graphCategories.map(
       (category) => {
         const total =
           (
@@ -722,7 +744,7 @@ const monthlyData = Array.from(
 
 // 연간 TOP5
 const topCategories =
-  variableCategories
+  graphCategories
     .map((category) => {
       const total =
         filteredYearlyGraphItems
@@ -1637,7 +1659,7 @@ const remainVariableBudget =
                 </h3>
 
                 <div className="space-y-3">
-                  {variableCategories.map(
+                  {graphCategories.map(
                     (
                       category
                     ) => (
