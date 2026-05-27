@@ -732,7 +732,7 @@ const remainVariableBudget =
               mainTab ===
               "account"
                 ? "bg-black text-white"
-                : "bg-white/95 border border-gray-300 shadow-sm"
+                : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
             }`}
           >
             가계부
@@ -748,7 +748,7 @@ const remainVariableBudget =
               mainTab ===
               "fridge"
                 ? "bg-black text-white"
-                : "bg-white/95 border border-gray-300 shadow-sm"
+                : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
             }`}
           >
             냉장고
@@ -767,7 +767,7 @@ const remainVariableBudget =
                 className={`px-4 py-2 rounded-xl whitespace-nowrap ${
                   filter === "all"
                     ? "bg-black text-white"
-                    : "bg-white/95 border border-gray-300 shadow-sm"
+                    : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
                 }`}
               >
                 전체
@@ -782,7 +782,7 @@ const remainVariableBudget =
                 className={`px-4 py-2 rounded-xl whitespace-nowrap ${
                   filter === "fixed"
                     ? "bg-black text-white"
-                    : "bg-white/95 border border-gray-300 shadow-sm"
+                    : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
                 }`}
               >
                 고정지출
@@ -798,7 +798,7 @@ const remainVariableBudget =
                   filter ===
                   "variable"
                     ? "bg-black text-white"
-                    : "bg-white/95 border border-gray-300 shadow-sm"
+                    : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
                 }`}
               >
                 변동지출
@@ -814,7 +814,7 @@ const remainVariableBudget =
                   filter ===
                   "allowance"
                     ? "bg-black text-white"
-                    : "bg-white/95 border border-gray-300 shadow-sm"
+                    : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
                 }`}
               >
                 용돈
@@ -830,7 +830,7 @@ const remainVariableBudget =
                   filter ===
                   "saving"
                     ? "bg-black text-white"
-                    : "bg-white/95 border border-gray-300 shadow-sm"
+                    : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
                 }`}
              >
                저축
@@ -845,7 +845,7 @@ const remainVariableBudget =
     className={`px-4 py-2 rounded-xl border border-gray-300 shadow-sm font-medium ${
       view === "year"
         ? "bg-black text-white"
-        : "bg-white/95 border border-gray-300 shadow-sm"
+        : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
     }`}
   >
     연요약
@@ -858,7 +858,7 @@ const remainVariableBudget =
     className={`px-4 py-2 rounded-xl border border-gray-300 shadow-sm font-medium ${
       view === "budget"
         ? "bg-black text-white"
-        : "bg-white/95 border border-gray-300 shadow-sm"
+        : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
     }`}
   >
     예산
@@ -871,7 +871,7 @@ const remainVariableBudget =
     className={`px-4 py-2 rounded-xl border border-gray-300 shadow-sm font-medium ${
       view === "list"
         ? "bg-black text-white"
-        : "bg-white/95 border border-gray-300 shadow-sm"
+        : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
     }`}
   >
     리스트
@@ -884,7 +884,7 @@ const remainVariableBudget =
     className={`px-4 py-2 rounded-xl border border-gray-300 shadow-sm font-medium ${
       view === "calendar"
         ? "bg-black text-white"
-        : "bg-white/95 border border-gray-300 shadow-sm"
+        : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
     }`}
   >
     달력
@@ -997,7 +997,9 @@ const remainVariableBudget =
             {/* 카드 */}
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                총 수입
+                <p className="text-sm font-semibold text-gray-800">
+                  총 수입
+                </p>
                 <h2 className="text-2xl font-extrabold text-blue-600">
                   ₩
                   {incomeTotal.toLocaleString()}
@@ -1005,7 +1007,9 @@ const remainVariableBudget =
               </div>
 
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                총 지출
+                <p className="text-sm font-semibold text-gray-800">
+                  총 지출
+                </p>
                 <h2 className="text-2xl font-extrabold text-red-700">
                   ₩
                   {expenseTotal.toLocaleString()}
@@ -1013,7 +1017,9 @@ const remainVariableBudget =
               </div>
 
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                총 저축
+                <p className="text-sm font-semibold text-gray-800">
+                  총 저축
+                </p>
                 <h2 className="text-2xl font-extrabold text-green-600">
                   ₩
                   {savingTotal.toLocaleString()}
@@ -1021,14 +1027,16 @@ const remainVariableBudget =
               </div>
 
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                실사용 잔액
-                <h2 className="text-2xl font-extrabold">
+                <p className="text-sm font-semibold text-gray-800">
+                  실시간 잔액
+                </p>
+                <h2 className="text-2xl font-extrabold text-gray-900">
                   ₩
                   {total.toLocaleString()}
                 </h2>
               </div>
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                <p className="text-sm text-gray-700">
+                <p className="text-sm font-semibold text-gray-900">
                   변동예산
                 </p>
 
@@ -1039,7 +1047,7 @@ const remainVariableBudget =
               </div>
 
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                <p className="text-sm text-gray-700">
+                <p className="text-sm font-semibold text-gray-900">
                   남은 변동예산
                 </p>
 
@@ -1433,7 +1441,7 @@ const remainVariableBudget =
 >
 
   <div className="flex justify-between mb-2">
-    <span>
+    <span className="font-semibold text-gray-800">
       {category}
     </span>
 
@@ -1548,7 +1556,7 @@ const remainVariableBudget =
       className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 w-32 placeholder:text-gray-500"
     />
 
-    <span className="text-sm text-gray-600">
+    <span className="text-sm font-semibold text-gray-800">
       {Math.round(
         (
           items
