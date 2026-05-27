@@ -910,7 +910,7 @@ const remainVariableBudget =
           .slice(0, 7)
       );
     }}
-    className="bg-white px-3 py-2 rounded-xl shadow"
+    className="bg-white px-3 py-2 rounded-xl shadow-md"
   >
     ◀
   </button>
@@ -942,7 +942,7 @@ const remainVariableBudget =
           .slice(0, 7)
       );
     }}
-    className="bg-white px-3 py-2 rounded-xl shadow"
+    className="bg-white px-3 py-2 rounded-xl shadow-md"
   >
     ▶
   </button>
@@ -996,7 +996,7 @@ const remainVariableBudget =
 
             {/* 카드 */}
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="bg-white p-5 rounded-2xl shadow">
+              <div className="bg-white p-5 rounded-2xl shadow-md">
                 총 수입
                 <h2 className="text-2xl font-bold text-blue-600">
                   ₩
@@ -1004,7 +1004,7 @@ const remainVariableBudget =
                 </h2>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl shadow">
+              <div className="bg-white p-5 rounded-2xl shadow-md">
                 총 지출
                 <h2 className="text-2xl font-bold text-red-700">
                   ₩
@@ -1012,7 +1012,7 @@ const remainVariableBudget =
                 </h2>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl shadow">
+              <div className="bg-white p-5 rounded-2xl shadow-md">
                 총 저축
                 <h2 className="text-2xl font-bold text-green-600">
                   ₩
@@ -1020,14 +1020,14 @@ const remainVariableBudget =
                 </h2>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl shadow">
+              <div className="bg-white p-5 rounded-2xl shadow-md">
                 실사용 잔액
                 <h2 className="text-2xl font-bold">
                   ₩
                   {total.toLocaleString()}
                 </h2>
               </div>
-              <div className="bg-white p-5 rounded-2xl shadow">
+              <div className="bg-white p-5 rounded-2xl shadow-md">
                 <p className="text-sm text-gray-700">
                   변동예산
                 </p>
@@ -1038,7 +1038,7 @@ const remainVariableBudget =
                 </h2>
               </div>
 
-              <div className="bg-white p-5 rounded-2xl shadow">
+              <div className="bg-white p-5 rounded-2xl shadow-md">
                 <p className="text-sm text-gray-700">
                   남은 변동예산
                 </p>
@@ -1051,7 +1051,7 @@ const remainVariableBudget =
             </div>
 
             {/* 그래프 */}
-            <div className="bg-white rounded-2xl p-5 shadow mb-4">
+            <div className="bg-white rounded-2xl p-5 shadow-md mb-4">
               <h3 className="font-bold mb-4">
                 카테고리별 지출
               </h3>
@@ -1087,7 +1087,7 @@ const remainVariableBudget =
             </div>
 
             {/* 예산 그래프 */}
-            <div className="bg-white rounded-2xl p-5 shadow mb-4">
+            <div className="bg-white rounded-2xl p-5 shadow-md mb-4">
               <h3 className="font-bold mb-4">
                 예산 대비 사용 현황
               </h3>
@@ -1132,7 +1132,7 @@ const remainVariableBudget =
 
             {/* 입력 */}
             <div className="sticky top-0 z-50 bg-gray-100 pb-3">
-              <div className="bg-white p-5 rounded-2xl shadow mb-4">
+              <div className="bg-white p-5 rounded-2xl shadow-md mb-4">
               <div className="grid md:grid-cols-6 gap-3">
                 <input
                   type="text"
@@ -1271,7 +1271,7 @@ const remainVariableBudget =
 
 
                 {/* 월별 지출 */}
-  <div className="bg-white p-5 rounded-2xl shadow">
+  <div className="bg-white p-5 rounded-2xl shadow-md">
     <h3 className="font-bold mb-4">
       월별 지출
     </h3>
@@ -1298,7 +1298,7 @@ const remainVariableBudget =
   </div>
 
   {/* 월별 저축률 */}
-  <div className="bg-white p-5 rounded-2xl shadow">
+  <div className="bg-white p-5 rounded-2xl shadow-md">
     <h3 className="font-bold mb-4">
       월별 저축률
     </h3>
@@ -1325,7 +1325,7 @@ const remainVariableBudget =
   </div>
 
   {/* 월별 소비패턴 */}
-  <div className="bg-white p-5 rounded-2xl shadow">
+  <div className="bg-white p-5 rounded-2xl shadow-md">
     <h3 className="font-bold mb-4">
       월별 소비패턴
     </h3>
@@ -1362,7 +1362,7 @@ const remainVariableBudget =
   </div>
 
   {/* TOP5 */}
-  <div className="bg-white p-5 rounded-2xl shadow">
+  <div className="bg-white p-5 rounded-2xl shadow-md">
     <h3 className="font-bold mb-4">
       연간 카테고리 TOP5
     </h3>
@@ -1416,7 +1416,7 @@ const remainVariableBudget =
                 }
               />
             ) : (
-              <div className="bg-white p-5 rounded-2xl shadow">
+              <div className="bg-white p-5 rounded-2xl shadow-md">
                 <h3 className="font-bold mb-4">
                   카테고리별 예산
                 </h3>
