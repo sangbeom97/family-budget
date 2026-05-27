@@ -958,9 +958,15 @@ const remainVariableBudget =
         selectedMonth + "-01"
       );
 
-      date.setMonth(
-        date.getMonth() - 1
-      );
+      if (view === "year") {
+  date.setFullYear(
+    date.getFullYear() - 1
+  );
+} else {
+  date.setMonth(
+    date.getMonth() - 1
+  );
+}
 
       setSelectedMonth(
         date
@@ -973,6 +979,28 @@ const remainVariableBudget =
     ◀
   </button>
 
+  {view === "year" ? (
+  <select
+    value={selectedYear}
+    onChange={(e) =>
+      setSelectedMonth(
+        `${e.target.value}-01`
+      )
+    }
+    className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+  >
+    {[2026, 2025, 2024].map(
+      (year) => (
+        <option
+          key={year}
+          value={year}
+        >
+          {year}년
+        </option>
+      )
+    )}
+  </select>
+) : (
   <input
     type="month"
     value={selectedMonth}
@@ -983,6 +1011,7 @@ const remainVariableBudget =
     }
     className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
   />
+)}
 
   <button
     onClick={() => {
@@ -990,9 +1019,15 @@ const remainVariableBudget =
         selectedMonth + "-01"
       );
 
-      date.setMonth(
-        date.getMonth() + 1
-      );
+      if (view === "year") {
+  date.setFullYear(
+    date.getFullYear() + 1
+  );
+} else {
+  date.setMonth(
+    date.getMonth() + 1
+  );
+}
 
       setSelectedMonth(
         date
