@@ -384,51 +384,6 @@ const fetchYearlyItems =
       }
     };
 
-  
-
-  const budgetCompareData =
-    variableCategories.map(
-      (category) => {
-        const spent =
-          filteredGraphItems
-            .filter(
-             (item) =>
-                item.category ===
-                  category &&
-                item.type ===
-                 "expense"
-            )
-           .reduce(
-             (
-                sum,
-               item
-              ) =>
-                sum +
-                item.amount,
-             0
-           );
-
-        const budget =
-         Number(
-           budgets[
-              category
-           ] || 0
-         );
-
-      return {
-        name: category,
-
-        사용금액: spent,
-
-        // 음수 허용
-        남은예산:
-          budget - spent,
-      };
-    }
-  );
-
-  
-
   const filteredGraphItems =
   filter === "all"
     ? items
@@ -475,7 +430,46 @@ const filteredYearlyGraphItems =
     );
   });
     
+  const budgetCompareData =
+    variableCategories.map(
+      (category) => {
+        const spent =
+          filteredGraphItems
+            .filter(
+             (item) =>
+                item.category ===
+                  category &&
+                item.type ===
+                 "expense"
+            )
+           .reduce(
+             (
+                sum,
+               item
+              ) =>
+                sum +
+                item.amount,
+             0
+           );
 
+        const budget =
+         Number(
+           budgets[
+              category
+           ] || 0
+         );
+
+      return {
+        name: category,
+
+        사용금액: spent,
+
+        // 음수 허용
+        남은예산:
+          budget - spent,
+      };
+    }
+  );
   
 
   const incomeTotal =
