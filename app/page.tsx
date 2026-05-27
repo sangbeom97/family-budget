@@ -961,33 +961,32 @@ const remainVariableBudget =
 
   <button
     onClick={() => {
-      const date = new Date(
-        selectedMonth + "-01"
-      );
-
-      if (view === "year") {
-  date.setFullYear(
-    date.getFullYear() - 1
+  const date = new Date(
+    selectedMonth + "-01"
   );
 
-  setSelectedYear(
+  if (view === "year") {
+    date.setFullYear(
+      date.getFullYear() - 1
+    );
+
+    setSelectedYear(
+      date
+        .getFullYear()
+        .toString()
+    );
+  } else {
+    date.setMonth(
+      date.getMonth() - 1
+    );
+  }
+
+  setSelectedMonth(
     date
-      .getFullYear()
-      .toString()
+      .toISOString()
+      .slice(0, 7)
   );
-}
-} else {
-  date.setMonth(
-    date.getMonth() - 1
-  );
-}
-
-      setSelectedMonth(
-        date
-          .toISOString()
-          .slice(0, 7)
-      );
-    }}
+}}
     className="bg-white/95 px-3 py-2 rounded-xl shadow-md"
   >
     ◀
@@ -1033,33 +1032,32 @@ const remainVariableBudget =
 
   <button
     onClick={() => {
-      const date = new Date(
-        selectedMonth + "-01"
-      );
-
-      if (view === "year") {
-  date.setFullYear(
-    date.getFullYear() + 1
+  const date = new Date(
+    selectedMonth + "-01"
   );
 
-  setSelectedYear(
+  if (view === "year") {
+    date.setFullYear(
+      date.getFullYear() + 1
+    );
+
+    setSelectedYear(
+      date
+        .getFullYear()
+        .toString()
+    );
+  } else {
+    date.setMonth(
+      date.getMonth() + 1
+    );
+  }
+
+  setSelectedMonth(
     date
-      .getFullYear()
-      .toString()
+      .toISOString()
+      .slice(0, 7)
   );
-}
-} else {
-  date.setMonth(
-    date.getMonth() + 1
-  );
-}
-
-      setSelectedMonth(
-        date
-          .toISOString()
-          .slice(0, 7)
-      );
-    }}
+}}
     className="bg-white/95 px-3 py-2 rounded-xl shadow-md"
   >
     ▶
