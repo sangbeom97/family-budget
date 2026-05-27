@@ -192,9 +192,6 @@ export default function Home() {
 const fetchYearlyItems =
   async () => {
 
-    const selectedYear =
-      selectedMonth.split("-")[0];
-
     const { data } =
       await supabase
         .from("transactions")
@@ -249,7 +246,7 @@ const fetchYearlyItems =
   fetchItems();
   fetchYearlyItems();
   fetchBudgets();
-}, [selectedMonth]);
+}, [selectedMonth, selectedYear]);
 
   // 추가
   const addItem = async () => {
@@ -393,7 +390,7 @@ const fetchYearlyItems =
     variableCategories.map(
       (category) => {
         const spent =
-          items
+          filteredGraphItems
             .filter(
              (item) =>
                 item.category ===
@@ -431,7 +428,7 @@ const fetchYearlyItems =
   );
 
   const filteredItems =
-  items.filter((item) => {
+  filteredGraphItems.filter((item) => {
 
     const filterMatch =
       filter === "all"
@@ -457,6 +454,25 @@ const fetchYearlyItems =
       categoryMatch
     );
   });
+
+  const filteredGraphItems =
+  filter === "all"
+    ? items
+    : items.filter(
+        (item) =>
+          item.spend_type ===
+          filter
+      );
+
+const filteredYearlyGraphItems =
+  filter === "all"
+    ? yearlyItems
+    : yearlyItems.filter(
+        (item) =>
+          item.spend_type ===
+          filter
+      );
+    
 
   
 
@@ -505,18 +521,14 @@ const fetchYearlyItems =
     incomeTotal -
     expenseTotal;
 
-// 연요약용
-const selectedYear =
-  selectedMonth.split(
-    "-"
-  )[0];
+
 
 const yearlyCategoryData =
   variableCategories.map(
     (category) => {
 
       const total =
-        yearlyItems
+        filteredYearlyGraphItems
           .filter(
             (item) =>
               item.category ===
@@ -544,7 +556,7 @@ const yearlyCategoryData =
   );
 
 const yearlyIncome =
-  yearlyItems
+  filteredYearlyGraphItems
     .filter(
       (item) =>
         item.type ===
@@ -557,7 +569,8 @@ const yearlyIncome =
     );
 
   const yearlyExpense =
-  yearlyItems
+    
+  filteredYearlyGraphItems
     .filter(
       (item) =>
         item.type ===
@@ -570,6 +583,24 @@ const yearlyIncome =
         sum + item.amount,
       0
     );
+
+  const yearlySaving =
+  filteredYearlyGraphItems
+    .filter(
+      (item) =>
+        item.spend_type ===
+        "saving"
+    )
+    .reduce(
+      (sum, item) =>
+        sum + item.amount,
+      0
+    );
+
+const yearlyTotal =
+  yearlyIncome -
+  yearlyExpense;
+  
   // 차트 데이터
   const categoryData =
     variableCategories.map(
@@ -577,8 +608,8 @@ const yearlyIncome =
         const total =
           (
             view === "year"
-              ? yearlyItems
-               : items
+  ? filteredYearlyGraphItems
+  : filteredGraphItems
           )
             .filter(
               (item) =>
@@ -615,7 +646,7 @@ const monthlyData = Array.from(
     ).padStart(2, "0")}`;
 
     const monthItems =
-      yearlyItems.filter(
+      filteredYearlyGraphItems.filter(
         (item) =>
           item.date.startsWith(
             month
@@ -698,7 +729,7 @@ const topCategories =
   variableCategories
     .map((category) => {
       const total =
-        yearlyItems
+        filteredYearlyGraphItems
           .filter(
             (item) =>
               item.category ===
@@ -739,13 +770,14 @@ const variableBudgetTotal =
       ),
     0
   );
+  
 
 // 남은 변동예산
 const remainVariableBudget =
   variableCategories.reduce(
     (sum, category) => {
       const spent =
-        items
+        filteredGraphItems
           .filter(
             (item) =>
               item.category ===
@@ -762,6 +794,7 @@ const remainVariableBudget =
               item.amount,
             0
           );
+      
 
       const budget =
         Number(
@@ -1006,7 +1039,11 @@ const remainVariableBudget =
 }}
     className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
   >
-    {[2026, 2025, 2024].map(
+    {Array.from(
+  { length: 5 },
+  (_, i) =>
+    new Date().getFullYear() - i
+).map(
       (year) => (
         <option
           key={year}
@@ -1066,47 +1103,50 @@ const remainVariableBudget =
 </div>
 
 
+{view !== "year" && (
+  <>
+    {/* 검색 */}
+    <input
+      type="text"
+      placeholder="검색"
+      value={search}
+      onChange={(e) =>
+        setSearch(
+          e.target.value
+        )
+      }
+      className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
+    />
 
-{/* 검색 */}
-<input
-  type="text"
-  placeholder="검색"
-  value={search}
-  onChange={(e) =>
-    setSearch(
-      e.target.value
-    )
-  }
-  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
-/>
-
-{/* 카테고리 필터 */}
-<select
-  value={categoryFilter}
-  onChange={(e) =>
-    setCategoryFilter(
-      e.target.value
-    )
-  }
-  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
->
-  <option value="all">
-    전체 카테고리
-  </option>
-
-  {[
-    ...fixedCategories,
-    ...variableCategories,
-    ...savingCategories,
-  ].map((category) => (
-    <option
-      key={category}
-      value={category}
+    {/* 카테고리 필터 */}
+    <select
+      value={categoryFilter}
+      onChange={(e) =>
+        setCategoryFilter(
+          e.target.value
+        )
+      }
+      className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
     >
-      {category}
-    </option>
-  ))}
-</select>
+      <option value="all">
+        전체 카테고리
+      </option>
+
+      {[
+        ...fixedCategories,
+        ...variableCategories,
+        ...savingCategories,
+      ].map((category) => (
+        <option
+          key={category}
+          value={category}
+        >
+          {category}
+        </option>
+      ))}
+    </select>
+  </>
+)}
 
 
 
@@ -1118,7 +1158,11 @@ const remainVariableBudget =
                 </p>
                 <h2 className="text-2xl font-extrabold text-blue-600">
                   ₩
-                  {incomeTotal.toLocaleString()}
+                  {(
+  view === "year"
+    ? yearlyIncome
+    : incomeTotal
+).toLocaleString()}
                 </h2>
               </div>
 
@@ -1128,7 +1172,11 @@ const remainVariableBudget =
                 </p>
                 <h2 className="text-2xl font-extrabold text-red-700">
                   ₩
-                  {expenseTotal.toLocaleString()}
+                  {(
+  view === "year"
+    ? yearlyExpense
+    : expenseTotal
+).toLocaleString()}
                 </h2>
               </div>
 
@@ -1137,9 +1185,13 @@ const remainVariableBudget =
                   총 저축
                 </p>
                 <h2 className="text-2xl font-extrabold text-green-600">
-                  ₩
-                  {savingTotal.toLocaleString()}
-                </h2>
+  ₩
+  {(
+    view === "year"
+      ? yearlySaving
+      : savingTotal
+  ).toLocaleString()}
+</h2>
               </div>
 
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
@@ -1147,9 +1199,13 @@ const remainVariableBudget =
                   실시간 잔액
                 </p>
                 <h2 className="text-2xl font-extrabold text-gray-900">
-                  ₩
-                  {total.toLocaleString()}
-                </h2>
+  ₩
+  {(
+    view === "year"
+      ? yearlyTotal
+      : total
+  ).toLocaleString()}
+</h2>
               </div>
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
                 <p className="text-sm font-semibold text-gray-900">
@@ -1177,8 +1233,10 @@ const remainVariableBudget =
             {/* 그래프 */}
             <div className="bg-white/95 rounded-2xl p-5 shadow-md mb-4">
               <h3 className="font-extrabold mb-4">
-                카테고리별 지출
-              </h3>
+  {view === "year"
+    ? "연간 카테고리별 지출"
+    : "카테고리별 지출"}
+</h3>
 
               <div className="h-72">
                 <ResponsiveContainer
@@ -1464,9 +1522,7 @@ const remainVariableBudget =
           <YAxis />
 <Tooltip
   formatter={(value) => [
-    `₩${Number(
-      value
-    ).toLocaleString()}`,
+    `${value}%`,
     " ",
   ]}
 />
@@ -1571,14 +1627,14 @@ const remainVariableBudget =
                 }
               />
             ) : view ===
-              "calendar" ? (
-              <CalendarView
-                items={items}
-                selectedMonth={
-                  selectedMonth
-                }
-              />
-            ) : (
+  "calendar" ? (
+  <CalendarView
+    items={filteredItems}
+    selectedMonth={
+      selectedMonth
+    }
+  />
+) : (
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
                 <h3 className="font-extrabold mb-4">
                   카테고리별 예산
@@ -1602,7 +1658,7 @@ const remainVariableBudget =
     <span className="font-extrabold">
       ₩
       {(
-        items
+        filteredGraphItems
           .filter(
             (item) =>
               item.category ===
@@ -1635,7 +1691,7 @@ const remainVariableBudget =
     <div
       className={`h-3 rounded-full ${
         (
-          items
+          filteredGraphItems
             .filter(
               (item) =>
                 item.category ===
@@ -1664,7 +1720,7 @@ const remainVariableBudget =
       style={{
         width: `${Math.min(
           (
-            items
+            filteredGraphItems
               .filter(
                 (item) =>
                   item.category ===
@@ -1713,7 +1769,7 @@ const remainVariableBudget =
     <span className="text-sm font-semibold text-gray-800">
       {Math.round(
         (
-          items
+          filteredGraphItems
             .filter(
               (item) =>
                 item.category ===
