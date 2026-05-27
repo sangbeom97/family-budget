@@ -537,8 +537,6 @@ const yearlyCategoryData =
   );
 
 const yearlyIncome =
-
-const yearlyIncome =
   yearlyItems
     .filter(
       (item) =>
