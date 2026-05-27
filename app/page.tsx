@@ -471,6 +471,51 @@ export default function Home() {
   const total =
     incomeTotal -
     expenseTotal;
+  const total =
+  incomeTotal -
+  expenseTotal;
+
+// 연요약용
+const selectedYear =
+  selectedMonth.split(
+    "-"
+  )[0];
+
+const yearlyItems =
+  items.filter(
+    (item) =>
+      item.date.startsWith(
+        selectedYear
+      )
+  );
+
+const yearlyIncome =
+  yearlyItems
+    .filter(
+      (item) =>
+        item.type ===
+        "income"
+    )
+    .reduce(
+      (sum, item) =>
+        sum + item.amount,
+      0
+    );
+
+const yearlyExpense =
+  yearlyItems
+    .filter(
+      (item) =>
+        item.type ===
+          "expense" &&
+        item.spend_type !==
+          "saving"
+    )
+    .reduce(
+      (sum, item) =>
+        sum + item.amount,
+      0
+    );
     // 변동예산 총합
 const variableBudgetTotal =
   variableCategories.reduce(
@@ -658,6 +703,20 @@ const remainVariableBudget =
                     : "bg-white"
                 }`}
               >
+
+                <button
+                  onClick={() =>
+                    setView("year")
+                  }
+                  className={`px-4 py-2 rounded-xl ${
+                    view === "year"
+                      ? "bg-black text-white"
+                      : "bg-white"
+                  }`}
+                >
+                 연요약
+                </button>
+                
                 리스트
               </button>
 
@@ -692,6 +751,19 @@ const remainVariableBudget =
               >
                 예산
               </button>
+
+              <button
+                onClick={() =>
+                  setView("year")
+                }
+                className={`px-4 py-2 rounded-xl ${
+                  view === "year"
+                    ? "bg-black text-white"
+                    : "bg-white"
+                }`}
+              >
+                연요약
+              </button>
             </div>
 
             {/* 월 */}
@@ -722,7 +794,7 @@ const remainVariableBudget =
 
               <div className="bg-white p-5 rounded-2xl shadow">
                 총 지출
-                <h2 className="text-2xl font-bold text-red-500">
+                <h2 className="text-2xl font-bold text-red-700">
                   ₩
                   {expenseTotal.toLocaleString()}
                 </h2>
@@ -744,7 +816,7 @@ const remainVariableBudget =
                 </h2>
               </div>
               <div className="bg-white p-5 rounded-2xl shadow">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-700">
                   변동예산
                 </p>
 
@@ -755,11 +827,11 @@ const remainVariableBudget =
               </div>
 
               <div className="bg-white p-5 rounded-2xl shadow">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-700">
                   남은 변동예산
                 </p>
 
-                <h2 className="text-2xl font-bold text-orange-500 mt-2">
+                <h2 className="text-2xl font-bold text-orange-700 mt-2">
                   ₩
                   {remainVariableBudget.toLocaleString()}
                 </h2>
@@ -782,7 +854,13 @@ const remainVariableBudget =
                       categoryData
                     }
                   >
-                    <XAxis dataKey="name" />
+                    <XAxis
+                      dataKey="name"
+                      angle={-30}
+                      textAnchor="end"
+                      interval={0}
+                      height={70}
+                    />
                     <YAxis
                       domain={[
                         "auto",
@@ -972,6 +1050,43 @@ const remainVariableBudget =
             </div>
 
             {/* 화면 */}
+{view === "year" ? (
+
+  <div className="bg-white p-5 rounded-2xl shadow">
+    <h3 className="font-bold text-xl mb-4">
+      {selectedYear}년 연요약
+    </h3>
+
+    <div className="grid grid-cols-2 gap-4">
+
+      <div>
+        <p className="text-gray-700">
+          연 총수입
+        </p>
+
+        <h2 className="text-2xl font-bold text-blue-600">
+          ₩
+          {yearlyIncome.toLocaleString()}
+        </h2>
+      </div>
+
+      <div>
+        <p className="text-gray-700">
+          연 총지출
+        </p>
+
+        <h2 className="text-2xl font-bold text-red-500">
+          ₩
+          {yearlyExpense.toLocaleString()}
+        </h2>
+      </div>
+
+    </div>
+  </div>
+
+) : view === "list" ? (
+            
+            
             {view === "list" ? (
               <ListView
                 items={filteredItems}
