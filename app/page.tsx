@@ -923,7 +923,7 @@ const remainVariableBudget =
         e.target.value
       )
     }
-    className="border rounded-xl px-3 py-2"
+    className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
   />
 
   <button
@@ -1144,7 +1144,7 @@ const remainVariableBudget =
                         .value
                     )
                   }
-                  className="border rounded-xl px-3 py-2"
+                  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
                 />
 
                 <input
@@ -1157,7 +1157,7 @@ const remainVariableBudget =
                         .value
                     )
                   }
-                  className="border rounded-xl px-3 py-2"
+                  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
                 />
 
                 <input
@@ -1169,7 +1169,7 @@ const remainVariableBudget =
                         .value
                     )
                   }
-                  className="border rounded-xl px-3 py-2"
+                  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
                 />
 
                 <select
@@ -1190,7 +1190,7 @@ const remainVariableBudget =
                       );
                     }
                   }}
-                  className="border rounded-xl px-3 py-2"
+                  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
                 >
                   <option value="expense">
                     지출
@@ -1209,7 +1209,7 @@ const remainVariableBudget =
                         .value
                     )
                   }
-                  className="border rounded-xl px-3 py-2"
+                  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
                 >
                   {currentCategories.map(
                     (item) => (
@@ -1231,7 +1231,7 @@ const remainVariableBudget =
                         e.target.value
                       )
                     }
-                    className="border rounded-xl px-3 py-2"
+                    className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2"
                   >
                     <option value="fixed">
                       고정지출
