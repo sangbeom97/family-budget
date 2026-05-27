@@ -1272,7 +1272,7 @@ const remainVariableBudget =
               </div>
               )}
 
-              /* 화면 */
+              {/* 화면 */}
               {view === "year" ? (
 
                 <div className="space-y-4">
