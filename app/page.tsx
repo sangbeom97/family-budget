@@ -83,6 +83,13 @@ export default function Home() {
         .slice(0, 7)
     );
 
+  const [selectedYear, setSelectedYear] =
+  useState(
+    new Date()
+      .getFullYear()
+      .toString()
+  );
+
   const [budgets, setBudgets] =
     useState<Record<
       string,
@@ -962,6 +969,13 @@ const remainVariableBudget =
   date.setFullYear(
     date.getFullYear() - 1
   );
+
+  setSelectedYear(
+    date
+      .getFullYear()
+      .toString()
+  );
+}
 } else {
   date.setMonth(
     date.getMonth() - 1
@@ -982,11 +996,15 @@ const remainVariableBudget =
   {view === "year" ? (
   <select
     value={selectedYear}
-    onChange={(e) =>
-      setSelectedMonth(
-        `${e.target.value}-01`
-      )
-    }
+    onChange={(e) => {
+  setSelectedYear(
+    e.target.value
+  );
+
+  setSelectedMonth(
+    `${e.target.value}-01`
+  );
+}}
     className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
   >
     {[2026, 2025, 2024].map(
@@ -1023,6 +1041,13 @@ const remainVariableBudget =
   date.setFullYear(
     date.getFullYear() + 1
   );
+
+  setSelectedYear(
+    date
+      .getFullYear()
+      .toString()
+  );
+}
 } else {
   date.setMonth(
     date.getMonth() + 1
