@@ -887,34 +887,34 @@ const remainVariableBudget =
                   )}
                 </select>
 
-                <select
-                  value={
-                    spendType
-                  }
-                  onChange={(e) =>
-                    setSpendType(
-                      e.target
-                        .value
-                    )
-                  }
-                  className="border rounded-xl px-3 py-2"
-                >
-                  <option value="fixed">
-                    고정지출
-                  </option>
 
-                  <option value="variable">
-                    변동지출
-                  </option>
+                {type === "expense" && (
+                  <select
+                    value={spendType}
+                    onChange={(e) =>
+                      setSpendType(
+                        e.target.value
+                      )
+                    }
+                    className="border rounded-xl px-3 py-2"
+                  >
+                    <option value="fixed">
+                      고정지출
+                    </option>
 
-                  <option value="allowance">
-                    용돈
-                  </option>
+                    <option value="variable">
+                      변동지출
+                    </option>
 
-                  <option value="saving">
-                    저축
-                  </option>
-                </select>
+                    <option value="allowance">
+                      용돈
+                    </option>
+
+                    <option value="saving">
+                      저축
+                    </option>
+                  </select>
+                )}
               </div>
 
               <button
