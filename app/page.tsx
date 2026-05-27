@@ -1147,12 +1147,13 @@ const remainVariableBudget =
                         "auto",
                       ]}
                     />
-                    <Tooltip
+<Tooltip
   formatter={(value) =>
     `₩${Number(
       value
     ).toLocaleString()}`
   }
+  labelFormatter={() => ""}
 />
                     <Bar dataKey="value" />
                   </BarChart>
@@ -1184,12 +1185,13 @@ const remainVariableBudget =
                         "auto",
                       ]}
                     />
-                    <Tooltip
+<Tooltip
   formatter={(value) =>
     `₩${Number(
       value
     ).toLocaleString()}`
   }
+  labelFormatter={() => ""}
 />
 
                     <Bar dataKey="남은예산">
@@ -1368,12 +1370,13 @@ const remainVariableBudget =
         >
           <XAxis dataKey="month" />
           <YAxis />
-          <Tooltip
+<Tooltip
   formatter={(value) =>
     `₩${Number(
       value
     ).toLocaleString()}`
   }
+  labelFormatter={() => ""}
 />
 
           <Bar
@@ -1401,12 +1404,13 @@ const remainVariableBudget =
         >
           <XAxis dataKey="month" />
           <YAxis />
-          <Tooltip
+<Tooltip
   formatter={(value) =>
     `₩${Number(
       value
     ).toLocaleString()}`
   }
+  labelFormatter={() => ""}
 />
 
           <Bar
@@ -1434,12 +1438,13 @@ const remainVariableBudget =
         >
           <XAxis dataKey="month" />
           <YAxis />
-          <Tooltip
+<Tooltip
   formatter={(value) =>
     `₩${Number(
       value
     ).toLocaleString()}`
   }
+  labelFormatter={() => ""}
 />
 
           <Bar
