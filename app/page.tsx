@@ -52,6 +52,9 @@ export default function Home() {
   const [spendType, setSpendType] =
     useState("variable");
 
+  const [filter, setFilter] =
+  useState("all");
+
   const [date, setDate] =
     useState(
       new Date()
@@ -222,11 +225,42 @@ export default function Home() {
           date,
         },
       ]);
-
     setName("");
     setAmount("");
 
     fetchItems();
+   };
+
+  // 삭제
+  const deleteItem = async (
+    id: number
+  ) => {
+    await supabase
+      .from("transactions")
+      .delete()
+      .eq("id", id);
+
+    fetchItems();
+  };
+
+  const startEdit = (
+    item: Item
+  ) => {
+    setName(item.name);
+
+    setAmount(
+      item.amount.toString()
+    );
+
+    setType(item.type);
+
+    setCategory(item.category);
+
+    setDate(item.date);
+
+    setSpendType(
+      item.spend_type
+    );
   };
 
   // 예산 저장
@@ -349,6 +383,15 @@ export default function Home() {
       };
     }
   );
+
+  const filteredItems =
+  filter === "all"
+    ? items
+    : items.filter(
+        (item) =>
+          item.spend_type ===
+          filter
+      );
 
   const incomeTotal =
     items
@@ -491,6 +534,83 @@ const remainVariableBudget =
           "account" && (
           <>
             {/* 탭 */}
+            <div className="flex gap-2 mb-4 overflow-x-auto">
+              <button
+                onClick={() =>
+                  setFilter("all")
+                }
+                className={`px-4 py-2 rounded-xl whitespace-nowrap ${
+                  filter === "all"
+                    ? "bg-black text-white"
+                    : "bg-white"
+                }`}
+              >
+                전체
+              </button>
+
+              <button
+                onClick={() =>
+                  setFilter(
+                    "fixed"
+                  )
+                }
+                className={`px-4 py-2 rounded-xl whitespace-nowrap ${
+                  filter === "fixed"
+                    ? "bg-black text-white"
+                    : "bg-white"
+                }`}
+              >
+                고정지출
+              </button>
+
+              <button
+                onClick={() =>
+                  setFilter(
+                    "variable"
+                  )
+                }
+                className={`px-4 py-2 rounded-xl whitespace-nowrap ${
+                  filter ===
+                  "variable"
+                    ? "bg-black text-white"
+                    : "bg-white"
+                }`}
+              >
+                변동지출
+              </button>
+
+              <button
+                onClick={() =>
+                  setFilter(
+                    "allowance"
+                  )
+                }
+                className={`px-4 py-2 rounded-xl whitespace-nowrap ${
+                  filter ===
+                  "allowance"
+                    ? "bg-black text-white"
+                    : "bg-white"
+                }`}
+              >
+                용돈
+              </button>
+
+              <button
+                onClick={() =>
+                  setFilter(
+                    "saving"
+                  )
+                }
+                className={`px-4 py-2 rounded-xl whitespace-nowrap ${
+                  filter ===
+                  "saving"
+                    ? "bg-black text-white"
+                    : "bg-white"
+                }`}
+             >
+               저축
+              </button>
+            </div>
             <div className="flex gap-2 mb-4">
               <button
                 onClick={() =>
@@ -808,9 +928,13 @@ const remainVariableBudget =
             {/* 화면 */}
             {view === "list" ? (
               <ListView
-                items={items}
-                deleteItem={() => {}}
-                startEdit={() => {}}
+                items={filteredItems}
+                deleteItem={
+                  deleteItem
+                }
+                startEdit={
+                  startEdit
+                }
               />
             ) : view ===
               "calendar" ? (
