@@ -1131,7 +1131,8 @@ const remainVariableBudget =
             </div>
 
             {/* 입력 */}
-            <div className="bg-white p-5 rounded-2xl shadow mb-4">
+            <div className="sticky top-0 z-50 bg-gray-100 pb-3">
+              <div className="bg-white p-5 rounded-2xl shadow mb-4">
               <div className="grid md:grid-cols-6 gap-3">
                 <input
                   type="text"
@@ -1259,16 +1260,17 @@ const remainVariableBudget =
                   ? "수정완료"
                   : "추가하기"}
               </button>
-            </div>
+              </div>
+              </div>
 
-            {/* 화면 */}
-{view === "year" ? (
+              {/* 화면 */}
+              {view === "year" ? (
 
-  <div className="space-y-4">
+                <div className="space-y-4">
 
 
 
-  {/* 월별 지출 */}
+                {/* 월별 지출 */}
   <div className="bg-white p-5 rounded-2xl shadow">
     <h3 className="font-bold mb-4">
       월별 지출
