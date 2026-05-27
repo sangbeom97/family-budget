@@ -34,6 +34,9 @@ export default function Home() {
   const [items, setItems] =
     useState<Item[]>([]);
 
+  const [yearlyItems, setYearlyItems] =
+  useState<Item[]>([]);
+
   const [view, setView] =
     useState("list");
 
@@ -178,6 +181,31 @@ export default function Home() {
     setItems(data || []);
   };
 
+  // 연간 데이터 불러오기
+const fetchYearlyItems =
+  async () => {
+
+    const selectedYear =
+      selectedMonth.split("-")[0];
+
+    const { data } =
+      await supabase
+        .from("transactions")
+        .select("*")
+        .gte(
+          "date",
+          `${selectedYear}-01-01`
+        )
+        .lte(
+          "date",
+          `${selectedYear}-12-31`
+        );
+
+    setYearlyItems(
+      data || []
+    );
+  };
+
   // 예산 불러오기
   const fetchBudgets =
     async () => {
@@ -211,9 +239,10 @@ export default function Home() {
     };
 
   useEffect(() => {
-    fetchItems();
-    fetchBudgets();
-  }, [selectedMonth]);
+  fetchItems();
+  fetchYearlyItems();
+  fetchBudgets();
+}, [selectedMonth]);
 
   // 추가
   const addItem = async () => {
@@ -474,33 +503,6 @@ const selectedYear =
   selectedMonth.split(
     "-"
   )[0];
-
-const yearlyItems =
-  items.filter(
-    const yearlyCategoryData =
-  variableCategories.map(
-    (category) => {
-
-      const total =
-        yearlyItems
-          .filter(
-            (item) =>
-              item.category ===
-                category &&
-              item.type ===
-                "expense" &&
-              item.spend_type !==
-                "saving"
-          )
-          .reduce(
-            (
-              sum,
-              item
-            ) =>
-              sum +
-              item.amount,
-            0
-          );
 
       return {
         name: category,
