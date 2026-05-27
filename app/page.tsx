@@ -504,17 +504,39 @@ const selectedYear =
     "-"
   )[0];
 
+const yearlyCategoryData =
+  variableCategories.map(
+    (category) => {
+
+      const total =
+        yearlyItems
+          .filter(
+            (item) =>
+              item.category ===
+                category &&
+              item.type ===
+                "expense" &&
+              item.spend_type !==
+                "saving"
+          )
+          .reduce(
+            (
+              sum,
+              item
+            ) =>
+              sum +
+              item.amount,
+            0
+          );
+
       return {
         name: category,
         value: total,
       };
     }
   );
-    (item) =>
-      item.date.startsWith(
-        selectedYear
-      )
-  );
+
+const yearlyIncome =
 
 const yearlyIncome =
   yearlyItems
