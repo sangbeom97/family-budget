@@ -961,7 +961,7 @@ const remainVariableBudget =
       e.target.value
     )
   }
-  className="border rounded-xl px-3 py-2 mb-4 w-full"
+  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
 />
 
 {/* 카테고리 필터 */}
@@ -972,7 +972,7 @@ const remainVariableBudget =
       e.target.value
     )
   }
-  className="border rounded-xl px-3 py-2 mb-4 w-full"
+  className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
 >
   <option value="all">
     전체 카테고리
@@ -1544,7 +1544,7 @@ const remainVariableBudget =
           e.target.value
         )
       }
-      className="border rounded-xl px-3 py-2 w-32"
+      className="border-2 border-gray-300 bg-white text-black rounded-xl px-3 py-2 w-32 placeholder:text-gray-500"
     />
 
     <span className="text-sm text-gray-600">
