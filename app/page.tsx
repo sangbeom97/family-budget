@@ -37,6 +37,11 @@ export default function Home() {
   const [view, setView] =
     useState("list");
 
+  const [editingId, setEditingId] =
+    useState<number | null>(
+     null
+   );
+
   const [name, setName] =
     useState("");
 
@@ -209,6 +214,33 @@ export default function Home() {
     if (!name || !amount)
       return;
 
+    if (editingId) {
+      await supabase
+        .from("transactions")
+        .update({
+          name,
+          amount:
+            Number(amount),
+          type,
+          category,
+          spend_type:
+            type === "income"
+              ? null
+              : spendType,
+          date,
+        })
+        .eq("id", editingId);
+
+      setEditingId(null);
+
+      setName("");
+      setAmount("");
+
+      fetchItems();
+
+      return;
+    }
+
     await supabase
       .from("transactions")
       .insert([
@@ -261,6 +293,8 @@ export default function Home() {
     setSpendType(
       item.spend_type
     );
+
+    setEditingId(item.id);
   };
 
   // 예산 저장
@@ -921,7 +955,9 @@ const remainVariableBudget =
                 onClick={addItem}
                 className="w-full bg-black text-white rounded-xl py-3 mt-4"
               >
-                추가하기
+                {editingId
+                  ? "수정완료"
+                  : "추가하기"}
               </button>
             </div>
 
@@ -974,12 +1010,22 @@ const remainVariableBudget =
                               category
                             ] || ""
                           }
-                          onChange={(e) =>
-                            saveBudget(
-                              category,
-                              e.target.value
-                            )
-                          }
+                          onChange={(e) => {
+                            const value =
+                              e.target.value;
+
+                            setType(value);
+
+                            if (
+                              value === "income"
+                            ) {
+                              setCategory("급여");
+                            } else {
+                              setCategory(
+                                "식비(통상)"
+                              );
+                            }
+                          }}
                           className="flex-1 border rounded-xl px-3 py-2"
                         />
                       </div>
