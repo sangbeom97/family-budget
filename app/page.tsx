@@ -337,6 +337,14 @@ async () => {
 
   useEffect(() => {
   fetchCategories();
+
+  const timeout =
+    setTimeout(() => {
+      fetchCategories();
+    }, 1000);
+
+  return () =>
+    clearTimeout(timeout);
 }, []);
 
   // 추가
@@ -2046,10 +2054,6 @@ const spent =
         추가
       </button>
     </div>
-
-    <div className="text-black text-sm">
-  {JSON.stringify(categories)}
-</div>
 
     <div className="space-y-6">
 
