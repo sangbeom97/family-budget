@@ -393,9 +393,6 @@ async () => {
 }
 
   alert("업로드 완료!");
-
-  fetchItems();
-  fetchYearlyItems();
 };
 
   // 예산 불러오기
