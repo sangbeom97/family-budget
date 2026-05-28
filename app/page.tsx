@@ -320,6 +320,7 @@ async () => {
     sheet,
     {
       header: 1,
+      defval: "",
     }
   );
 
