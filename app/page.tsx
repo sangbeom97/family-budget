@@ -390,8 +390,6 @@ async () => {
   )
     .toISOString()
     .split("T")[0],
-    .toISOString()
-    .split("T")[0],
     };
   });
 
