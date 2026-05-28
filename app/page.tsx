@@ -105,6 +105,12 @@ export default function Home() {
       string
     >>({});
 
+  const [categoryName, setCategoryName] =
+  useState("");
+
+const [categoryType, setCategoryType] =
+  useState("variable");
+
   const currentCategories =
   categories
     .filter(
@@ -479,6 +485,26 @@ setCategory(
           ]);
       }
     };
+
+  const addCategory =
+  async () => {
+
+    if (!categoryName)
+      return;
+
+    await supabase
+      .from("categories")
+      .insert([
+        {
+          name: categoryName,
+          type: categoryType,
+        },
+      ]);
+
+    setCategoryName("");
+
+    fetchCategories();
+  };
 
   const isRealExpense = (
   item: Item
@@ -931,7 +957,23 @@ const spent =
         </h1>
 
         {/* 메인탭 */}
+        
         <div className="flex gap-2 mb-6">
+          <button
+  onClick={() =>
+    setMainTab(
+      "category"
+    )
+  }
+  className={`px-4 py-2 rounded-xl border border-gray-300 shadow-sm font-medium ${
+    mainTab ===
+    "category"
+      ? "bg-black text-white"
+      : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
+  }`}
+>
+  카테고리관리
+</button>
           <button
             onClick={() =>
               setMainTab(
