@@ -184,6 +184,19 @@ const savingCategories =
       (item) => item.name
     );
 
+  const incomeCategories =
+  categories
+    .filter(
+      (item) =>
+        item.type
+          ?.trim()
+          .toLowerCase() ===
+        "income"
+    )
+    .map(
+      (item) => item.name
+    );
+
 const graphCategories =
   [
     ...new Set(
@@ -278,6 +291,10 @@ async () => {
   setCategories(
     data || []
   );
+  console.log(
+  "updated categories",
+  data
+);
 };
 
   // 예산 불러오기
@@ -2039,22 +2056,14 @@ const spent =
     </h3>
 
     <div className="flex flex-wrap gap-2">
-      {categories
-        .filter(
-          (item) =>
-            item.type
-  ?.trim()
-  .toLowerCase() ===
-"fixed"
-        )
-        .map((item) => (
-          <div
-            key={item.id}
-            className="bg-blue-100 px-3 py-1 rounded-full text-sm font-semibold"
-          >
-            {item.name}
-          </div>
-        ))}
+      {fixedCategories.map((item) => (
+        <div
+          key={item}
+          className="bg-blue-100 px-3 py-1 rounded-full text-sm font-semibold"
+        >
+          {item}
+        </div>
+      ))}
     </div>
   </div>
 
@@ -2065,22 +2074,14 @@ const spent =
     </h3>
 
     <div className="flex flex-wrap gap-2">
-      {categories
-        .filter(
-          (item) =>
-            item.type
-  ?.trim()
-  .toLowerCase() ===
-"variable"
-        )
-        .map((item) => (
-          <div
-            key={item.id}
-            className="bg-red-100 px-3 py-1 rounded-full text-sm font-semibold"
-          >
-            {item.name}
-          </div>
-        ))}
+      {variableCategories.map((item) => (
+        <div
+          key={item}
+          className="bg-red-100 px-3 py-1 rounded-full text-sm font-semibold"
+        >
+          {item}
+        </div>
+      ))}
     </div>
   </div>
 
@@ -2091,22 +2092,14 @@ const spent =
     </h3>
 
     <div className="flex flex-wrap gap-2">
-      {categories
-        .filter(
-          (item) =>
-            item.type
-  ?.trim()
-  .toLowerCase() ===
-            "allowance"
-        )
-        .map((item) => (
-          <div
-            key={item.id}
-            className="bg-orange-100 px-3 py-1 rounded-full text-sm font-semibold"
-          >
-            {item.name}
-          </div>
-        ))}
+      {allowanceCategories.map((item) => (
+        <div
+          key={item}
+          className="bg-orange-100 px-3 py-1 rounded-full text-sm font-semibold"
+        >
+          {item}
+        </div>
+      ))}
     </div>
   </div>
 
@@ -2117,22 +2110,14 @@ const spent =
     </h3>
 
     <div className="flex flex-wrap gap-2">
-      {categories
-        .filter(
-          (item) =>
-            item.type
-  ?.trim()
-  .toLowerCase() ===
-            "saving"
-        )
-        .map((item) => (
-          <div
-            key={item.id}
-            className="bg-green-100 px-3 py-1 rounded-full text-sm font-semibold"
-          >
-            {item.name}
-          </div>
-        ))}
+      {savingCategories.map((item) => (
+        <div
+          key={item}
+          className="bg-green-100 px-3 py-1 rounded-full text-sm font-semibold"
+        >
+          {item}
+        </div>
+      ))}
     </div>
   </div>
 
@@ -2143,22 +2128,14 @@ const spent =
     </h3>
 
     <div className="flex flex-wrap gap-2">
-      {categories
-        .filter(
-          (item) =>
-            item.type
-  ?.trim()
-  .toLowerCase() ===
-            "income"
-        )
-        .map((item) => (
-          <div
-            key={item.id}
-            className="bg-purple-100 px-3 py-1 rounded-full text-sm font-semibold"
-          >
-            {item.name}
-          </div>
-        ))}
+      {incomeCategories.map((item) => (
+        <div
+          key={item}
+          className="bg-purple-100 px-3 py-1 rounded-full text-sm font-semibold"
+        >
+          {item}
+        </div>
+      ))}
     </div>
   </div>
 
