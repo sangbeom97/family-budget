@@ -312,7 +312,7 @@ async () => {
 
   const sheet =
     workbook.Sheets[
-      workbook.SheetNames[1]
+      workbook.SheetNames[0]
     ];
 
   const json: any[] =
@@ -334,7 +334,7 @@ async () => {
 
   const amount =
     Number(
-      String(row[4])
+      String(row[6])
         .replaceAll(",", "")
         .replaceAll("₩", "")
     );
@@ -348,14 +348,14 @@ async () => {
 
     const amount =
       Number(
-        String(row[4])
+        String(row[6])
           .replaceAll(",", "")
           .replaceAll("₩", "")
       );
 
     return {
 
-      name: row[1] || "",
+      name: row[5] || "",
 
       amount:
         Math.abs(amount),
@@ -366,7 +366,7 @@ async () => {
           : "income",
 
       category:
-        row[3] || "미분류",
+        row[4] || "미분류",
 
       spend_type:
         row[2] === "저축/투자"
