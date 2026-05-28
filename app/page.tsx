@@ -712,6 +712,16 @@ const yearlySaving =
   const categoryData =
   getCategoryData(items);
 
+  console.log(
+  "graphCategories",
+  graphCategories
+);
+
+console.log(
+  "categoryData",
+  categoryData
+);
+
 const monthlyData = Array.from(
   { length: 12 },
   (_, i) => {
