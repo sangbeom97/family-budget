@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import * as XLSX from "xlsx";
 
 import {
   BarChart,
@@ -295,6 +296,85 @@ async () => {
   "updated categories",
   data
 );
+};
+
+  const handleFileUpload = async (e: any) => {
+
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  const data =
+    await file.arrayBuffer();
+
+  const workbook =
+    XLSX.read(data);
+
+  const sheet =
+    workbook.Sheets[
+      workbook.SheetNames[0]
+    ];
+
+  const json: any[] =
+    XLSX.utils.sheet_to_json(sheet);
+
+  console.log(json);
+
+  const converted = json.map(
+    (item) => {
+
+      return {
+
+        name:
+          item["내용"] || "",
+
+        amount: Math.abs(
+          Number(
+            item["금액"] || 0
+          )
+        ),
+
+        type:
+          Number(item["금액"]) > 0
+            ? "income"
+            : "expense",
+
+        category:
+          item["소분류"] ||
+          "미분류",
+
+        spend_type:
+          item["대분류"] === "저축"
+            ? "saving"
+            : "variable",
+
+        date:
+          item["날짜"],
+
+      };
+    }
+  );
+
+  console.log(converted);
+
+  const { error } =
+    await supabase
+      .from("transactions")
+      .insert(converted);
+
+  if (error) {
+
+    console.log(error);
+
+    alert("업로드 실패");
+
+    return;
+  }
+
+  alert("업로드 완료!");
+
+  fetchItems();
+  fetchYearlyItems();
 };
 
   // 예산 불러오기
@@ -1511,8 +1591,17 @@ const spent =
               </div>
             </div>
             )}
-            {view === "list" && (
-              <div className="sticky top-2 z-50 bg-gray-100/90 backdrop-blur pb-3">
+           {view === "list" && (
+  <div className="sticky top-2 z-50 bg-gray-100/90 backdrop-blur pb-3">
+
+    <input
+      type="file"
+    accept=".xlsx,.xls,.csv"
+    onChange={handleFileUpload}
+    className="mb-4"
+  />
+
+
               <div className="bg-white/95 p-5 rounded-2xl shadow-md mb-4">
               <div className="grid md:grid-cols-6 gap-3">
                 <input
