@@ -331,10 +331,10 @@ async () => {
 );
 
   const converted = json
-  .slice(2)
+  .slice(3)
   .filter((row: any) => {
 
-  if (!row[0]) return false;
+  if (!row[15]) return false;
   if (!row[6]) return false;
 
   const amount =
@@ -383,7 +383,13 @@ async () => {
           : "variable",
 
       date:
-  new Date(row[0])
+  new Date(
+    (
+      row[15] - 25569
+    ) * 86400 * 1000
+  )
+    .toISOString()
+    .split("T")[0],
     .toISOString()
     .split("T")[0],
     };
