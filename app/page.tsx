@@ -310,6 +310,10 @@ async () => {
   const workbook =
     XLSX.read(data);
 
+    console.log(
+  workbook.SheetNames
+);
+
   const sheet =
     workbook.Sheets[
       workbook.SheetNames[0]
@@ -323,10 +327,6 @@ async () => {
       defval: "",
     }
   );
-
-    console.log(
-  workbook.SheetNames
-);
 
   console.log(json);
 
