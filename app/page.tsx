@@ -366,7 +366,13 @@ async () => {
           : "variable",
 
       date:
-        row[0],
+  new Date(
+    (
+      row[0] - 25569
+    ) * 86400 * 1000
+  )
+    .toISOString()
+    .split("T")[0],
     };
   });
 
