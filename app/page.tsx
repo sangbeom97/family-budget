@@ -330,6 +330,11 @@ async () => {
   json[2]
 );
 
+    console.log(
+  "실제 데이터 row",
+  json[3]
+);
+
   const converted = json
   .slice(3)
   .filter((row: any) => {
