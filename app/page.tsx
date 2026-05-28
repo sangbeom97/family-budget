@@ -2066,11 +2066,32 @@ const spent =
     <div className="flex flex-wrap gap-2">
       {fixedCategories.map((item) => (
         <div
-          key={item}
-          className="bg-blue-100 px-3 py-1 rounded-full text-sm font-semibold"
-        >
-          {item}
-        </div>
+  key={item}
+  className="bg-blue-100 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-2"
+>
+  <span>{item}</span>
+
+  <button
+    onClick={async () => {
+
+  const ok = confirm(
+    `${item} 카테고리를 삭제할까요?`
+  );
+
+  if (!ok) return;
+
+  await supabase
+    .from("categories")
+    .delete()
+    .eq("name", item);
+
+  fetchCategories();
+}}
+    className="text-red-500 text-xs"
+  >
+    ✕
+  </button>
+</div>
       ))}
     </div>
   </div>
@@ -2083,13 +2104,34 @@ const spent =
 
     <div className="flex flex-wrap gap-2">
       {variableCategories.map((item) => (
-        <div
-          key={item}
-          className="bg-red-100 px-3 py-1 rounded-full text-sm font-semibold"
-        >
-          {item}
-        </div>
-      ))}
+  <div
+    key={item}
+    className="bg-red-100 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-2"
+  >
+    <span>{item}</span>
+
+    <button
+      onClick={async () => {
+
+        const ok = confirm(
+          `${item} 카테고리를 삭제할까요?`
+        );
+
+        if (!ok) return;
+
+        await supabase
+          .from("categories")
+          .delete()
+          .eq("name", item);
+
+        fetchCategories();
+      }}
+      className="text-red-500 text-xs"
+    >
+      ✕
+    </button>
+  </div>
+))}
     </div>
   </div>
 
@@ -2101,13 +2143,34 @@ const spent =
 
     <div className="flex flex-wrap gap-2">
       {allowanceCategories.map((item) => (
-        <div
-          key={item}
-          className="bg-orange-100 px-3 py-1 rounded-full text-sm font-semibold"
-        >
-          {item}
-        </div>
-      ))}
+  <div
+    key={item}
+    className="bg-orange-100 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-2"
+  >
+    <span>{item}</span>
+
+    <button
+      onClick={async () => {
+
+        const ok = confirm(
+          `${item} 카테고리를 삭제할까요?`
+        );
+
+        if (!ok) return;
+
+        await supabase
+          .from("categories")
+          .delete()
+          .eq("name", item);
+
+        fetchCategories();
+      }}
+      className="text-red-500 text-xs"
+    >
+      ✕
+    </button>
+  </div>
+))}
     </div>
   </div>
 
@@ -2119,13 +2182,34 @@ const spent =
 
     <div className="flex flex-wrap gap-2">
       {savingCategories.map((item) => (
-        <div
-          key={item}
-          className="bg-green-100 px-3 py-1 rounded-full text-sm font-semibold"
-        >
-          {item}
-        </div>
-      ))}
+  <div
+    key={item}
+    className="bg-green-100 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-2"
+  >
+    <span>{item}</span>
+
+    <button
+      onClick={async () => {
+
+        const ok = confirm(
+          `${item} 카테고리를 삭제할까요?`
+        );
+
+        if (!ok) return;
+
+        await supabase
+          .from("categories")
+          .delete()
+          .eq("name", item);
+
+        fetchCategories();
+      }}
+      className="text-red-500 text-xs"
+    >
+      ✕
+    </button>
+  </div>
+))}
     </div>
   </div>
 
@@ -2137,13 +2221,34 @@ const spent =
 
     <div className="flex flex-wrap gap-2">
       {incomeCategories.map((item) => (
-        <div
-          key={item}
-          className="bg-purple-100 px-3 py-1 rounded-full text-sm font-semibold"
-        >
-          {item}
-        </div>
-      ))}
+  <div
+    key={item}
+    className="bg-purple-100 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-2"
+  >
+    <span>{item}</span>
+
+    <button
+      onClick={async () => {
+
+        const ok = confirm(
+          `${item} 카테고리를 삭제할까요?`
+        );
+
+        if (!ok) return;
+
+        await supabase
+          .from("categories")
+          .delete()
+          .eq("name", item);
+
+        fetchCategories();
+      }}
+      className="text-red-500 text-xs"
+    >
+      ✕
+    </button>
+  </div>
+))}
     </div>
   </div>
 
