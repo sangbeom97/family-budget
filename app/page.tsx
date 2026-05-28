@@ -134,15 +134,7 @@ const [categoryType, setCategoryType] =
       (item) => item.name
     );
 
-  console.log(
-  "fixedCategories",
-  fixedCategories
-);
 
-console.log(
-  "categories raw",
-  categories
-);
 
 const variableCategories =
   categories
@@ -155,10 +147,7 @@ const variableCategories =
       (item) => item.name
     );
 
-console.log(
-  "variableCategories",
-  variableCategories
-);
+
 
 const allowanceCategories =
   categories
@@ -263,15 +252,7 @@ const graphCategories =
       .from("categories")
       .select("*");
 
-    console.log(
-      "categories:",
-      data
-    );
 
-    console.log(
-      "categories error:",
-      error
-    );
 
     setCategories(
       data || []
@@ -750,15 +731,7 @@ const yearlySaving =
   const categoryData =
   getCategoryData(items);
 
-  console.log(
-  "graphCategories",
-  graphCategories
-);
 
-console.log(
-  "categoryData",
-  categoryData
-);
 
 const monthlyData = Array.from(
   { length: 12 },
@@ -2027,22 +2000,129 @@ const spent =
       </button>
     </div>
 
-    <div className="space-y-2">
-      {categories.map((item) => (
-        <div
-          key={item.id}
-          className="flex justify-between bg-gray-100 rounded-xl px-4 py-2"
-        >
-          <span>
-            {item.name}
-          </span>
+    <div className="space-y-6">
 
-          <span className="text-gray-500">
-            {item.type}
-          </span>
-        </div>
-      ))}
+  {/* 고정지출 */}
+  <div>
+    <h3 className="font-extrabold mb-2 text-blue-600">
+      고정지출
+    </h3>
+
+    <div className="flex flex-wrap gap-2">
+      {categories
+        .filter(
+          (item) =>
+            item.type ===
+            "fixed"
+        )
+        .map((item) => (
+          <div
+            key={item.id}
+            className="bg-blue-100 px-3 py-1 rounded-full text-sm font-semibold"
+          >
+            {item.name}
+          </div>
+        ))}
     </div>
+  </div>
+
+  {/* 변동지출 */}
+  <div>
+    <h3 className="font-extrabold mb-2 text-red-600">
+      변동지출
+    </h3>
+
+    <div className="flex flex-wrap gap-2">
+      {categories
+        .filter(
+          (item) =>
+            item.type ===
+            "variable"
+        )
+        .map((item) => (
+          <div
+            key={item.id}
+            className="bg-red-100 px-3 py-1 rounded-full text-sm font-semibold"
+          >
+            {item.name}
+          </div>
+        ))}
+    </div>
+  </div>
+
+  {/* 용돈 */}
+  <div>
+    <h3 className="font-extrabold mb-2 text-orange-600">
+      용돈
+    </h3>
+
+    <div className="flex flex-wrap gap-2">
+      {categories
+        .filter(
+          (item) =>
+            item.type ===
+            "allowance"
+        )
+        .map((item) => (
+          <div
+            key={item.id}
+            className="bg-orange-100 px-3 py-1 rounded-full text-sm font-semibold"
+          >
+            {item.name}
+          </div>
+        ))}
+    </div>
+  </div>
+
+  {/* 저축 */}
+  <div>
+    <h3 className="font-extrabold mb-2 text-green-600">
+      저축
+    </h3>
+
+    <div className="flex flex-wrap gap-2">
+      {categories
+        .filter(
+          (item) =>
+            item.type ===
+            "saving"
+        )
+        .map((item) => (
+          <div
+            key={item.id}
+            className="bg-green-100 px-3 py-1 rounded-full text-sm font-semibold"
+          >
+            {item.name}
+          </div>
+        ))}
+    </div>
+  </div>
+
+  {/* 수입 */}
+  <div>
+    <h3 className="font-extrabold mb-2 text-purple-600">
+      수입
+    </h3>
+
+    <div className="flex flex-wrap gap-2">
+      {categories
+        .filter(
+          (item) =>
+            item.type ===
+            "income"
+        )
+        .map((item) => (
+          <div
+            key={item.id}
+            className="bg-purple-100 px-3 py-1 rounded-full text-sm font-semibold"
+          >
+            {item.name}
+          </div>
+        ))}
+    </div>
+  </div>
+
+</div>
 
   </div>
 )}
