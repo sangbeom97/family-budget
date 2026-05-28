@@ -243,21 +243,29 @@ const graphCategories =
 
 
   const fetchCategories =
-  async () => {
+async () => {
 
-    const {
-      data,
-      error,
-    } = await supabase
-      .from("categories")
-      .select("*");
+  const {
+    data,
+    error,
+  } = await supabase
+    .from("categories")
+    .select("*");
 
+  console.log(
+    "categories data",
+    data
+  );
 
+  console.log(
+    "categories error",
+    error
+  );
 
-    setCategories(
-      data || []
-    );
-  };
+  setCategories(
+    data || []
+  );
+};
 
   // 예산 불러오기
   const fetchBudgets =
