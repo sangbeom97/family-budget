@@ -324,6 +324,10 @@ async () => {
     }
   );
 
+    console.log(
+  workbook.SheetNames
+);
+
   console.log(json);
 
     console.log(
