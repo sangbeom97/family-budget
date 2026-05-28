@@ -325,6 +325,11 @@ async () => {
 
   console.log(json);
 
+    console.log(
+  "첫번째 row",
+  json[2]
+);
+
   const converted = json
   .slice(2)
   .filter((row: any) => {
