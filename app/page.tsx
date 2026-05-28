@@ -316,7 +316,7 @@ async () => {
 
   const sheet =
     workbook.Sheets[
-      workbook.SheetNames[0]
+      workbook.SheetNames[1]
     ];
 
   const json: any[] =
@@ -337,7 +337,7 @@ async () => {
 
     console.log(
   "실제 데이터 row",
-  json[3]
+  json.slice(0, 10)
 );
 
     console.log(
