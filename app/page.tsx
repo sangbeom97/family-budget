@@ -27,6 +27,12 @@ type Item = {
   spend_type: string;
 };
 
+type Category = {
+  id: number;
+  name: string;
+  type: string;
+};
+
 export default function Home() {
   const [mainTab, setMainTab] =
     useState("account");
@@ -36,6 +42,9 @@ export default function Home() {
 
   const [yearlyItems, setYearlyItems] =
   useState<Item[]>([]);
+
+  const [categories, setCategories] =
+  useState<Category[]>([]);
 
   const [view, setView] =
     useState("list");
@@ -55,7 +64,7 @@ export default function Home() {
     useState("expense");
 
   const [category, setCategory] =
-    useState("식비(통상)");
+    useState("");
 
   const [spendType, setSpendType] =
     useState("variable");
@@ -96,64 +105,61 @@ export default function Home() {
       string
     >>({});
 
-  // 카테고리
-  const incomeCategories = [
-    "급여",
-    "상여",
-    "수당",
-    "기타수입",
-  ];
-
-  const fixedCategories = [
-    "주거비",
-    "통신비",
-    "보험료",
-    "교통/차량(고정)",
-    "헌금",
-    "구독",
-  ];
-
-  const variableCategories = [
-    "식비(통상)",
-    "식비(통상외)",
-    "생활",
-    "꾸밈비",
-    "교통/차량(변동)",
-    "의료",
-    "건강",
-    "문화/여가",
-    "여행/숙박",
-    "교육/학습",
-    "경조/선물",
-    "교회",
-    "기타지출",
-  ];
-
-  const allowanceCategories = [
-    "상범용돈",
-    "희원용돈",
-  ];
-
-  const savingCategories = [
-    "예적금",
-    "현금성통장",
-    "투자",
-    "연금저축",
-    "주택청약",
-  ];
-
   const currentCategories =
-    type === "income"
-      ? incomeCategories
-      : spendType === "fixed"
-      ? fixedCategories
-      : spendType ===
+  categories
+    .filter(
+      (item) =>
+        item.type ===
+        (type === "income"
+          ? "income"
+          : spendType)
+    )
+    .map(
+      (item) => item.name
+    );
+
+    const fixedCategories =
+  categories
+    .filter(
+      (item) =>
+        item.type === "fixed"
+    )
+    .map(
+      (item) => item.name
+    );
+
+const variableCategories =
+  categories
+    .filter(
+      (item) =>
+        item.type ===
+        "variable"
+    )
+    .map(
+      (item) => item.name
+    );
+
+const allowanceCategories =
+  categories
+    .filter(
+      (item) =>
+        item.type ===
         "allowance"
-      ? allowanceCategories
-      : spendType ===
+    )
+    .map(
+      (item) => item.name
+    );
+
+const savingCategories =
+  categories
+    .filter(
+      (item) =>
+        item.type ===
         "saving"
-      ? savingCategories
-      : variableCategories;
+    )
+    .map(
+      (item) => item.name
+    );
 
   const graphCategories =
   filter === "fixed"
@@ -165,11 +171,13 @@ export default function Home() {
     : filter === "saving"
     ? savingCategories
     : [
-        ...fixedCategories,
-        ...variableCategories,
-        ...allowanceCategories,
-        ...savingCategories,
-      ];
+    ...new Set([
+      ...fixedCategories,
+      ...variableCategories,
+      ...allowanceCategories,
+      ...savingCategories,
+    ]),
+  ];
 
   // 거래내역 불러오기
   const fetchItems = async () => {
@@ -205,7 +213,7 @@ export default function Home() {
   };
 
   // 연간 데이터 불러오기
-const fetchYearlyItems =
+    const fetchYearlyItems =
   async () => {
 
     const { data } =
@@ -224,6 +232,17 @@ const fetchYearlyItems =
     setYearlyItems(
       data || []
     );
+  };
+
+
+  const fetchCategories =
+  async () => {
+    const { data } =
+      await supabase
+        .from("categories")
+        .select("*");
+
+    setCategories(data || []);
   };
 
   // 예산 불러오기
@@ -264,6 +283,10 @@ const fetchYearlyItems =
   fetchBudgets();
 }, [selectedMonth, selectedYear]);
 
+  useEffect(() => {
+  fetchCategories();
+}, []);
+
   // 추가
   const addItem = async () => {
     if (!name || !amount)
@@ -290,8 +313,22 @@ const fetchYearlyItems =
 
       setName("");
       setAmount("");
+      setType("expense");
+
+setSpendType("variable");
+
+setDate(
+  new Date()
+    .toISOString()
+    .split("T")[0]
+);
+
+setCategory(
+  variableCategories[0] || ""
+);
 
       fetchItems();
+      fetchYearlyItems();
 
       return;
     }
@@ -314,8 +351,22 @@ const fetchYearlyItems =
       ]);
     setName("");
     setAmount("");
+    setType("expense");
+
+setSpendType("variable");
+
+setDate(
+  new Date()
+    .toISOString()
+    .split("T")[0]
+);
+
+setCategory(
+  variableCategories[0] || ""
+);
 
     fetchItems();
+    fetchYearlyItems();
    };
 
   // 삭제
@@ -328,6 +379,7 @@ const fetchYearlyItems =
       .eq("id", id);
 
     fetchItems();
+    fetchYearlyItems();
   };
 
   const startEdit = (
@@ -346,8 +398,9 @@ const fetchYearlyItems =
     setDate(item.date);
 
     setSpendType(
-      item.spend_type
-    );
+  item.spend_type ||
+    "variable"
+);
 
     setEditingId(item.id);
   };
@@ -400,86 +453,36 @@ const fetchYearlyItems =
       }
     };
 
-  const filteredGraphItems =
-  filter === "all"
-    ? items
-    : items.filter(
-        (item) =>
-          item.spend_type ===
-          filter
-      );
+  const isRealExpense = (
+  item: Item
+) =>
+  item.type ===
+    "expense" &&
+  item.spend_type !==
+    "saving";
 
-const filteredYearlyGraphItems =
-  filter === "all"
-    ? yearlyItems
-    : yearlyItems.filter(
-        (item) =>
-          item.spend_type ===
-          filter
-      );
-
-  const filteredItems =
-  filteredGraphItems.filter((item) => {
-
-    const filterMatch =
-      filter === "all"
-        ? true
-        : item.spend_type ===
-          filter;
-
-    const searchMatch =
-  item.name
-    .toLowerCase()
-    .includes(
-      search
-        .trim()
-        .toLowerCase()
-    );
-
-    const categoryMatch =
-      categoryFilter ===
-      "all"
-        ? true
-        : item.category ===
-          categoryFilter;
-
-    return (
-      filterMatch &&
-      searchMatch &&
-      categoryMatch
-    );
-  });
-
-  const filteredTotal =
-  filteredItems.reduce(
-    (sum, item) => {
-      if (
-        item.type ===
-        "income"
-      ) {
-        return (
-          sum + item.amount
-        );
-      }
-
-      return (
-        sum - item.amount
-      );
-    },
-    0
-  );
-    
   const budgetCompareData =
-    graphCategories.map(
+    graphCategories
+  .filter(
+    (category) =>
+      !savingCategories.includes(
+        category
+      )
+  )
+  .map(
       (category) => {
-        const spent =
-          filteredGraphItems
+        const sourceItems =
+  view === "year"
+    ? yearlyItems
+    : items;
+
+const spent =
+  sourceItems
             .filter(
              (item) =>
                 item.category ===
                   category &&
-                item.type ===
-                 "expense"
+                isRealExpense(item)
             )
            .reduce(
              (
@@ -509,7 +512,59 @@ const filteredYearlyGraphItems =
       };
     }
   );
+
+  const baseItems =
+  view === "year"
+    ? yearlyItems
+    : items;
+
+const filteredItems =
+  baseItems.filter((item) => {
+
+    const filterMatch =
+  filter === "all"
+    ? true
+    : item.type ===
+        "expense" &&
+      item.spend_type ===
+        filter;
+
+    const searchMatch =
+  item.name
+    .toLowerCase()
+    .includes(
+      search
+        .trim()
+        .toLowerCase()
+    );
+
+    const categoryMatch =
+      categoryFilter ===
+      "all"
+        ? true
+        : item.category ===
+          categoryFilter;
+
+    return (
+      filterMatch &&
+      searchMatch &&
+      categoryMatch
+    );
+  });
+
   
+  
+  const filteredTotal =
+  filteredItems
+    .filter(
+      (item) =>
+        isRealExpense(item)
+    )
+    .reduce(
+      (sum, item) =>
+        sum + item.amount,
+      0
+    );
 
   const incomeTotal =
     items
@@ -525,14 +580,11 @@ const filteredYearlyGraphItems =
       );
 
   const expenseTotal =
-    items
-      .filter(
-        (item) =>
-          item.type ===
-            "expense" &&
-          item.spend_type !==
-            "saving"
-      )
+  items
+    .filter(
+      (item) =>
+        isRealExpense(item)
+    )
       .reduce(
         (sum, item) =>
           sum + item.amount,
@@ -557,30 +609,32 @@ const total =
   expenseTotal -
   savingTotal;
 
+  
 
+  const getCategoryData = (
+  sourceItems: Item[]
+) => {
 
-const yearlyCategoryData =
-  graphCategories.map(
-    (category) => {
+  return graphCategories
+    .filter(
+      (category) =>
+        !savingCategories.includes(
+          category
+        )
+    )
+    .map((category) => {
 
       const total =
-        filteredYearlyGraphItems
+        sourceItems
           .filter(
             (item) =>
               item.category ===
                 category &&
-              item.type ===
-                "expense" &&
-              item.spend_type !==
-                "saving"
+              isRealExpense(item)
           )
           .reduce(
-            (
-              sum,
-              item
-            ) =>
-              sum +
-              item.amount,
+            (sum, item) =>
+              sum + item.amount,
             0
           );
 
@@ -588,11 +642,14 @@ const yearlyCategoryData =
         name: category,
         value: total,
       };
-    }
-  );
+    });
+};
+
+const yearlyCategoryData =
+  getCategoryData(yearlyItems);
 
 const yearlyIncome =
-  filteredYearlyGraphItems
+  yearlyItems
     .filter(
       (item) =>
         item.type ===
@@ -605,23 +662,19 @@ const yearlyIncome =
     );
 
   const yearlyExpense =
-    
-  filteredYearlyGraphItems
+  yearlyItems
     .filter(
-      (item) =>
-        item.type ===
-          "expense" &&
-        item.spend_type !==
-          "saving"
-    )
+  (item) =>
+    isRealExpense(item)
+)
     .reduce(
       (sum, item) =>
         sum + item.amount,
       0
     );
 
-  const yearlySaving =
-  filteredYearlyGraphItems
+const yearlySaving =
+  yearlyItems
     .filter(
       (item) =>
         item.spend_type ===
@@ -633,46 +686,16 @@ const yearlyIncome =
       0
     );
 
-const yearlyTotal =
+  const yearlyTotal =
   yearlyIncome -
   yearlyExpense -
   yearlySaving;
+
   
+
   // 차트 데이터
   const categoryData =
-    graphCategories.map(
-      (category) => {
-        const total =
-          (
-            view === "year"
-  ? filteredYearlyGraphItems
-  : filteredGraphItems
-          )
-            .filter(
-              (item) =>
-                item.category ===
-                  category &&
-                item.type ===
-                  "expense" &&
-                item.spend_type !==
-                  "saving"
-            )
-            .reduce(
-              (
-                sum,
-                item
-              ) =>
-                sum +
-                item.amount,
-              0
-            );
-
-        return {
-          name: category,
-          value: total,
-        };
-      }
-    );
+  getCategoryData(items);
 
 const monthlyData = Array.from(
   { length: 12 },
@@ -683,7 +706,7 @@ const monthlyData = Array.from(
     ).padStart(2, "0")}`;
 
     const monthItems =
-      filteredYearlyGraphItems.filter(
+      yearlyItems.filter(
         (item) =>
           item.date.startsWith(
             month
@@ -711,10 +734,7 @@ const monthlyData = Array.from(
       monthItems
         .filter(
           (item) =>
-            item.type ===
-              "expense" &&
-            item.spend_type !==
-              "saving"
+            isRealExpense(item)
         )
         .reduce(
           (
@@ -766,13 +786,12 @@ const topCategories =
   graphCategories
     .map((category) => {
       const total =
-        filteredYearlyGraphItems
+        yearlyItems
           .filter(
             (item) =>
               item.category ===
                 category &&
-              item.type ===
-                "expense"
+              isRealExpense(item)
           )
           .reduce(
             (
@@ -793,11 +812,21 @@ const topCategories =
       (a, b) =>
         b.total - a.total
     )
-    .slice(0, 5);
+    .filter(
+  (item) => item.total > 0
+)
+  .slice(0, 5);
   
     // 변동예산 총합
 const variableBudgetTotal =
-  variableCategories.reduce(
+  graphCategories
+  .filter(
+    (category) =>
+      !savingCategories.includes(
+        category
+      )
+  )
+  .reduce(
     (sum, category) =>
       sum +
       Number(
@@ -807,20 +836,30 @@ const variableBudgetTotal =
       ),
     0
   );
-  
 
 // 남은 변동예산
 const remainVariableBudget =
-  variableCategories.reduce(
+  graphCategories
+  .filter(
+    (category) =>
+      !savingCategories.includes(
+        category
+      )
+  )
+  .reduce(
     (sum, category) => {
-      const spent =
-        filteredGraphItems
+      const sourceItems =
+  view === "year"
+    ? yearlyItems
+    : items;
+
+const spent =
+  sourceItems
           .filter(
             (item) =>
               item.category ===
                 category &&
-              item.type ===
-                "expense"
+              isRealExpense(item)
           )
           .reduce(
             (
@@ -831,7 +870,6 @@ const remainVariableBudget =
               item.amount,
             0
           );
-      
 
       const budget =
         Number(
@@ -1077,19 +1115,17 @@ const remainVariableBudget =
     className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
   >
     {Array.from(
-  { length: 30 },
+  { length: 31 },
   (_, i) =>
     new Date().getFullYear() - 15 + i
-).map(
-      (year) => (
-        <option
-          key={year}
-          value={year}
-        >
-          {year}년
-        </option>
-      )
-    )}
+).map((year) => (
+  <option
+    key={year}
+    value={year}
+  >
+    {year}년
+  </option>
+))}
   </select>
 ) : (
   <input
@@ -1140,69 +1176,66 @@ const remainVariableBudget =
 </div>
 
 
-{view !== "year" && (
-  <div className="grid md:grid-cols-4 gap-3 mb-4">
-    {/* 검색 */}
-    <input
-      type="text"
-      placeholder="검색"
-      value={search}
-      onChange={(e) =>
-        setSearch(
-          e.target.value
-        )
-      }
-      className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
-    />
 
-    {/* 카테고리 필터 */}
-    <select
-      value={categoryFilter}
-      onChange={(e) =>
-        setCategoryFilter(
-          e.target.value
-        )
-      }
-      className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 mb-4 w-full placeholder:text-gray-500"
-    >
-      <option value="all">
-        전체 카테고리
-      </option>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
 
-      {[
+  {/* 검색 */}
+  <input
+    type="text"
+    placeholder="검색"
+    value={search}
+    onChange={(e) =>
+      setSearch(
+        e.target.value
+      )
+    }
+    className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 w-full placeholder:text-gray-500"
+  />
+
+  {/* 카테고리 필터 */}
+  <select
+    value={categoryFilter}
+    onChange={(e) =>
+      setCategoryFilter(
+        e.target.value
+      )
+    }
+    className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 w-full"
+  >
+    <option value="all">
+      전체 카테고리
+    </option>
+
+    {[
+      ...new Set([
         ...fixedCategories,
         ...variableCategories,
         ...allowanceCategories,
         ...savingCategories,
-      ].map((category) => (
-        <option
-          key={category}
-          value={category}
-        >
-          {category}
-        </option>
-      ))}
-    </select>
-  {/* 현재 합계 */}
-    <div className="bg-white/95 border-2 border-gray-300 rounded-xl px-4 py-2 flex items-center justify-between md:col-span-2">
-      <span className="text-sm font-semibold text-gray-700">
-        현재 합계
-      </span>
-
-      <span
-        className={`font-extrabold ${
-          filteredTotal >= 0
-            ? "text-blue-600"
-            : "text-red-600"
-        }`}
+      ]),
+    ].map((category) => (
+      <option
+        key={category}
+        value={category}
       >
-        ₩
-        {filteredTotal.toLocaleString()}
-      </span>
-    </div>
+        {category}
+      </option>
+    ))}
+  </select>
 
+  {/* 현재 합계 */}
+  <div className="bg-white/95 border-2 border-gray-300 rounded-xl px-4 py-2 flex items-center justify-between">
+    <span className="text-sm font-semibold text-gray-700">
+      현재 합계
+    </span>
+
+    <span className="font-extrabold text-red-600">
+      ₩
+      {filteredTotal.toLocaleString()}
+    </span>
   </div>
-)}
+
+</div>
 
 
 
@@ -1228,7 +1261,7 @@ const remainVariableBudget =
                 </p>
                 <h2 className="text-2xl font-extrabold text-red-700">
                   ₩
-                  {(
+{(
   view === "year"
     ? yearlyExpense
     : expenseTotal
@@ -1241,13 +1274,13 @@ const remainVariableBudget =
                   총 저축
                 </p>
                 <h2 className="text-2xl font-extrabold text-green-600">
-  ₩
-  {(
-    view === "year"
-      ? yearlySaving
-      : savingTotal
-  ).toLocaleString()}
-</h2>
+                  ₩
+{(
+  view === "year"
+    ? yearlySaving
+    : savingTotal
+).toLocaleString()}
+                </h2>
               </div>
 
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
@@ -1255,44 +1288,46 @@ const remainVariableBudget =
                   실시간 잔액
                 </p>
                 <h2 className="text-2xl font-extrabold text-gray-900">
-  ₩
-  {(
-    view === "year"
-      ? yearlyTotal
-      : total
-  ).toLocaleString()}
-</h2>
-              </div>
-              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                <p className="text-sm font-semibold text-gray-900">
-                  변동예산
-                </p>
-
-                <h2 className="text-2xl font-extrabold text-purple-600 mt-2">
                   ₩
-    {variableBudgetTotal.toLocaleString()}
+                  {(
+  view === "year"
+    ? yearlyTotal
+    : total
+).toLocaleString()}
                 </h2>
               </div>
+              {view !== "year" && (
+  <>
+    <div className="bg-white/95 p-5 rounded-2xl shadow-md">
+      <p className="text-sm font-semibold text-gray-900">
+        변동예산
+      </p>
 
-              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                <p className="text-sm font-semibold text-gray-900">
-                  남은 변동예산
-                </p>
+      <h2 className="text-2xl font-extrabold text-purple-600 mt-2">
+        ₩
+        {variableBudgetTotal.toLocaleString()}
+      </h2>
+    </div>
 
-                <h2 className="text-2xl font-extrabold text-orange-700 mt-2">
-                  ₩
-                  {remainVariableBudget.toLocaleString()}
-                </h2>
-              </div>
+    <div className="bg-white/95 p-5 rounded-2xl shadow-md">
+      <p className="text-sm font-semibold text-gray-900">
+        남은 변동예산
+      </p>
+
+      <h2 className="text-2xl font-extrabold text-orange-700 mt-2">
+        ₩
+        {remainVariableBudget.toLocaleString()}
+      </h2>
+    </div>
+  </>
+)}
             </div>
 
             {/* 그래프 */}
             <div className="bg-white/95 rounded-2xl p-5 shadow-md mb-4">
               <h3 className="font-extrabold mb-4">
-  {view === "year"
-    ? "연간 카테고리별 지출"
-    : "카테고리별 지출"}
-</h3>
+                카테고리별 지출
+              </h3>
 
               <div className="h-72">
                 <ResponsiveContainer
@@ -1438,11 +1473,38 @@ const remainVariableBudget =
                     if (
                       value === "income"
                     ) {
-                      setCategory("급여");
+                      setSpendType("");
+                      const nextCategories =
+  categories
+    .filter(
+      (item) =>
+        item.type ===
+        (value === "income"
+          ? "income"
+          : spendType)
+    )
+    .map(
+      (item) => item.name
+    );
+
+setCategory(
+  nextCategories[0] || ""
+);
                     } else {
-                      setCategory(
-                        "식비(통상)"
-                      );
+                      const nextCategories =
+  categories
+    .filter(
+      (item) =>
+        item.type ===
+        spendType
+    )
+    .map(
+      (item) => item.name
+    );
+
+setCategory(
+  nextCategories[0] || ""
+);
                     }
                   }}
                   className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
@@ -1481,11 +1543,27 @@ const remainVariableBudget =
                 {type === "expense" && (
                   <select
                     value={spendType}
-                    onChange={(e) =>
-                      setSpendType(
-                        e.target.value
-                      )
-                    }
+                    onChange={(e) => {
+
+  const value =
+    e.target.value;
+
+  setSpendType(value);
+
+  const nextCategories =
+    categories
+      .filter(
+        (item) =>
+          item.type === value
+      )
+      .map(
+        (item) => item.name
+      );
+
+  setCategory(
+    nextCategories[0] || ""
+  );
+}}
                     className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
                   >
                     <option value="fixed">
@@ -1578,7 +1656,9 @@ const remainVariableBudget =
           <YAxis />
 <Tooltip
   formatter={(value) => [
-    `${value}%`,
+    `₩${Number(
+      value
+    ).toLocaleString()}`,
     " ",
   ]}
 />
@@ -1665,13 +1745,6 @@ const remainVariableBudget =
   </div>
       </div>
 
-
-
-
-
-
-            
-            
             ) : view === "list" ? (
               <ListView
                 items={filteredItems}
@@ -1683,25 +1756,69 @@ const remainVariableBudget =
                 }
               />
             ) : view ===
-  "calendar" ? (
-  <CalendarView
-    items={filteredItems}
-    selectedMonth={
-      selectedMonth
-    }
-  />
-) : (
+              "calendar" ? (
+              <CalendarView
+                items={filteredItems}
+                selectedMonth={
+                  selectedMonth
+                }
+              />
+            ) : (
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
                 <h3 className="font-extrabold mb-4">
                   카테고리별 예산
                 </h3>
 
                 <div className="space-y-3">
-                  {graphCategories.map(
-                    (
-                      category
-                    ) => (
-                      <div
+                  {graphCategories
+  .filter(
+    (category) =>
+      !savingCategories.includes(
+        category
+      )
+  )
+  .map(
+  (
+    category
+  ) => {
+
+    const sourceItems =
+  view === "year"
+    ? yearlyItems
+    : items;
+
+const spent =
+  sourceItems
+        .filter(
+          (item) =>
+            item.category ===
+              category &&
+            isRealExpense(item)
+        )
+        .reduce(
+          (
+            sum,
+            item
+          ) =>
+            sum +
+            item.amount,
+          0
+        );
+
+    const budget =
+      Number(
+        budgets[
+          category
+        ] || 0
+      );
+
+    const percent =
+      budget > 0
+        ? (spent / budget) * 100
+        : 0;
+
+    return (
+      <div
   key={category}
   className="bg-gray-50 rounded-xl p-3"
 >
@@ -1713,25 +1830,7 @@ const remainVariableBudget =
 
     <span className="font-extrabold">
       ₩
-      {(
-        filteredGraphItems
-          .filter(
-            (item) =>
-              item.category ===
-                category &&
-              item.type ===
-                "expense"
-          )
-          .reduce(
-            (
-              sum,
-              item
-            ) =>
-              sum +
-              item.amount,
-            0
-          )
-      ).toLocaleString()}
+{spent.toLocaleString()}
       {" / "}
       ₩
       {Number(
@@ -1743,67 +1842,21 @@ const remainVariableBudget =
   </div>
 
   {/* Progress */}
-  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-    <div
-      className={`h-3 rounded-full ${
-        (
-          filteredGraphItems
-            .filter(
-              (item) =>
-                item.category ===
-                  category &&
-                item.type ===
-                  "expense"
-            )
-            .reduce(
-              (
-                sum,
-                item
-              ) =>
-                sum +
-                item.amount,
-              0
-            ) /
-          Number(
-            budgets[
-              category
-            ] || 1
-          )
-        ) > 1
-          ? "bg-red-500"
-          : "bg-blue-500"
-      }`}
-      style={{
-        width: `${Math.min(
-          (
-            filteredGraphItems
-              .filter(
-                (item) =>
-                  item.category ===
-                    category &&
-                  item.type ===
-                    "expense"
-              )
-              .reduce(
-                (
-                  sum,
-                  item
-                ) =>
-                  sum +
-                  item.amount,
-                0
-              ) /
-            Number(
-              budgets[
-                category
-              ] || 1
-            )
-          ) * 100,
-          100
-        )}%`,
-      }}
-    />
-  </div>
+<div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+  <div
+    className={`h-3 rounded-full ${
+      percent > 100
+        ? "bg-red-500"
+        : "bg-blue-500"
+    }`}
+    style={{
+      width: `${Math.min(
+        percent,
+        100
+      )}%`,
+    }}
+  />
+</div>
 
   <div className="flex justify-between mt-2">
     <input
@@ -1823,38 +1876,13 @@ const remainVariableBudget =
     />
 
     <span className="text-sm font-semibold text-gray-800">
-      {Math.round(
-        (
-          filteredGraphItems
-            .filter(
-              (item) =>
-                item.category ===
-                  category &&
-                item.type ===
-                  "expense"
-            )
-            .reduce(
-              (
-                sum,
-                item
-              ) =>
-                sum +
-                item.amount,
-              0
-            ) /
-          Number(
-            budgets[
-              category
-            ] || 1
-          )
-        ) * 100
-      )}
-      %
-    </span>
+  {Math.round(percent)}%
+</span>
   </div>
 
 </div>
-                    )
+                    );
+                  }
                   )}
                 </div>
               </div>
