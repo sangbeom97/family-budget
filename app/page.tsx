@@ -115,10 +115,14 @@ const [categoryType, setCategoryType] =
   categories
     .filter(
       (item) =>
-        item.type ===
-        (type === "income"
-          ? "income"
-          : spendType)
+        item.type
+          ?.trim()
+          .toLowerCase() ===
+        (
+          type === "income"
+            ? "income"
+            : spendType
+        )
     )
     .map(
       (item) => item.name
@@ -128,7 +132,10 @@ const [categoryType, setCategoryType] =
   categories
     .filter(
       (item) =>
-        item.type === "fixed"
+        item.type
+  ?.trim()
+  .toLowerCase() ===
+"fixed"
     )
     .map(
       (item) => item.name
@@ -140,8 +147,10 @@ const variableCategories =
   categories
     .filter(
       (item) =>
-        item.type ===
-        "variable"
+        item.type
+  ?.trim()
+  .toLowerCase() ===
+"variable"
     )
     .map(
       (item) => item.name
@@ -153,8 +162,10 @@ const allowanceCategories =
   categories
     .filter(
       (item) =>
-        item.type ===
-        "allowance"
+        item.type
+  ?.trim()
+  .toLowerCase() ===
+"allowance"
     )
     .map(
       (item) => item.name
@@ -164,8 +175,10 @@ const savingCategories =
   categories
     .filter(
       (item) =>
-        item.type ===
-        "saving"
+        item.type
+  ?.trim()
+  .toLowerCase() ===
+"saving"
     )
     .map(
       (item) => item.name
@@ -1531,10 +1544,14 @@ const spent =
   categories
     .filter(
       (item) =>
-        item.type ===
-        (value === "income"
-          ? "income"
-          : spendType)
+        item.type
+  ?.trim()
+  .toLowerCase() ===
+(
+  value === "income"
+    ? "income"
+    : spendType
+)
     )
     .map(
       (item) => item.name
@@ -1548,8 +1565,10 @@ setCategory(
   categories
     .filter(
       (item) =>
-        item.type ===
-        spendType
+        item.type
+  ?.trim()
+  .toLowerCase() ===
+spendType
     )
     .map(
       (item) => item.name
@@ -1607,7 +1626,10 @@ setCategory(
     categories
       .filter(
         (item) =>
-          item.type === value
+          item.type
+  ?.trim()
+  .toLowerCase() ===
+value
       )
       .map(
         (item) => item.name
@@ -2020,8 +2042,10 @@ const spent =
       {categories
         .filter(
           (item) =>
-            item.type ===
-            "fixed"
+            item.type
+  ?.trim()
+  .toLowerCase() ===
+"fixed"
         )
         .map((item) => (
           <div
@@ -2044,8 +2068,10 @@ const spent =
       {categories
         .filter(
           (item) =>
-            item.type ===
-            "variable"
+            item.type
+  ?.trim()
+  .toLowerCase() ===
+"variable"
         )
         .map((item) => (
           <div
@@ -2068,7 +2094,9 @@ const spent =
       {categories
         .filter(
           (item) =>
-            item.type ===
+            item.type
+  ?.trim()
+  .toLowerCase() ===
             "allowance"
         )
         .map((item) => (
@@ -2092,7 +2120,9 @@ const spent =
       {categories
         .filter(
           (item) =>
-            item.type ===
+            item.type
+  ?.trim()
+  .toLowerCase() ===
             "saving"
         )
         .map((item) => (
@@ -2116,7 +2146,9 @@ const spent =
       {categories
         .filter(
           (item) =>
-            item.type ===
+            item.type
+  ?.trim()
+  .toLowerCase() ===
             "income"
         )
         .map((item) => (
