@@ -320,40 +320,56 @@ async () => {
 
   console.log(json);
 
-  const converted = json.map(
-    (item) => {
+  const converted = json
+  .filter(
+    (item) =>
+      item["__EMPTY"] &&
+      item["__EMPTY_4"]
+  )
+  .map((item) => {
 
-      return {
+    const amount =
+      Number(
+        String(
+          item["__EMPTY_4"]
+        )
+          .replaceAll(",", "")
+          .replaceAll("₩", "")
+      );
 
-        name:
-          item["내용"] || "",
+    return {
 
-        amount: Math.abs(
-          Number(
-            item["금액"] || 0
-          )
-        ),
+      name:
+        item["__EMPTY"] || "",
 
-        type:
-          Number(item["금액"]) > 0
-            ? "income"
-            : "expense",
+      amount:
+        Math.abs(amount),
 
-        category:
-          item["소분류"] ||
-          "미분류",
+      type:
+        amount > 0
+          ? "expense"
+          : "income",
 
-        spend_type:
-          item["대분류"] === "저축"
-            ? "saving"
-            : "variable",
+      category:
+        item["__EMPTY_2"] ||
+        "미분류",
 
-        date:
-          item["날짜"],
+      spend_type:
+        item["__EMPTY_1"] ===
+        "저축"
+          ? "saving"
+          : item["__EMPTY_1"] ===
+            "고정지출"
+          ? "fixed"
+          : item["__EMPTY_1"] ===
+            "용돈"
+          ? "allowance"
+          : "variable",
 
-      };
-    }
-  );
+      date:
+        item["__EMPTY_5"],
+    };
+  });
 
   console.log(converted);
 
