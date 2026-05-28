@@ -2047,6 +2047,10 @@ const spent =
       </button>
     </div>
 
+    <div className="text-black text-sm">
+  {JSON.stringify(categories)}
+</div>
+
     <div className="space-y-6">
 
   {/* 고정지출 */}
