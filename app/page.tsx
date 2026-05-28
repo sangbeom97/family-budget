@@ -336,6 +336,14 @@ async () => {
   json[3]
 );
 
+    console.log(
+  "실제 데이터 전체",
+  json[3].map(
+    (v: any, i: number) =>
+      `${i}: ${v}`
+  )
+);
+
   const converted = json
   .slice(3)
   .filter((row: any) => {
