@@ -170,18 +170,14 @@ const graphCategories =
     ? allowanceCategories
     : filter === "saving"
     ? savingCategories
-    : categories
-        .filter(
-          (item) =>
-            item.type !==
-              "income" &&
-            item.type !==
-              "saving"
-        )
-        .map(
-          (item) =>
-            item.name
-        );
+    : [
+        ...new Set([
+          ...fixedCategories,
+          ...variableCategories,
+          ...allowanceCategories,
+          ...savingCategories,
+        ]),
+      ];
 
   // 거래내역 불러오기
   const fetchItems = async () => {
@@ -1225,14 +1221,7 @@ const spent =
       전체 카테고리
     </option>
 
-    {[
-      ...new Set([
-        ...fixedCategories,
-        ...variableCategories,
-        ...allowanceCategories,
-        ...savingCategories,
-      ]),
-    ].map((category) => (
+    {graphCategories.map((category) => (
       <option
         key={category}
         value={category}
