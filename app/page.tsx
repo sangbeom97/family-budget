@@ -1966,6 +1966,86 @@ const spent =
           "fridge" && (
           <FridgeView />
         )}
+        {mainTab ===
+  "category" && (
+
+  <div className="bg-white/95 p-5 rounded-2xl shadow-md">
+
+    <h2 className="text-2xl font-extrabold mb-4">
+      카테고리 관리
+    </h2>
+
+    <div className="grid md:grid-cols-3 gap-3 mb-4">
+
+      <input
+        type="text"
+        placeholder="카테고리명"
+        value={categoryName}
+        onChange={(e) =>
+          setCategoryName(
+            e.target.value
+          )
+        }
+        className="border-2 border-gray-300 rounded-xl px-3 py-2"
+      />
+
+      <select
+        value={categoryType}
+        onChange={(e) =>
+          setCategoryType(
+            e.target.value
+          )
+        }
+        className="border-2 border-gray-300 rounded-xl px-3 py-2"
+      >
+        <option value="fixed">
+          고정지출
+        </option>
+
+        <option value="variable">
+          변동지출
+        </option>
+
+        <option value="allowance">
+          용돈
+        </option>
+
+        <option value="saving">
+          저축
+        </option>
+
+        <option value="income">
+          수입
+        </option>
+      </select>
+
+      <button
+        onClick={addCategory}
+        className="bg-black text-white rounded-xl px-4 py-2"
+      >
+        추가
+      </button>
+    </div>
+
+    <div className="space-y-2">
+      {categories.map((item) => (
+        <div
+          key={item.id}
+          className="flex justify-between bg-gray-100 rounded-xl px-4 py-2"
+        >
+          <span>
+            {item.name}
+          </span>
+
+          <span className="text-gray-500">
+            {item.type}
+          </span>
+        </div>
+      ))}
+    </div>
+
+  </div>
+)}
       </div>
     </main>
   );
