@@ -177,22 +177,19 @@ const savingCategories =
     );
 
 const graphCategories =
-  filter === "fixed"
-    ? fixedCategories
-    : filter === "variable"
-    ? variableCategories
-    : filter === "allowance"
-    ? allowanceCategories
-    : filter === "saving"
-    ? savingCategories
-    : [
-        ...new Set([
-          ...fixedCategories,
-          ...variableCategories,
-          ...allowanceCategories,
-          ...savingCategories,
-        ]),
-      ];
+  [
+    ...new Set(
+      items
+        .filter((item) =>
+          filter === "all"
+            ? true
+            : item.spend_type === filter
+        )
+        .map(
+          (item) => item.category
+        )
+    ),
+  ];
 
   // 거래내역 불러오기
   const fetchItems = async () => {
