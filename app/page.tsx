@@ -161,7 +161,7 @@ const savingCategories =
       (item) => item.name
     );
 
-  const graphCategories =
+const graphCategories =
   filter === "fixed"
     ? fixedCategories
     : filter === "variable"
@@ -170,14 +170,18 @@ const savingCategories =
     ? allowanceCategories
     : filter === "saving"
     ? savingCategories
-    : [
-    ...new Set([
-      ...fixedCategories,
-      ...variableCategories,
-      ...allowanceCategories,
-      ...savingCategories,
-    ]),
-  ];
+    : categories
+        .filter(
+          (item) =>
+            item.type !==
+              "income" &&
+            item.type !==
+              "saving"
+        )
+        .map(
+          (item) =>
+            item.name
+        );
 
   // 거래내역 불러오기
   const fetchItems = async () => {
