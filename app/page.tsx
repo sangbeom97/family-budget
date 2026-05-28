@@ -128,6 +128,16 @@ export default function Home() {
       (item) => item.name
     );
 
+  console.log(
+  "fixedCategories",
+  fixedCategories
+);
+
+console.log(
+  "categories raw",
+  categories
+);
+
 const variableCategories =
   categories
     .filter(
@@ -138,6 +148,11 @@ const variableCategories =
     .map(
       (item) => item.name
     );
+
+console.log(
+  "variableCategories",
+  variableCategories
+);
 
 const allowanceCategories =
   categories
