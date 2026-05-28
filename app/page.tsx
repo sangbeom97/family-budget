@@ -327,11 +327,23 @@ async () => {
 
   const converted = json
   .slice(2)
-  .filter(
-    (row: any) =>
-      row[0] &&
-      row[4]
-  )
+  .filter((row: any) => {
+
+  if (!row[0]) return false;
+  if (!row[4]) return false;
+
+  const amount =
+    Number(
+      String(row[4])
+        .replaceAll(",", "")
+        .replaceAll("₩", "")
+    );
+
+  if (isNaN(amount))
+    return false;
+
+  return true;
+})
   .map((row: any) => {
 
     const amount =
@@ -376,10 +388,19 @@ async () => {
     };
   });
 
-  const { error } =
-    await supabase
-      .from("transactions")
-      .insert(converted);
+  if (converted.length === 0) {
+
+  alert(
+    "업로드 가능한 데이터가 없습니다."
+  );
+
+  return;
+}
+
+const { error } =
+  await supabase
+    .from("transactions")
+    .insert(converted);
 
   if (error) {
 
@@ -668,7 +689,7 @@ const spent =
                item
               ) =>
                 sum +
-                item.amount,
+(Number(item.amount) || 0),
              0
            );
 
@@ -708,8 +729,8 @@ const filteredItems =
         filter;
 
     const searchMatch =
-  item.name
-    .toLowerCase()
+  (item.name || "")
+  .toLowerCase()
     .includes(
       search
         .trim()
@@ -740,7 +761,8 @@ const filteredItems =
     )
     .reduce(
       (sum, item) =>
-        sum + item.amount,
+        sum +
+(Number(item.amount) || 0),
       0
     );
 
@@ -753,7 +775,8 @@ const filteredItems =
       )
       .reduce(
         (sum, item) =>
-          sum + item.amount,
+          sum +
+(Number(item.amount) || 0),
         0
       );
 
@@ -765,7 +788,8 @@ const filteredItems =
     )
       .reduce(
         (sum, item) =>
-          sum + item.amount,
+          sum +
+(Number(item.amount) || 0),
         0
       );
 
@@ -778,7 +802,8 @@ const filteredItems =
       )
       .reduce(
         (sum, item) =>
-          sum + item.amount,
+          sum +
+(Number(item.amount) || 0),
         0
       );
 
@@ -811,10 +836,11 @@ const total =
               isRealExpense(item)
           )
           .reduce(
-            (sum, item) =>
-              sum + item.amount,
-            0
-          );
+  (sum, item) =>
+    sum +
+    (Number(item.amount) || 0),
+  0
+);
 
       return {
         name: category,
@@ -835,7 +861,8 @@ const yearlyIncome =
     )
     .reduce(
       (sum, item) =>
-        sum + item.amount,
+        sum +
+(Number(item.amount) || 0),
       0
     );
 
@@ -847,7 +874,8 @@ const yearlyIncome =
 )
     .reduce(
       (sum, item) =>
-        sum + item.amount,
+        sum +
+(Number(item.amount) || 0),
       0
     );
 
@@ -860,7 +888,8 @@ const yearlySaving =
     )
     .reduce(
       (sum, item) =>
-        sum + item.amount,
+        sum +
+(Number(item.amount) || 0),
       0
     );
 
@@ -888,9 +917,10 @@ const monthlyData = Array.from(
     const monthItems =
       yearlyItems.filter(
         (item) =>
-          item.date.startsWith(
-            month
-          )
+          item.date &&
+item.date.startsWith(
+  month
+)
       );
 
     const income =
@@ -901,14 +931,14 @@ const monthlyData = Array.from(
             "income"
         )
         .reduce(
-          (
-            sum,
-            item
-          ) =>
-            sum +
-            item.amount,
-          0
-        );
+  (
+    sum,
+    item
+  ) =>
+    sum +
+    (Number(item.amount) || 0),
+  0
+);
 
     const expense =
       monthItems
@@ -917,14 +947,14 @@ const monthlyData = Array.from(
             isRealExpense(item)
         )
         .reduce(
-          (
-            sum,
-            item
-          ) =>
-            sum +
-            item.amount,
-          0
-        );
+  (
+    sum,
+    item
+  ) =>
+    sum +
+    (Number(item.amount) || 0),
+  0
+);
 
     const saving =
       monthItems
@@ -934,14 +964,14 @@ const monthlyData = Array.from(
             "saving"
         )
         .reduce(
-          (
-            sum,
-            item
-          ) =>
-            sum +
-            item.amount,
-          0
-        );
+  (
+    sum,
+    item
+  ) =>
+    sum +
+    (Number(item.amount) || 0),
+  0
+);
 
     return {
       month: `${i + 1}월`,
@@ -979,7 +1009,7 @@ const topCategories =
               item
             ) =>
               sum +
-              item.amount,
+(Number(item.amount) || 0),
             0
           );
 
@@ -1047,7 +1077,7 @@ const spent =
               item
             ) =>
               acc +
-              item.amount,
+(Number(item.amount) || 0),
             0
           );
 
@@ -2008,7 +2038,7 @@ const spent =
             item
           ) =>
             sum +
-            item.amount,
+(Number(item.amount) || 0),
           0
         );
 
