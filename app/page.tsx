@@ -380,12 +380,14 @@ async () => {
 
   if (error) {
 
-    console.log(error);
+  console.log(error);
 
-    alert("업로드 실패");
+  alert(
+    JSON.stringify(error)
+  );
 
-    return;
-  }
+  return;
+}
 
   alert("업로드 완료!");
 
