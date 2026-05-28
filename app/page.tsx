@@ -312,66 +312,63 @@ async () => {
 
   const sheet =
     workbook.Sheets[
-      workbook.SheetNames[0]
+      workbook.SheetNames[1]
     ];
 
   const json: any[] =
-    XLSX.utils.sheet_to_json(sheet);
+  XLSX.utils.sheet_to_json(
+    sheet,
+    {
+      header: 1,
+    }
+  );
 
   console.log(json);
 
   const converted = json
+  .slice(2)
   .filter(
-    (item) =>
-      item["__EMPTY"] &&
-      item["__EMPTY_4"]
+    (row: any) =>
+      row[0] &&
+      row[4]
   )
-  .map((item) => {
+  .map((row: any) => {
 
     const amount =
       Number(
-        String(
-          item["__EMPTY_4"]
-        )
+        String(row[4])
           .replaceAll(",", "")
           .replaceAll("₩", "")
       );
 
     return {
 
-      name:
-        item["__EMPTY"] || "",
+      name: row[1] || "",
 
       amount:
         Math.abs(amount),
 
       type:
-        amount > 0
+        amount < 0
           ? "expense"
           : "income",
 
       category:
-        item["__EMPTY_2"] ||
-        "미분류",
+        row[3] || "미분류",
 
       spend_type:
-        item["__EMPTY_1"] ===
-        "저축"
+        row[2] === "저축/투자"
           ? "saving"
-          : item["__EMPTY_1"] ===
-            "고정지출"
+          : row[2] === "고정지출"
           ? "fixed"
-          : item["__EMPTY_1"] ===
-            "용돈"
+          : row[2] === "용돈"
           ? "allowance"
           : "variable",
 
       date:
-        item["__EMPTY_5"],
+        row[0],
     };
   });
-
-  console.log(converted);
 
   const { error } =
     await supabase
