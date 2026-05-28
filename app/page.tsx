@@ -237,12 +237,27 @@ const savingCategories =
 
   const fetchCategories =
   async () => {
-    const { data } =
-      await supabase
-        .from("categories")
-        .select("*");
 
-    setCategories(data || []);
+    const {
+      data,
+      error,
+    } = await supabase
+      .from("categories")
+      .select("*");
+
+    console.log(
+      "categories:",
+      data
+    );
+
+    console.log(
+      "categories error:",
+      error
+    );
+
+    setCategories(
+      data || []
+    );
   };
 
   // 예산 불러오기
