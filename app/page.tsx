@@ -1676,7 +1676,6 @@ const spent =
         ₩
         {remainVariableBudget.toLocaleString()}
       </h2>
-    )}
     </div>
   </>
 )}
