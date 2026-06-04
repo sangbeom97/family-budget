@@ -201,7 +201,17 @@ const savingCategories =
 const graphCategories =
 [
   ...new Set(
-    categories.map(
+    categories
+      .filter((item) => {
+
+        if (filter === "all")
+          return true;
+
+        return (
+          item.type === filter
+        );
+      })
+      .map(
         (item) => item.name
       )
   ),
