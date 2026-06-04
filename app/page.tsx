@@ -869,8 +869,7 @@ const filteredItems =
 
 const total =
   incomeTotal -
-  expenseTotal -
-  savingTotal;
+  expenseTotal;
 
   
 
@@ -975,8 +974,7 @@ const yearlySaving =
 
   const yearlyTotal =
   yearlyIncome -
-  yearlyExpense -
-  yearlySaving;
+  yearlyExpense;
 
   
 
