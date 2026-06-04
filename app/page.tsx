@@ -26,6 +26,7 @@ type Item = {
   category: string;
   date: string;
   spend_type: string;
+  memo: string;
 };
 
 type Category = {
@@ -56,6 +57,9 @@ export default function Home() {
    );
 
   const [name, setName] =
+    useState("");
+
+  const [memo, setMemo] =
     useState("");
 
   const [amount, setAmount] =
@@ -392,6 +396,8 @@ async () => {
 
       name: row[5] || "",
 
+      memo: row[7] || "",
+
       amount:
         Math.abs(amount),
 
@@ -507,22 +513,23 @@ const { error } =
       await supabase
         .from("transactions")
         .update({
-          name,
-          amount:
-            Number(amount),
-          type,
-          category,
-          spend_type:
-            type === "income"
-              ? null
-              : spendType,
-          date,
-        })
+  name,
+  memo,
+  amount:Number(amount),
+  type,
+  category,
+  spend_type:
+    type === "income"
+      ? null
+      : spendType,
+  date,
+})
         .eq("id", editingId);
 
       setEditingId(null);
 
       setName("");
+      setMemo("");
       setAmount("");
       setType("expense");
 
@@ -549,6 +556,7 @@ setCategory(
       .insert([
         {
           name,
+          memo,
           amount:
             Number(amount),
           type,
@@ -561,6 +569,7 @@ setCategory(
         },
       ]);
     setName("");
+    setMemo("");
     setAmount("");
     setType("expense");
 
@@ -607,6 +616,10 @@ setCategory(
     setCategory(item.category);
 
     setDate(item.date);
+
+    setMemo(
+      item.memo || ""
+    );
 
     setSpendType(
   item.spend_type ||
@@ -1737,7 +1750,7 @@ const spent =
 
 
               <div className="bg-white/95 p-5 rounded-2xl shadow-md mb-4">
-              <div className="grid md:grid-cols-6 gap-3">
+              <div className="grid md:grid-cols-7 gap-3">
                 <input
                   type="text"
                   placeholder="항목명"
@@ -1752,6 +1765,16 @@ const spent =
                 />
 
                 <input
+  type="text"
+  placeholder="메모"
+  value={memo}
+  onChange={(e) =>
+    setMemo(e.target.value)
+  }
+  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+/>
+
+                <input
                   type="number"
                   placeholder="금액"
                   value={amount}
@@ -1763,6 +1786,8 @@ const spent =
                   }
                   className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
                 />
+
+                
 
                 <input
                   type="date"
