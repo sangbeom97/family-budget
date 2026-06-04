@@ -1749,7 +1749,13 @@ const spent =
                       budgetCompareData
                     }
                   >
-                    <XAxis dataKey="name" />
+                    <XAxis
+  dataKey="name"
+  angle={-30}
+  textAnchor="end"
+  interval={0}
+  height={70}
+/>
                     <YAxis
                       domain={[
                         "auto",
