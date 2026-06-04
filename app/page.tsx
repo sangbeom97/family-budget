@@ -846,12 +846,18 @@ const total =
 ) => {
 
   return graphCategories
-    .filter(
-      (category) =>
-        !savingCategories.includes(
-          category
-        )
-    )
+  .filter((category) => {
+
+    if (filter === "saving") {
+      return savingCategories.includes(
+        category
+      );
+    }
+
+    return !savingCategories.includes(
+      category
+    );
+  })
     .map((category) => {
 
       const total =
@@ -1025,15 +1031,30 @@ item.date.startsWith(
 // 연간 TOP5
 const topCategories =
   graphCategories
+    .filter((category) => {
+
+      if (filter === "saving") {
+        return savingCategories.includes(
+          category
+        );
+      }
+
+      return !savingCategories.includes(
+        category
+      );
+    })
     .map((category) => {
       const total =
         yearlyItems
           .filter(
-            (item) =>
-              item.category ===
-                category &&
-              isRealExpense(item)
-          )
+  (item) =>
+    item.category === category &&
+    (
+      filter === "saving"
+        ? item.spend_type === "saving"
+        : isRealExpense(item)
+    )
+)
           .reduce(
             (
               sum,
@@ -1463,7 +1484,26 @@ const spent =
       전체 카테고리
     </option>
 
-    {graphCategories.map((category) => (
+    {graphCategories
+  .filter((category) => {
+
+    if (filter === "saving") {
+      return savingCategories.includes(
+        category
+      );
+    }
+
+    if (filter === "all") {
+      return true;
+    }
+
+    return categories.some(
+      (c) =>
+        c.name === category &&
+        c.type === filter
+    );
+  })
+  .map((category) => (
       <option
         key={category}
         value={category}
