@@ -768,6 +768,8 @@ const filteredItems =
     const filterMatch =
   filter === "all"
     ? true
+    : filter === "income"
+    ? item.type === "income"
     : item.type ===
         "expense" &&
       item.spend_type ===
@@ -1253,6 +1255,19 @@ const spent =
               </button>
 
               <button
+  onClick={() =>
+    setFilter("income")
+  }
+  className={`px-4 py-2 rounded-xl whitespace-nowrap ${
+    filter === "income"
+      ? "bg-black text-white"
+      : "bg-white/95 border border-gray-300 shadow-sm text-gray-800"
+  }`}
+>
+  수입
+</button>
+
+              <button
                 onClick={() =>
                   setFilter(
                     "fixed"
@@ -1520,6 +1535,14 @@ const spent =
         category
       );
     }
+
+    if (filter === "income") {
+  return categories.some(
+    (c) =>
+      c.name === category &&
+      c.type === "income"
+  );
+}
 
     if (filter === "all") {
       return true;
