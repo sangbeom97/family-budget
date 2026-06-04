@@ -233,13 +233,13 @@ const graphCategories =
       0
     );
 
-    const start = startDate
-      .toISOString()
-      .split("T")[0];
+    const start =
+  `${selectedMonth}-01`;
 
-    const end = endDate
-      .toISOString()
-      .split("T")[0];
+const end =
+  `${selectedMonth}-${String(
+    endDate.getDate()
+  ).padStart(2,"0")}`;
 
     const { data } =
       await supabase
