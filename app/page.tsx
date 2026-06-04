@@ -199,19 +199,13 @@ const savingCategories =
     );
 
 const graphCategories =
-  [
-    ...new Set(
-      items
-        .filter((item) =>
-          filter === "all"
-            ? true
-            : item.spend_type === filter
-        )
-        .map(
-          (item) => item.category
-        )
-    ),
-  ];
+[
+  ...new Set(
+    categories.map(
+        (item) => item.name
+      )
+  ),
+];
 
   // 거래내역 불러오기
   const fetchItems = async () => {
@@ -2031,12 +2025,12 @@ value
 
                 <div className="space-y-3">
                   {graphCategories
-  .filter(
-    (category) =>
-      !savingCategories.includes(
-        category
-      )
-  )
+                    .filter(
+                      (category) =>
+                        !savingCategories.includes(
+                          category
+                        )
+                      )
   .map(
   (
     category
