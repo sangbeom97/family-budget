@@ -1680,7 +1680,7 @@ const spent =
   </>
 )}
             </div>
-
+)}
             {/* 그래프 */}
             {view !== "calendar" &&
  filter !== "income" && (
