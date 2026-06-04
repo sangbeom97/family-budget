@@ -320,7 +320,7 @@ async () => {
 
   const sheet =
     workbook.Sheets[
-      workbook.SheetNames[1]
+      workbook.SheetNames[0]
     ];
 
   const json: any[] =
@@ -356,7 +356,7 @@ async () => {
   .slice(3)
   .filter((row: any) => {
 
-  if (!row[15]) return false;
+  if (!row[0]) return false;
   if (!row[6]) return false;
 
   const amount =
@@ -405,11 +405,7 @@ async () => {
           : "variable",
 
       date:
-  new Date(
-    (
-      row[15] - 25569
-    ) * 86400 * 1000
-  )
+  new Date(row[0])
     .toISOString()
     .split("T")[0],
     };
