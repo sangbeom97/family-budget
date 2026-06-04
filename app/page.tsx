@@ -356,7 +356,31 @@ async () => {
   .slice(3)
   .filter((row: any) => {
 
+  .filter((row: any) => {
+
   if (!row[0]) return false;
+  if (!row[6]) return false;
+
+  // 이체 제외
+  if (
+    String(row[2] || "")
+      .includes("이체")
+  ) {
+    return false;
+  }
+
+  const amount =
+    Number(
+      String(row[6])
+        .replaceAll(",", "")
+        .replaceAll("₩", "")
+    );
+
+  if (isNaN(amount))
+    return false;
+
+  return true;
+})
   if (!row[6]) return false;
 
   const amount =
