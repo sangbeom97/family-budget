@@ -405,9 +405,10 @@ async () => {
           : "variable",
 
       date:
-  new Date(row[0])
-    .toISOString()
-    .split("T")[0],
+  XLSX.SSF.format(
+    "yyyy-mm-dd",
+    row[0]
+  ),
     };
   });
 
