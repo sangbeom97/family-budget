@@ -1678,6 +1678,7 @@ const spent =
             </div>
 
             {/* 그래프 */}
+            {filter !== "income" && (
             <div className="bg-white/95 rounded-2xl p-5 shadow-md mb-4">
               <h3 className="font-extrabold mb-4">
                 카테고리별 지출
@@ -1721,9 +1722,11 @@ const spent =
                 </ResponsiveContainer>
               </div>
             </div>
+  )}
 
             {/* 예산 그래프 */}
-            {view !== "year" && (
+            {view !== "year" && 
+  filter !== "income" && (
             <div className="bg-white/95 rounded-2xl p-5 shadow-md mb-4">
               <h3 className="font-extrabold mb-4">
                 예산 대비 사용 현황
