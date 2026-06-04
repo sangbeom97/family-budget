@@ -824,12 +824,7 @@ const filteredItems =
             (Number(item.amount) || 0),
           0
         );
-    .reduce(
-      (sum, item) =>
-        sum +
-(Number(item.amount) || 0),
-      0
-    );
+    
 
   const incomeTotal =
     items
