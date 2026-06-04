@@ -37,6 +37,12 @@ export default function ListView({
                 {item.name}
               </p>
 
+              {item.memo && (
+                <p className="text-sm text-gray-500">
+                  📝 {item.memo}
+                </p>
+              )}
+
               <p className="text-gray-500">
                 {item.type === "income"
                   ? "수입"
