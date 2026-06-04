@@ -118,6 +118,37 @@ export default function CalendarView({
                 item.date === dateString
             );
 
+      const dayExpense =
+  dayItems
+    .filter(
+      (item) =>
+        item.type === "expense" &&
+        item.spend_type !== "saving"
+    )
+    .reduce(
+      (sum, item) =>
+        sum + item.amount,
+      0
+    );
+
+      let bgColor =
+  "bg-white";
+
+if (dayExpense >= 200000) {
+  bgColor =
+    "bg-red-300";
+} else if (
+  dayExpense >= 100000
+) {
+  bgColor =
+    "bg-orange-200";
+} else if (
+  dayExpense >= 50000
+) {
+  bgColor =
+    "bg-yellow-100";
+}
+
             // 날짜 총합
             const dayTotal = dayItems.reduce(
               (sum, item) => {
@@ -150,15 +181,16 @@ export default function CalendarView({
                     dateString
                   )
                 }
-                className="
-                  border
-                  h-36
-                  p-2
-                  overflow-y-auto
-                  cursor-pointer
-                  hover:bg-gray-50
-                  transition
-                "
+                className={`
+  border
+  h-36
+  p-2
+  overflow-y-auto
+  cursor-pointer
+  hover:bg-gray-50
+  transition
+  ${bgColor}
+`}
               >
                 {/* 날짜 */}
                 <div
@@ -310,6 +342,12 @@ export default function CalendarView({
                       <p className="font-medium">
                         {item.name}
                       </p>
+
+                      {item.memo && (
+  <p className="text-xs text-gray-400">
+    📝 {item.memo}
+  </p>
+)}
 
                       <p className="text-sm text-gray-500">
                         {item.category}
