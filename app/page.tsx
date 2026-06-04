@@ -1703,12 +1703,12 @@ const spent =
                     }
                   >
                     <XAxis
-                      dataKey="name"
-                      angle={-90}
-                      textAnchor="end"
-                      interval={0}
-                      height={120}
-                    />
+  dataKey="name"
+  angle={-45}
+  textAnchor="end"
+  interval={0}
+  height={90}
+/>
                     <YAxis
                       domain={[
                         "auto",
@@ -1751,10 +1751,10 @@ const spent =
                   >
                     <XAxis
   dataKey="name"
-  angle={-90}
+  angle={-45}
   textAnchor="end"
   interval={0}
-  height={120}
+  height={90}
 />
                     <YAxis
                       domain={[
