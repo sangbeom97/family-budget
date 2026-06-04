@@ -2004,7 +2004,7 @@ value
           <YAxis />
 <Tooltip
   formatter={(value) => [
-    `%{Number(
+    `${Number(
       value
     ).toLocaleString()}%`,
     " ",
