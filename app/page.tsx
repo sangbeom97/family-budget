@@ -775,14 +775,19 @@ const filteredItems =
       item.spend_type ===
         filter;
 
-    const searchMatch =
+    const keyword =
+  search
+    .trim()
+    .toLowerCase();
+
+const searchMatch =
   (item.name || "")
-  .toLowerCase()
-    .includes(
-      search
-        .trim()
-        .toLowerCase()
-    );
+    .toLowerCase()
+    .includes(keyword)
+  ||
+  (item.memo || "")
+    .toLowerCase()
+    .includes(keyword);
 
     const categoryMatch =
       categoryFilter ===
