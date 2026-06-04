@@ -10,6 +10,7 @@ type Item = {
   category: string;
   date: string;
   spend_type: string;
+  memo: string;
 };
 
 type Props = {
