@@ -847,11 +847,15 @@ const total =
       const total =
         sourceItems
           .filter(
-            (item) =>
-              item.category ===
-                category &&
-              isRealExpense(item)
-          )
+  (item) =>
+    item.category === category &&
+    isRealExpense(item) &&
+    (
+      filter === "all"
+        ? true
+        : item.spend_type === filter
+    )
+)
           .reduce(
   (sum, item) =>
     sum +
