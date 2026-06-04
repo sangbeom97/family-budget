@@ -209,7 +209,7 @@ const graphCategories =
       .filter((item) => {
 
         if (filter === "all")
-          return true;
+          return item.type !== "income";
 
         return (
           item.type === filter
