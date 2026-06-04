@@ -393,7 +393,7 @@ async () => {
           : "income",
 
       category:
-        row[4] || "미분류",
+        row[3] || "미분류",
 
       spend_type:
         row[2] === "저축/투자"
