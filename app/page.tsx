@@ -1597,6 +1597,7 @@ const spent =
 
 
             {/* 카드 */}
+            {view !== "calendar" && (
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="bg-white/95 p-5 rounded-2xl shadow-md">
                 <p className="text-sm font-semibold text-gray-800">
@@ -1675,13 +1676,16 @@ const spent =
         ₩
         {remainVariableBudget.toLocaleString()}
       </h2>
+    )}
     </div>
   </>
 )}
             </div>
 
             {/* 그래프 */}
-            {filter !== "income" && (
+            {view !== "calendar" &&
+ filter !== "income" && (
+            
             <div className="bg-white/95 rounded-2xl p-5 shadow-md mb-4">
               <h3 className="font-extrabold mb-4">
                 카테고리별 지출
@@ -1725,10 +1729,11 @@ const spent =
                 </ResponsiveContainer>
               </div>
             </div>
-  )}
+            )}
 
             {/* 예산 그래프 */}
             {view !== "year" && 
+              view !== "calendar" &&
   filter !== "income" && (
             <div className="bg-white/95 rounded-2xl p-5 shadow-md mb-4">
               <h3 className="font-extrabold mb-4">
