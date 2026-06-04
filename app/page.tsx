@@ -862,16 +862,26 @@ const total =
 
       const total =
         sourceItems
-          .filter(
-  (item) =>
-    item.category === category &&
+          .filter((item) => {
+
+  if (item.category !== category)
+    return false;
+
+  if (filter === "saving") {
+    return (
+      item.spend_type === "saving"
+    );
+  }
+
+  return (
     isRealExpense(item) &&
     (
       filter === "all"
         ? true
         : item.spend_type === filter
     )
-)
+  );
+})
           .reduce(
   (sum, item) =>
     sum +
