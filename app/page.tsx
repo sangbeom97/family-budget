@@ -801,11 +801,36 @@ const filteredItems =
   
   
   const filteredTotal =
-  filteredItems
-    .filter(
-      (item) =>
-        isRealExpense(item)
-    )
+  filter === "income"
+    ? filteredItems
+        .filter(
+          (item) =>
+            item.type ===
+            "income"
+        )
+        .reduce(
+          (sum, item) =>
+            sum +
+            (Number(
+              item.amount
+            ) || 0),
+          0
+        )
+    : filteredItems
+        .filter(
+          (item) =>
+            isRealExpense(
+              item
+            )
+        )
+        .reduce(
+          (sum, item) =>
+            sum +
+            (Number(
+              item.amount
+            ) || 0),
+          0
+        );
     .reduce(
       (sum, item) =>
         sum +
