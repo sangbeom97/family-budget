@@ -2730,3 +2730,5 @@ const spent =
       )}
 
     </main>
+      );
+}
