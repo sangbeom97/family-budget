@@ -116,6 +116,20 @@ export default function Home() {
 const [categoryType, setCategoryType] =
   useState("variable");
 
+  const [duplicateItem, setDuplicateItem] =
+  useState<any>(null);
+
+const [duplicateResolve, setDuplicateResolve] =
+  useState<
+    ((value: boolean) => void) | null
+  >(null);
+
+const [duplicateIndex, setDuplicateIndex] =
+  useState(0);
+
+const [duplicateTotal, setDuplicateTotal] =
+  useState(0);
+
   const currentCategories =
   categories
     .filter(
@@ -435,24 +449,85 @@ async () => {
   return;
 }
 
-const { error } =
-  await supabase
-    .from("transactions")
-    .insert(converted);
+let duplicateCount = 0;
 
-  if (error) {
+for (let i = 0; i < converted.length; i++) {
 
-  console.log(error);
+  const item = converted[i];
 
-  alert(
-    JSON.stringify(error)
-  );
+  const { data: exists } =
+    await supabase
+      .from("transactions")
+      .select("*")
+      .eq("date", item.date)
+      .eq("amount", item.amount)
+      .limit(1);
 
-  return;
+  if (
+    exists &&
+    exists.length > 0
+  ) {
+    duplicateCount++;
+  }
 }
 
-  alert("업로드 완료!");
-};
+setDuplicateTotal(
+  duplicateCount
+);
+
+let currentDuplicate = 0;
+
+for (const item of converted) {
+
+  const { data: exists } =
+    await supabase
+      .from("transactions")
+      .select("*")
+      .eq("date", item.date)
+      .eq("amount", item.amount)
+      .limit(1);
+
+  if (
+    exists &&
+    exists.length > 0
+  ) {
+
+    currentDuplicate++;
+
+    setDuplicateIndex(
+      currentDuplicate
+    );
+
+    const result =
+      await new Promise<boolean>(
+        (resolve) => {
+
+          setDuplicateItem({
+            newItem: item,
+            oldItem:
+              exists[0],
+          });
+
+          setDuplicateResolve(
+            () => resolve
+          );
+        }
+      );
+
+    if (!result) {
+      continue;
+    }
+  }
+
+  await supabase
+    .from("transactions")
+    .insert(item);
+}
+
+alert("업로드 완료!");
+
+fetchItems();
+fetchYearlyItems();
 
   // 예산 불러오기
   const fetchBudgets =
