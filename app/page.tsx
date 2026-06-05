@@ -1093,7 +1093,9 @@ const yearlySaving =
 
   // 차트 데이터
   const categoryData =
-  getCategoryData(items);
+  getCategoryData(
+    periodFilteredItems
+  );
 
 
 
@@ -2340,9 +2342,13 @@ value
   ) => {
 
     const sourceItems =
-  view === "year"
-    ? yearlyItems
-    : items;
+  startDate || endDate
+    ? periodFilteredItems
+    : (
+        view === "year"
+          ? yearlyItems
+          : items
+      );
 
 const spent =
   sourceItems
