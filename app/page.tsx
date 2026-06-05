@@ -104,6 +104,12 @@ export default function Home() {
       .toString()
   );
 
+  const [startDate, setStartDate] =
+  useState("");
+
+const [endDate, setEndDate] =
+  useState("");
+
   const [budgets, setBudgets] =
     useState<Record<
       string,
@@ -879,11 +885,31 @@ const searchMatch =
     );
   });
 
-  
+  const periodFilteredItems =
+  filteredItems.filter((item) => {
+
+    const startMatch =
+      !startDate ||
+      item.date >= startDate;
+
+    const endMatch =
+      !endDate ||
+      item.date <= endDate;
+
+    return (
+      startMatch &&
+      endMatch
+    );
+  });
+
+  const yearlySourceItems =
+  startDate || endDate
+    ? periodFilteredItems
+    : yearlyItems;
   
   const filteredTotal =
   filter === "income"
-    ? filteredItems
+    ? periodFilteredItems
         .filter(
           (item) =>
             item.type === "income"
@@ -894,7 +920,7 @@ const searchMatch =
             (Number(item.amount) || 0),
           0
         )
-    : filteredItems
+    : periodFilteredItems
         .filter(
           (item) =>
             isRealExpense(item)
@@ -1010,10 +1036,12 @@ const total =
 };
 
 const yearlyCategoryData =
-  getCategoryData(yearlyItems);
+  getCategoryData(
+    yearlySourceItems
+  );
 
 const yearlyIncome =
-  yearlyItems
+  yearlySourceItems
     .filter(
       (item) =>
         item.type ===
@@ -1027,7 +1055,7 @@ const yearlyIncome =
     );
 
   const yearlyExpense =
-  yearlyItems
+  yearlySourceItems
     .filter(
   (item) =>
     isRealExpense(item)
@@ -1040,7 +1068,7 @@ const yearlyIncome =
     );
 
 const yearlySaving =
-  yearlyItems
+  yearlySourceItems
     .filter(
       (item) =>
         item.spend_type ===
@@ -1073,8 +1101,13 @@ const monthlyData = Array.from(
       i + 1
     ).padStart(2, "0")}`;
 
+    const yearlyCategoryData =
+  getCategoryData(
+    yearlySourceItems
+  );
+
     const monthItems =
-      yearlyItems.filter(
+  yearlySourceItems.filter(
         (item) =>
           item.date &&
 item.date.startsWith(
@@ -1167,7 +1200,7 @@ const topCategories =
     })
     .map((category) => {
       const total =
-        yearlyItems
+        yearlySourceItems
           .filter(
   (item) =>
     item.category === category &&
@@ -1588,7 +1621,35 @@ const spent =
 
 </div>
 
+{(view === "list" ||
+  view === "year") && (
 
+  <div className="flex gap-2 mb-4">
+
+    <input
+      type="date"
+      value={startDate}
+      onChange={(e) =>
+        setStartDate(
+          e.target.value
+        )
+      }
+      className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+    />
+
+    <input
+      type="date"
+      value={endDate}
+      onChange={(e) =>
+        setEndDate(
+          e.target.value
+        )
+      }
+      className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+    />
+
+  </div>
+)}
 
 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
 
@@ -2223,7 +2284,7 @@ value
 
             ) : view === "list" ? (
               <ListView
-                items={filteredItems}
+  items={periodFilteredItems}
                 deleteItem={
                   deleteItem
                 }
