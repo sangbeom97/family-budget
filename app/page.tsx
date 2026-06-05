@@ -2633,6 +2633,100 @@ const spent =
   </div>
 )}
       </div>
+
+      {duplicateItem && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+          <div className="bg-white rounded-2xl p-6 w-[450px]">
+
+            <h2 className="text-xl font-bold mb-2">
+              중복 가능 거래 발견
+            </h2>
+
+            <p className="text-sm text-gray-500 mb-4">
+              {duplicateIndex} / {duplicateTotal}
+              (남은 확인 건수 :
+              {duplicateTotal - duplicateIndex}
+              건)
+            </p>
+
+            <div className="border rounded-xl p-3 mb-3">
+              <p className="font-bold">
+                추가하려는 데이터
+              </p>
+
+              <p>
+                {duplicateItem.newItem.date}
+              </p>
+
+              <p>
+                {duplicateItem.newItem.name}
+              </p>
+
+              <p>
+                ₩
+                {duplicateItem.newItem.amount.toLocaleString()}
+              </p>
+            </div>
+
+            <div className="border rounded-xl p-3 mb-4">
+              <p className="font-bold">
+                이미 존재하는 데이터
+              </p>
+
+              <p>
+                {duplicateItem.oldItem.date}
+              </p>
+
+              <p>
+                {duplicateItem.oldItem.name}
+              </p>
+
+              <p>
+                ₩
+                {duplicateItem.oldItem.amount.toLocaleString()}
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+
+              <button
+                onClick={() => {
+
+                  duplicateResolve?.(
+                    true
+                  );
+
+                  setDuplicateItem(
+                    null
+                  );
+                }}
+                className="flex-1 bg-blue-500 text-white rounded-xl py-2"
+              >
+                예
+              </button>
+
+              <button
+                onClick={() => {
+
+                  duplicateResolve?.(
+                    false
+                  );
+
+                  setDuplicateItem(
+                    null
+                  );
+                }}
+                className="flex-1 bg-gray-300 rounded-xl py-2"
+              >
+                아니요
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
     </main>
-  );
-}
