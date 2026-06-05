@@ -98,17 +98,20 @@ export default function Home() {
     );
 
   const [selectedYear, setSelectedYear] =
-  useState(
-    new Date()
-      .getFullYear()
-      .toString()
-  );
+    useState(
+      new Date()
+        .getFullYear()
+        .toString()
+    );
+
+  const [darkMode, setDarkMode] =
+    useState(false);
 
   const [startDate, setStartDate] =
-  useState("");
+    useState("");
 
-const [endDate, setEndDate] =
-  useState("");
+  const [endDate, setEndDate] =
+    useState("");
 
   const [budgets, setBudgets] =
     useState<Record<
@@ -1310,11 +1313,35 @@ const spent =
   );
 
   return (
-    <main className="min-h-screen bg-zinc-200 p-4 md:p-6">
+    <main
+      className={`min-h-screen p-4 md:p-6 ${
+        darkMode
+          ? "bg-slate-900 text-white"
+          : "bg-zinc-200 text-black"
+      }`}
+    >
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-extrabold mb-6 text-black">
+        <h1
+          className={`text-4xl font-extrabold mb-6 ${
+            darkMode
+              ? "text-white"
+              : "text-black"
+          }`}
+        >
           무계획 속 계획
         </h1>
+        <div className="mb-4">
+          <button
+            onClick={() =>
+              setDarkMode(!darkMode)
+            }
+            className="px-4 py-2 rounded-xl bg-black text-white"
+          >
+            {darkMode
+              ? "☀️ 라이트모드"
+              : "🌙 다크모드"}
+          </button>
+        </div>
 
         {/* 메인탭 */}
         
@@ -1547,7 +1574,11 @@ const spent =
       .slice(0, 7)
   );
 }}
-    className="bg-white/95 px-3 py-2 rounded-xl shadow-md"
+    className={`px-3 py-2 rounded-xl shadow-md ${
+  darkMode
+    ? "bg-slate-700 text-white"
+    : "bg-white/95 text-black"
+}`}
   >
     ◀
   </button>
@@ -1564,7 +1595,11 @@ const spent =
     `${e.target.value}-01`
   );
 }}
-    className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+    className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
   >
     {Array.from(
   { length: 31 },
@@ -1588,7 +1623,11 @@ const spent =
         e.target.value
       )
     }
-    className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+    className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
   />
 )}
 
@@ -1620,7 +1659,11 @@ const spent =
       .slice(0, 7)
   );
 }}
-    className="bg-white/95 px-3 py-2 rounded-xl shadow-md"
+    className={`px-3 py-2 rounded-xl shadow-md ${
+  darkMode
+    ? "bg-slate-700 text-white"
+    : "bg-white/95 text-black"
+}`}
   >
     ▶
   </button>
@@ -1640,7 +1683,11 @@ const spent =
           e.target.value
         )
       }
-      className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+      className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
     />
 
     <input
@@ -1651,7 +1698,11 @@ const spent =
           e.target.value
         )
       }
-      className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+      className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
     />
 
     <button
@@ -1659,7 +1710,11 @@ const spent =
         setStartDate("");
         setEndDate("");
       }}
-      className="px-3 py-2 rounded-xl bg-gray-200"
+      className={`px-3 py-2 rounded-xl ${
+  darkMode
+    ? "bg-slate-700 text-white"
+    : "bg-gray-200 text-black"
+}`}
     >
       초기화
     </button>
@@ -1668,7 +1723,13 @@ const spent =
 )}
 
             {(startDate || endDate) && (
-  <div className="mb-4 rounded-xl bg-orange-50 border border-orange-200 px-3 py-2 text-sm text-orange-700">
+  <div
+  className={`mb-4 rounded-xl px-3 py-2 text-sm ${
+    darkMode
+      ? "bg-orange-900/30 border border-orange-700 text-orange-300"
+      : "bg-orange-50 border border-orange-200 text-orange-700"
+  }`}
+>
     📅 기간조회 사용 중 (월 선택 무시)
   </div>
 )}
@@ -1685,7 +1746,11 @@ const spent =
         e.target.value
       )
     }
-    className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 w-full placeholder:text-gray-500"
+    className={`border-2 rounded-xl px-3 py-2 w-full placeholder:text-gray-500 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
   />
 
   {/* 카테고리 필터 */}
@@ -1696,7 +1761,11 @@ const spent =
         e.target.value
       )
     }
-    className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 w-full"
+    className={`border-2 rounded-xl px-3 py-2 w-full ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
   >
     <option value="all">
       전체 카테고리
@@ -1740,8 +1809,20 @@ const spent =
   </select>
 
   {/* 현재 합계 */}
-  <div className="bg-white/95 border-2 border-gray-300 rounded-xl px-4 py-2 flex items-center justify-between">
-    <span className="text-sm font-semibold text-gray-700">
+  <div
+  className={`border-2 rounded-xl px-4 py-2 flex items-center justify-between ${
+    darkMode
+      ? "bg-slate-800 border-slate-700"
+      : "bg-white/95 border-gray-300"
+  }`}
+>
+    <span
+  className={`text-sm font-semibold ${
+    darkMode
+      ? "text-gray-200"
+      : "text-gray-700"
+  }`}
+>
       현재 합계
     </span>
 
@@ -1758,9 +1839,21 @@ const spent =
             {/* 카드 */}
             {view !== "calendar" && (
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                <p className="text-sm font-semibold text-gray-800">
-                  총 수입
+              <div
+                className={`p-5 rounded-2xl shadow-md ${
+                  darkMode
+                    ? "bg-slate-800"
+                    : "bg-white/95"
+                }`}
+              >
+                <p
+  className={`text-sm font-semibold ${
+    darkMode
+      ? "text-gray-200"
+      : "text-gray-800"
+  }`}
+>
+  총 수입
                 </p>
                 <h2 className="text-2xl font-extrabold text-blue-600">
                   ₩
@@ -1772,9 +1865,21 @@ const spent =
                 </h2>
               </div>
 
-              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                <p className="text-sm font-semibold text-gray-800">
-                  총 지출
+              <div
+  className={`p-5 rounded-2xl shadow-md ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
+                <p
+  className={`text-sm font-semibold ${
+    darkMode
+      ? "text-gray-200"
+      : "text-gray-800"
+  }`}
+>
+  총 지출
                 </p>
                 <h2 className="text-2xl font-extrabold text-red-700">
                   ₩
@@ -1786,9 +1891,21 @@ const spent =
                 </h2>
               </div>
 
-              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                <p className="text-sm font-semibold text-gray-800">
-                  총 저축
+              <div
+  className={`p-5 rounded-2xl shadow-md ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
+                <p
+  className={`text-sm font-semibold ${
+    darkMode
+      ? "text-gray-200"
+      : "text-gray-800"
+  }`}
+>
+  총 저축
                 </p>
                 <h2 className="text-2xl font-extrabold text-green-600">
                   ₩
@@ -1800,11 +1917,29 @@ const spent =
                 </h2>
               </div>
 
-              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-                <p className="text-sm font-semibold text-gray-800">
-                  실시간 잔액
+              <div
+  className={`p-5 rounded-2xl shadow-md ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
+                <p
+  className={`text-sm font-semibold ${
+    darkMode
+      ? "text-gray-200"
+      : "text-gray-800"
+  }`}
+>
+  실시간 잔액
                 </p>
-                <h2 className="text-2xl font-extrabold text-gray-900">
+                <h2
+  className={`text-2xl font-extrabold ${
+    darkMode
+      ? "text-white"
+      : "text-gray-900"
+  }`}
+>
                   ₩
                   {(
   view === "year"
@@ -1815,8 +1950,20 @@ const spent =
               </div>
               {view !== "year" && (
   <>
-    <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-      <p className="text-sm font-semibold text-gray-900">
+    <div
+  className={`p-5 rounded-2xl shadow-md ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
+      <p
+  className={`text-sm font-semibold ${
+    darkMode
+      ? "text-gray-200"
+      : "text-gray-900"
+  }`}
+>
         변동예산
       </p>
 
@@ -1826,8 +1973,20 @@ const spent =
       </h2>
     </div>
 
-    <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-      <p className="text-sm font-semibold text-gray-900">
+    <div
+  className={`p-5 rounded-2xl shadow-md ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
+      <p
+  className={`text-sm font-semibold ${
+    darkMode
+      ? "text-gray-200"
+      : "text-gray-900"
+  }`}
+>
         남은 변동예산
       </p>
 
@@ -1844,9 +2003,15 @@ const spent =
             {view !== "calendar" &&
  filter !== "income" && (
             
-            <div className="bg-white/95 rounded-2xl p-5 shadow-md mb-4">
-              <h3 className="font-extrabold mb-4">
-                카테고리별 지출
+            <div
+  className={`rounded-2xl p-5 shadow-md mb-4 ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
+  <h3 className="font-extrabold mb-4">
+    카테고리별 지출
               </h3>
 
               <div className="h-72">
@@ -1893,9 +2058,15 @@ const spent =
             {view !== "year" && 
               view !== "calendar" &&
   filter !== "income" && (
-            <div className="bg-white/95 rounded-2xl p-5 shadow-md mb-4">
-              <h3 className="font-extrabold mb-4">
-                예산 대비 사용 현황
+            <div
+  className={`rounded-2xl p-5 shadow-md mb-4 ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
+  <h3 className="font-extrabold mb-4">
+    예산 대비 사용 현황
               </h3>
 
               <div className="h-72">
@@ -1960,7 +2131,13 @@ const spent =
   />
 
 
-              <div className="bg-white/95 p-5 rounded-2xl shadow-md mb-4">
+              <div
+  className={`p-5 rounded-2xl shadow-md mb-4 ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
               <div className="grid md:grid-cols-7 gap-3">
                 <input
                   type="text"
@@ -1972,7 +2149,11 @@ const spent =
                         .value
                     )
                   }
-                  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+                  className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
                 />
 
                 <input
@@ -1982,7 +2163,11 @@ const spent =
   onChange={(e) =>
     setMemo(e.target.value)
   }
-  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+  className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
 />
 
                 <input
@@ -1995,7 +2180,11 @@ const spent =
                         .value
                     )
                   }
-                  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+                  className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
                 />
 
                 
@@ -2009,7 +2198,11 @@ const spent =
                         .value
                     )
                   }
-                  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+                  className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
                 />
 
                 <select
@@ -2063,7 +2256,11 @@ setCategory(
 );
                     }
                   }}
-                  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+                  className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
                 >
                   <option value="expense">
                     지출
@@ -2082,7 +2279,11 @@ setCategory(
                         .value
                     )
                   }
-                  className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+                  className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
                 >
                   {currentCategories.map(
                     (item) => (
@@ -2123,7 +2324,11 @@ value
     nextCategories[0] || ""
   );
 }}
-                    className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
+                    className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
                   >
                     <option value="fixed">
                       고정지출
@@ -2164,9 +2369,15 @@ value
 
 
                 {/* 월별 지출 */}
-  <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-    <h3 className="font-extrabold mb-4">
-      월별 지출
+  <div
+  className={`p-5 rounded-2xl shadow-md ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
+  <h3 className="font-extrabold mb-4">
+    월별 지출
     </h3>
 
     <div className="h-72">
@@ -2198,9 +2409,15 @@ value
   </div>
 
   {/* 월별 저축률 */}
-  <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-    <h3 className="font-extrabold mb-4">
-      월별 저축률
+  <div
+  className={`p-5 rounded-2xl shadow-md ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
+  <h3 className="font-extrabold mb-4">
+    월별 저축률
     </h3>
 
     <div className="h-72">
@@ -2232,9 +2449,15 @@ value
   </div>
 
   {/* 월별 소비패턴 */}
-  <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-    <h3 className="font-extrabold mb-4">
-      월별 소비패턴
+  <div
+  className={`p-5 rounded-2xl shadow-md ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
+  <h3 className="font-extrabold mb-4">
+    월별 소비패턴
     </h3>
 
     <div className="h-72">
@@ -2276,9 +2499,15 @@ value
   </div>
 
   {/* TOP5 */}
-  <div className="bg-white/95 p-5 rounded-2xl shadow-md">
-    <h3 className="font-extrabold mb-4">
-      연간 카테고리 TOP5
+  <div
+  className={`p-5 rounded-2xl shadow-md ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
+  <h3 className="font-extrabold mb-4">
+    연간 카테고리 TOP5
     </h3>
 
     <div className="space-y-3">
@@ -2323,7 +2552,13 @@ value
                 }
               />
             ) : (
-              <div className="bg-white/95 p-5 rounded-2xl shadow-md">
+              <div
+  className={`p-5 rounded-2xl shadow-md ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
                 <h3 className="font-extrabold mb-4">
                   카테고리별 예산
                 </h3>
@@ -2383,11 +2618,19 @@ const spent =
     return (
       <div
   key={category}
-  className="bg-gray-50 rounded-xl p-3"
+  className={`rounded-xl p-3 ${
+  darkMode
+    ? "bg-slate-700"
+    : "bg-gray-50"
+}`}
 >
 
   <div className="flex justify-between mb-2">
-    <span className="font-semibold text-gray-800">
+    <span className={`font-semibold ${
+  darkMode
+    ? "text-gray-200"
+    : "text-gray-800"
+}`}>
       {category}
     </span>
 
@@ -2435,10 +2678,18 @@ const spent =
           e.target.value
         )
       }
-      className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2 w-32 placeholder:text-gray-500"
+      className={`border-2 rounded-xl px-3 py-2 w-32 placeholder:text-gray-500 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white/95 text-black border-gray-300"
+}`}
     />
 
-    <span className="text-sm font-semibold text-gray-800">
+    <span className={`text-sm font-semibold ${
+  darkMode
+    ? "text-gray-200"
+    : "text-gray-800"
+}`}>
   {Math.round(percent)}%
 </span>
   </div>
@@ -2460,7 +2711,13 @@ const spent =
         {mainTab ===
   "category" && (
 
-  <div className="bg-white/95 p-5 rounded-2xl shadow-md">
+  <div
+  className={`p-5 rounded-2xl shadow-md ${
+    darkMode
+      ? "bg-slate-800"
+      : "bg-white/95"
+  }`}
+>
 
     <h2 className="text-2xl font-extrabold mb-4">
       카테고리 관리
@@ -2477,18 +2734,26 @@ const spent =
             e.target.value
           )
         }
-        className="border-2 border-gray-300 rounded-xl px-3 py-2"
+        className={`border-2 rounded-xl px-3 py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white border-slate-600"
+    : "bg-white text-black border-gray-300"
+}`}
       />
 
       <select
-        value={categoryType}
-        onChange={(e) =>
-          setCategoryType(
-            e.target.value
-          )
-        }
-        className="border-2 border-gray-300 rounded-xl px-3 py-2"
-      >
+  value={categoryType}
+  onChange={(e) =>
+    setCategoryType(
+      e.target.value
+    )
+  }
+  className={`border-2 rounded-xl px-3 py-2 ${
+    darkMode
+      ? "bg-slate-700 text-white border-slate-600"
+      : "bg-white text-black border-gray-300"
+  }`}
+>
         <option value="fixed">
           고정지출
         </option>
@@ -2724,13 +2989,23 @@ const spent =
       {duplicateItem && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
-          <div className="bg-white rounded-2xl p-6 w-[450px]">
+          <div
+  className={`rounded-2xl p-6 w-[450px] ${
+    darkMode
+      ? "bg-slate-800 text-white"
+      : "bg-white text-black"
+  }`}
+>
 
             <h2 className="text-xl font-bold mb-2">
               중복 가능 거래 발견
             </h2>
 
-            <p className="text-sm text-gray-500 mb-4">
+            <p className={`text-sm mb-4 ${
+  darkMode
+    ? "text-gray-300"
+    : "text-gray-500"
+}`}>
               {duplicateIndex} / {duplicateTotal}
               (남은 확인 건수 :
               {duplicateTotal - duplicateIndex}
@@ -2804,7 +3079,11 @@ const spent =
                     null
                   );
                 }}
-                className="flex-1 bg-gray-300 rounded-xl py-2"
+                className={`flex-1 rounded-xl py-2 ${
+  darkMode
+    ? "bg-slate-700 text-white"
+    : "bg-gray-300 text-black"
+}`}
               >
                 아니요
               </button>
