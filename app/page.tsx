@@ -840,9 +840,13 @@ const spent =
   );
 
   const baseItems =
-  view === "year"
+  (startDate || endDate)
     ? yearlyItems
-    : items;
+    : (
+        view === "year"
+          ? yearlyItems
+          : items
+      );
 
 const filteredItems =
   baseItems.filter((item) => {
@@ -1648,6 +1652,22 @@ const spent =
       className="border-2 border-gray-300 bg-white/95 text-black rounded-xl px-3 py-2"
     />
 
+    <button
+      onClick={() => {
+        setStartDate("");
+        setEndDate("");
+      }}
+      className="px-3 py-2 rounded-xl bg-gray-200"
+    >
+      초기화
+    </button>
+
+  </div>
+)}
+
+            {(startDate || endDate) && (
+  <div className="mb-4 rounded-xl bg-orange-50 border border-orange-200 px-3 py-2 text-sm text-orange-700">
+    📅 기간조회 사용 중 (월 선택 무시)
   </div>
 )}
 
