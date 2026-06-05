@@ -354,7 +354,7 @@ async () => {
 
     console.log(
   "첫번째 row",
-  json[2]
+  json[1]
 );
 
     console.log(
@@ -371,7 +371,7 @@ async () => {
 );
 
   const converted = json
-  .slice(3)
+  .slice(1)
   .filter((row: any) => {
 
     if (!row[0]) return false;
