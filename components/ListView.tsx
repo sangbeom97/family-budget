@@ -13,16 +13,32 @@ type Props = {
   items: Item[];
   deleteItem: (id: number) => void;
   startEdit: (item: Item) => void;
+  darkMode: boolean;
 };
 
 export default function ListView({
+
   items,
   deleteItem,
   startEdit,
+  darkMode,
 }: Props) {
+
+  console.log("ListView darkMode =", darkMode);
+
   return (
-    <div className="bg-white rounded-2xl p-5 shadow">
-      <h3 className="font-semibold mb-4 text-gray-800">
+    <div
+      className={`rounded-2xl p-5 shadow ${darkMode
+        ? "bg-slate-800 text-white"
+        : "bg-white"
+        }`}
+    >
+      <h3
+        className={`font-semibold mb-4 ${darkMode
+          ? "text-white"
+          : "text-gray-800"
+          }`}
+      >
         내역 목록
       </h3>
 
@@ -30,41 +46,63 @@ export default function ListView({
         {items.map((item) => (
           <div
             key={item.id}
-            className="border rounded-xl p-4 flex justify-between items-center"
+            className={`border rounded-xl p-4 flex justify-between items-center ${darkMode
+              ? "bg-slate-700 border-slate-600"
+              : "bg-white"
+              }`}
           >
             <div>
-              <p className="font-semibold text-gray-900">
+              <p
+                className={`font-semibold ${darkMode
+                  ? "text-white"
+                  : "text-gray-900"
+                  }`}
+              >
                 {item.name}
               </p>
 
               {item.memo && (
-                <p className="text-sm text-gray-500">
+                <p
+                  className={`text-sm ${darkMode
+                    ? "text-gray-300"
+                    : "text-gray-500"
+                    }`}
+                >
                   📝 {item.memo}
                 </p>
               )}
 
-              <p className="text-gray-500">
+              <p
+                className={`${darkMode
+                  ? "text-gray-300"
+                  : "text-gray-500"
+                  }`}
+              >
                 {item.type === "income"
                   ? "수입"
                   : item.category}
               </p>
 
-              <p className="text-xs text-gray-400 mt-1">
+              <p
+                className={`text-xs mt-1 ${darkMode
+                  ? "text-gray-400"
+                  : "text-gray-400"
+                  }`}
+              >
                 {item.date}
               </p>
             </div>
 
             <div className="text-right">
               <p
-                className={`font-bold ${
-                  item.type ===
+                className={`font-bold ${item.type ===
                   "income"
-                    ? "text-blue-600"
-                    : "text-red-500"
-                }`}
+                  ? "text-blue-600"
+                  : "text-red-500"
+                  }`}
               >
                 {item.type ===
-                "income"
+                  "income"
                   ? "+"
                   : "-"}
                 ₩
@@ -76,7 +114,10 @@ export default function ListView({
                   onClick={() =>
                     startEdit(item)
                   }
-                  className="text-sm px-3 py-1 rounded-lg bg-gray-200 text-gray-800"
+                  className={`text-sm px-3 py-1 rounded-lg ${darkMode
+                    ? "bg-slate-600 text-white"
+                    : "bg-gray-200 text-gray-800"
+                    }`}
                 >
                   수정
                 </button>

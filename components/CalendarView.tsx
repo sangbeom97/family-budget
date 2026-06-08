@@ -16,12 +16,17 @@ type Item = {
 type Props = {
   items: Item[];
   selectedMonth: string;
+  darkMode: boolean;
 };
 
 export default function CalendarView({
   items,
   selectedMonth,
+  darkMode,
 }: Props) {
+
+  console.log("Calendar darkMode =", darkMode);
+  
   const [selectedDate, setSelectedDate] =
     useState<string | null>(null);
 
@@ -74,23 +79,26 @@ export default function CalendarView({
 
   return (
     <>
-      <div className="bg-white rounded-2xl p-4 shadow">
+      <div
+        className={`rounded-2xl p-4 shadow ${darkMode
+          ? "bg-slate-800 text-white"
+          : "bg-white text-black"
+          }`}
+      >
         {/* 요일 */}
         <div className="grid grid-cols-7 border-b">
           {weekDays.map((day, index) => (
             <div
               key={day}
               className={`text-center font-semibold py-3
-              ${
-                index === 0
+              ${index === 0
                   ? "text-red-500"
                   : ""
-              }
-              ${
-                index === 6
+                }
+              ${index === 6
                   ? "text-blue-500"
                   : ""
-              }`}
+                }`}
             >
               {day}
             </div>
@@ -104,7 +112,10 @@ export default function CalendarView({
               return (
                 <div
                   key={index}
-                  className="border h-36 bg-gray-50"
+                  className={`border h-36 ${darkMode
+                    ? "bg-slate-700 border-slate-600"
+                    : "bg-gray-50"
+                    }`}
                 />
               );
             }
@@ -118,36 +129,36 @@ export default function CalendarView({
                 item.date === dateString
             );
 
-      const dayExpense =
-  dayItems
-    .filter(
-      (item) =>
-        item.type === "expense" &&
-        item.spend_type !== "saving"
-    )
-    .reduce(
-      (sum, item) =>
-        sum + item.amount,
-      0
-    );
+            const dayExpense =
+              dayItems
+                .filter(
+                  (item) =>
+                    item.type === "expense" &&
+                    item.spend_type !== "saving"
+                )
+                .reduce(
+                  (sum, item) =>
+                    sum + item.amount,
+                  0
+                );
 
-      let bgColor =
-  "bg-white";
+            let bgColor = darkMode
+              ? "bg-slate-800"
+              : "bg-white";
 
-if (dayExpense >= 200000) {
-  bgColor =
-    "bg-red-300";
-} else if (
-  dayExpense >= 100000
-) {
-  bgColor =
-    "bg-orange-200";
-} else if (
-  dayExpense >= 50000
-) {
-  bgColor =
-    "bg-yellow-100";
-}
+            if (dayExpense >= 200000) {
+              bgColor = darkMode
+                ? "bg-red-900/40"
+                : "bg-red-300";
+            } else if (dayExpense >= 100000) {
+              bgColor = darkMode
+                ? "bg-orange-900/40"
+                : "bg-orange-200";
+            } else if (dayExpense >= 50000) {
+              bgColor = darkMode
+                ? "bg-yellow-900/30"
+                : "bg-yellow-100";
+            }
 
             // 날짜 총합
             const dayTotal = dayItems.reduce(
@@ -182,15 +193,16 @@ if (dayExpense >= 200000) {
                   )
                 }
                 className={`
-  border
-  h-36
-  p-2
-  overflow-y-auto
-  cursor-pointer
-  hover:bg-gray-50
-  transition
-  ${bgColor}
-`}
+                  border
+                  ${darkMode ? "border-slate-700" : ""}
+                  h-36
+                  p-2
+                  overflow-y-auto
+                  cursor-pointer
+                  ${darkMode ? "hover:bg-slate-700" : "hover:bg-gray-50"}
+                  transition
+                  ${bgColor}
+                `}
               >
                 {/* 날짜 */}
                 <div
@@ -201,21 +213,18 @@ if (dayExpense >= 200000) {
                   <span
                     className={`
                     text-sm font-bold
-                    ${
-                      weekIndex === 0
+                    ${weekIndex === 0
                         ? "text-red-500"
                         : ""
-                    }
-                    ${
-                      weekIndex === 6
+                      }
+                    ${weekIndex === 6
                         ? "text-blue-500"
                         : ""
-                    }
-                    ${
-                      isToday
+                      }
+                    ${isToday
                         ? "bg-black text-white rounded-full w-6 h-6 flex items-center justify-center"
                         : ""
-                    }
+                      }
                   `}
                   >
                     {day}
@@ -224,11 +233,10 @@ if (dayExpense >= 200000) {
                   {/* 총합 */}
                   <span
                     className={`text-[10px] font-semibold
-                    ${
-                      dayTotal >= 0
+                    ${dayTotal >= 0
                         ? "text-blue-500"
                         : "text-red-500"
-                    }`}
+                      }`}
                   >
                     ₩
                     {Math.abs(
@@ -250,15 +258,14 @@ if (dayExpense >= 200000) {
                         px-1
                         py-[2px]
                         truncate
-                        ${
-                          item.type ===
-                          "income"
+                        ${item.type ===
+                            "income"
                             ? "bg-blue-100 text-blue-700"
                             : item.spend_type ===
                               "fixed"
-                            ? "bg-orange-100 text-orange-700"
-                            : "bg-red-100 text-red-700"
-                        }
+                              ? "bg-orange-100 text-orange-700"
+                              : "bg-red-100 text-red-700"
+                          }
                       `}
                       >
                         {item.name} ₩
@@ -293,15 +300,18 @@ if (dayExpense >= 200000) {
           }
         >
           <div
-            className="
-              bg-white
-              rounded-2xl
-              p-5
-              w-[90%]
-              max-w-md
-              max-h-[80vh]
-              overflow-y-auto
-            "
+            className={`
+                rounded-2xl
+                p-5
+                w-[90%]
+                max-w-md
+                max-h-[80vh]
+                overflow-y-auto
+                ${darkMode
+                ? "bg-slate-800 text-white"
+                : "bg-white text-black"
+              }
+  `}
             onClick={(e) =>
               e.stopPropagation()
             }
@@ -324,19 +334,23 @@ if (dayExpense >= 200000) {
             <div className="space-y-3">
               {selectedItems.length ===
                 0 && (
-                <p className="text-gray-400">
-                  내역 없음
-                </p>
-              )}
+                  <p className="text-gray-400">
+                    내역 없음
+                  </p>
+                )}
 
               {selectedItems.map(
                 (item) => (
                   <div
                     key={item.id}
-                    className="
-                    border rounded-xl p-3
-                    flex justify-between items-center
-                  "
+                    className={`
+                        border rounded-xl p-3
+                        flex justify-between items-center
+                        ${darkMode
+                        ? "border-slate-600 bg-slate-700"
+                        : ""
+                      }
+                    `}
                   >
                     <div>
                       <p className="font-medium">
@@ -344,12 +358,22 @@ if (dayExpense >= 200000) {
                       </p>
 
                       {item.memo && (
-  <p className="text-xs text-gray-400">
-    📝 {item.memo}
-  </p>
-)}
+                        <p
+                          className={`text-xs ${darkMode
+                            ? "text-gray-300"
+                            : "text-gray-400"
+                            }`}
+                        >
+                          📝 {item.memo}
+                        </p>
+                      )}
 
-                      <p className="text-sm text-gray-500">
+                      <p
+                        className={`text-sm ${darkMode
+                          ? "text-gray-300"
+                          : "text-gray-500"
+                          }`}
+                      >
                         {item.category}
                       </p>
                     </div>
@@ -357,13 +381,13 @@ if (dayExpense >= 200000) {
                     <div
                       className={
                         item.type ===
-                        "income"
+                          "income"
                           ? "text-blue-500 font-semibold"
                           : "text-red-500 font-semibold"
                       }
                     >
                       {item.type ===
-                      "income"
+                        "income"
                         ? "+"
                         : "-"}
                       ₩
