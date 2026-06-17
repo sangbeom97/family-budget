@@ -22,6 +22,7 @@ type AccountViewProps = {
 
     handleFileUpload: (e: any) => void;
     selectedFileName: string;
+    exportToExcel: () => void;
 
     periodFilteredItems: any[];
     deleteItem: (id: any) => void;
@@ -178,6 +179,7 @@ export default function AccountView({
 
     handleFileUpload,
     selectedFileName,
+    exportToExcel,
 
     periodFilteredItems,
     deleteItem,
@@ -766,71 +768,6 @@ export default function AccountView({
                                 }`}
                         >
 
-                            <div
-                                className={`mb-5 rounded-2xl border-2 border-dashed p-6 text-center ${darkMode
-                                    ? "border-slate-600 bg-slate-800"
-                                    : "border-gray-300 bg-gray-50"
-                                    }`}
-                            >
-                                <div className="text-3xl mb-2">
-                                    📊
-                                </div>
-
-                                <h3 className="font-bold text-lg mb-2">
-                                    Excel 가져오기
-                                </h3>
-
-                                <p
-                                    className={`text-sm mb-4 ${darkMode
-                                        ? "text-gray-300"
-                                        : "text-gray-500"
-                                        }`}
-                                >
-                                    파일을 드래그하거나 클릭하여 선택하세요
-                                </p>
-
-                                <label
-                                    className="
-                                                inline-flex
-                                                items-center
-                                                gap-2
-                                                px-5
-                                                py-3
-                                                rounded-xl
-                                                bg-blue-500
-                                                text-white
-                                                cursor-pointer
-                                                hover:bg-blue-600
-                                                transition"
-                                >
-                                    📁 파일 선택
-
-                                    <input
-                                        type="file"
-                                        accept=".xlsx,.xls"
-                                        onChange={handleFileUpload}
-                                        className="hidden"
-                                    />
-                                </label>
-
-                                <div
-                                    className={`mt-4 text-sm ${darkMode
-                                        ? "text-gray-300"
-                                        : "text-gray-600"
-                                        }`}
-                                >
-                                    {selectedFileName ? (
-                                        <span>
-                                            ✅ {selectedFileName}
-                                        </span>
-                                    ) : (
-                                        <span>
-                                            선택된 파일 없음
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-
                             <TransactionForm
                                 darkMode={darkMode}
 
@@ -862,6 +799,90 @@ export default function AccountView({
 
                                 editingId={editingId}
                             />
+
+                            <div
+                                className={`mb-5 rounded-2xl border-2 border-dashed p-6 text-center ${darkMode
+                                    ? "border-slate-600 bg-slate-800"
+                                    : "border-gray-300 bg-gray-50"
+                                    }`}
+                            >
+                                <div className="text-3xl mb-2">
+                                    📊
+                                </div>
+
+                                <h3 className="font-bold text-lg mb-2">
+                                    Excel 가져오기
+                                </h3>
+
+                                <p
+                                    className={`text-sm mb-4 ${darkMode
+                                        ? "text-gray-300"
+                                        : "text-gray-500"
+                                        }`}
+                                >
+                                    파일을 드래그하거나 클릭하여 선택하세요
+                                </p>
+
+                                <div className="flex justify-center gap-2">
+
+                                    <label
+                                        className="
+      inline-flex
+      items-center
+      gap-2
+      px-5
+      py-3
+      rounded-xl
+      bg-blue-500
+      text-white
+      cursor-pointer
+      hover:bg-blue-600
+      transition
+    "
+                                    >
+                                        📁 파일 선택
+
+                                        <input
+                                            type="file"
+                                            accept=".xlsx,.xls"
+                                            onChange={handleFileUpload}
+                                            className="hidden"
+                                        />
+                                    </label>
+
+                                    <button
+                                        onClick={exportToExcel}
+                                        className="
+                                              px-5
+                                              py-3
+                                              rounded-xl
+                                              bg-green-600
+                                              text-white
+                                              hover:bg-green-700
+                                            "
+                                    >
+                                        📥 Excel 내보내기
+                                    </button>
+
+                                </div>
+
+                                <div
+                                    className={`mt-4 text-sm ${darkMode
+                                        ? "text-gray-300"
+                                        : "text-gray-600"
+                                        }`}
+                                >
+                                    {selectedFileName ? (
+                                        <span>
+                                            ✅ {selectedFileName}
+                                        </span>
+                                    ) : (
+                                        <span>
+                                            선택된 파일 없음
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
 
                             <ListView
                                 items={periodFilteredItems}

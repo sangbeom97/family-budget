@@ -706,6 +706,36 @@ export default function Home() {
     fetchYearlyItems();
   };
 
+  const exportToExcel = () => {
+    const exportData = periodFilteredItems.map(
+      (item) => ({
+        날짜: item.date,
+        항목명: item.name,
+        카테고리: item.category,
+        금액: item.amount,
+        구분: item.type,
+        메모: item.memo,
+      })
+    );
+
+    const worksheet =
+      XLSX.utils.json_to_sheet(exportData);
+
+    const workbook =
+      XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "가계부"
+    );
+
+    XLSX.writeFile(
+      workbook,
+      `${selectedMonth}_가계부.xlsx`
+    );
+  };
+
   const startEdit = (
     item: Item
   ) => {
@@ -1428,6 +1458,7 @@ export default function Home() {
 
               handleFileUpload={handleFileUpload}
               selectedFileName={selectedFileName}
+              exportToExcel={exportToExcel}
 
               periodFilteredItems={periodFilteredItems}
               deleteItem={deleteItem}
@@ -1489,7 +1520,7 @@ export default function Home() {
               yearlyTotal={yearlyTotal}
               total={total}
 
-                            variableBudgetTotal={variableBudgetTotal}
+              variableBudgetTotal={variableBudgetTotal}
               remainVariableBudget={remainVariableBudget}
 
               name={name}
