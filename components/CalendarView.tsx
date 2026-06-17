@@ -25,8 +25,6 @@ export default function CalendarView({
   darkMode,
 }: Props) {
 
-  console.log("Calendar darkMode =", darkMode);
-  
   const [selectedDate, setSelectedDate] =
     useState<string | null>(null);
 
