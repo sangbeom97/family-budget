@@ -678,8 +678,12 @@ export default function AccountView({
 
                         </>
                     )}
+                    
+                    {view === "list" && (
+                    <>
+
                     {/* 그래프 */}
-                    {view === "year" &&
+                    {view === "list" &&
                         filter !== "income" && (
 
                             <div
@@ -696,8 +700,12 @@ export default function AccountView({
                             </div>
                         )}
 
+
+
+
+
                     {/* 예산 그래프 */}
-                    {view === "budget" &&
+                    {view === "list" &&
                         filter !== "income" && (
                             <div
                                 className={`rounded-2xl p-5 shadow-md mb-4 ${darkMode
@@ -760,7 +768,6 @@ export default function AccountView({
                                 </div>
                             </div>
                         )}
-                    {view === "list" && (
                         <div
                             className={`pb-3 ${darkMode
                                 ? "bg-slate-900"
@@ -892,6 +899,7 @@ export default function AccountView({
                             />
 
                         </div>
+                        </>
                     )}
 
                     {view === "calendar" && (
