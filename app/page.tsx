@@ -101,19 +101,17 @@ export default function Home() {
     }
   }, [session]);
 
-  // 소셜 로그인 공통 핸들러 함수
+  // 소셜 로그인 공통 핸들러 함수 (window is not defined 방지 처리 완료)
   const handleSocialSignIn = async (provider: "google" | "kakao" | "naver") => {
-  // 브라우저 환경인지 체크 후 주소 가져오기 (SSR 에러 완벽 방지)
-  const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
-
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider,
-    options: {
-      redirectTo: redirectUrl, 
-    },
-  });
-  if (error) alert(`${provider} 로그인 실패: ${error.message}`);
-};
+    const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: redirectUrl,
+      },
+    });
+    if (error) alert(`${provider} 로그인 실패: ${error.message}`);
+  };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -543,7 +541,7 @@ export default function Home() {
       <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900 px-4">
         <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-slate-700 text-center">
           <h2 className="text-3xl font-extrabold mb-2 tracking-tight text-slate-900 dark:text-white">📊 무계획 속 계획</h2>
-          <p className="text-xs text-gray-400 dark:text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
+          <p className="text-center text-xs text-gray-400 dark:text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
           
           <div className="space-y-3 pt-2">
             {/* 카카오 로그인 */}
@@ -567,7 +565,7 @@ export default function Home() {
               onClick={() => handleSocialSignIn("google")} 
               className="w-full py-3.5 rounded-xl bg-white text-slate-700 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 transition flex items-center justify-center gap-2"
             >
-              <span> G </span> 구글 계정으로 시작하기
+              <span>G</span> 구글 계정으로 시작하기
             </button>
           </div>
         </div>
