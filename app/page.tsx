@@ -100,16 +100,16 @@ export default function Home() {
     }
   }, [session]);
 
-  // 소셜 로그인 공통 핸들러 함수 (window is not defined 방지 처리 완료)
-  const handleSocialSignIn = async (provider: "google" | "kakao" | "naver") => {
+// 구글 로그인 핸들러 함수 (window is not defined 방지 처리 완료)
+  const handleGoogleSignIn = async () => {
     const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
     const { error } = await supabase.auth.signInWithOAuth({
-  provider: 'google',
-  options: {
-    redirectTo: redirectUrl,
-  },
-});
-    if (error) alert(`${provider} 로그인 실패: ${error.message}`);
+      provider: 'google',
+      options: {
+        redirectTo: redirectUrl,
+      },
+    });
+    if (error) alert(`구글 로그인 실패: ${error.message}`);
   };
 
   const handleSignOut = async () => {
@@ -543,9 +543,9 @@ export default function Home() {
           <p className="text-center text-xs text-gray-400 dark:text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
           
 
-            {/* 구글 로그인 */}
-            <button 
-              onClick={() => handleSocialSignIn("google")} 
+{/* 구글 로그인 */}
+<button 
+  onClick={handleGoogleSignIn}
               className="w-full py-3.5 rounded-xl bg-white text-slate-700 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 transition flex items-center justify-center gap-2"
             >
               <span>G</span> 구글 계정으로 시작하기
