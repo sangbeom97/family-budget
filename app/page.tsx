@@ -104,11 +104,11 @@ export default function Home() {
   const handleGoogleSignIn = async () => {
     const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: redirectUrl,
-      },
-    });
+  provider: provider as any, // TypeScript의 타입 제한을 일시적으로 풀어줍니다.
+  options: {
+    redirectTo: redirectUrl,
+  },
+});
     if (error) alert(`구글 로그인 실패: ${error.message}`);
   };
 
@@ -530,8 +530,8 @@ export default function Home() {
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
-    XXLSX.utils.book_append_sheet(workbook, worksheet, "가계부내역");
-    XXLSX.writeFile(workbook, `가계부_내역_${selectedMonth}.xlsx`);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "가계부내역");
+    XLSX.writeFile(workbook, `가계부_내역_${selectedMonth}.xlsx`);
   };
 
   // --- 8. 미인증 상태 UI (소셜 로그인 전용 화면) ---
