@@ -19,382 +19,104 @@ type Props = {
   darkMode: boolean;
 };
 
-export default function CalendarView({
-  items,
-  selectedMonth,
-  darkMode,
-}: Props) {
+export default function CalendarView({ items, selectedMonth, darkMode }: Props) {
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const [selectedDate, setSelectedDate] =
-    useState<string | null>(null);
+  const [year, month] = selectedMonth.split("-").map(Number);
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const daysInMonth = new Date(year, month, 0).getDate();
 
-  const [year, month] = selectedMonth
-    .split("-")
-    .map(Number);
-
-  const firstDay = new Date(
-    year,
-    month - 1,
-    1
-  ).getDay();
-
-  const daysInMonth = new Date(
-    year,
-    month,
-    0
-  ).getDate();
-
-  const days = [];
-
-  // 빈칸
-  for (let i = 0; i < firstDay; i++) {
-    days.push(null);
-  }
-
-  // 날짜
-  for (let i = 1; i <= daysInMonth; i++) {
-    days.push(i);
-  }
-
-  const weekDays = [
-    "일",
-    "월",
-    "화",
-    "수",
-    "목",
-    "금",
-    "토",
+  const days: (number | null)[] = [
+    ...Array(firstDay).fill(null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1)
   ];
 
-  const today = new Date()
-    .toISOString()
-    .split("T")[0];
+  const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
 
-  // 팝업 데이터
-  const selectedItems = items.filter(
-    (item) => item.date === selectedDate
-  );
+  // 선택된 날짜의 가계부 내역들 필터링
+  const activeItems = items.filter((item) => {
+    if (!selectedDate) return false;
+    const dayStr = String(selectedDate).padStart(2, "0");
+    return item.date === `${selectedMonth}-${dayStr}`;
+  });
 
   return (
     <>
-      <div
-        className={`rounded-2xl p-4 shadow ${darkMode
-          ? "bg-slate-800 text-white"
-          : "bg-white text-black"
-          }`}
-      >
-        {/* 요일 */}
-        <div className="grid grid-cols-7 border-b">
-          {weekDays.map((day, index) => (
-            <div
-              key={day}
-              className={`text-center font-semibold py-3
-              ${index === 0
-                  ? "text-red-500"
-                  : ""
-                }
-              ${index === 6
-                  ? "text-blue-500"
-                  : ""
-                }`}
-            >
-              {day}
+      <div className={`rounded-2xl p-4 shadow-sm border ${darkMode ? "bg-slate-800 border-slate-700" : "bg-white border-gray-100"}`}>
+        {/* 요일 헤더 */}
+        <div className="grid grid-cols-7 gap-1 text-center mb-2">
+          {weekDays.map((d, i) => (
+            <div key={d} className={`text-xs font-bold py-1 ${i === 0 ? "text-red-500" : i === 6 ? "text-blue-500" : darkMode ? "text-gray-400" : "text-gray-500"}`}>
+              {d}
             </div>
           ))}
         </div>
 
-        {/* 날짜 */}
-        <div className="grid grid-cols-7">
-          {days.map((day, index) => {
-            if (!day) {
-              return (
-                <div
-                  key={index}
-                  className={`border h-36 ${darkMode
-                    ? "bg-slate-700 border-slate-600"
-                    : "bg-gray-50"
-                    }`}
-                />
-              );
-            }
+        {/* 달력 날짜 그리드 */}
+        <div className="grid grid-cols-7 gap-1">
+          {days.map((day, idx) => {
+            if (day === null) return <div key={`empty-${idx}`} className="p-2" />;
 
-            const dateString = `${selectedMonth}-${String(
-              day
-            ).padStart(2, "0")}`;
-
-            const dayItems = items.filter(
-              (item) =>
-                item.date === dateString
-            );
-
-            const dayExpense =
-              dayItems
-                .filter(
-                  (item) =>
-                    item.type === "expense" &&
-                    item.spend_type !== "saving"
-                )
-                .reduce(
-                  (sum, item) =>
-                    sum + item.amount,
-                  0
-                );
-
-            let bgColor = darkMode
-              ? "bg-slate-800"
-              : "bg-white";
-
-            if (dayExpense >= 200000) {
-              bgColor = darkMode
-                ? "bg-red-900/40"
-                : "bg-red-300";
-            } else if (dayExpense >= 100000) {
-              bgColor = darkMode
-                ? "bg-orange-900/40"
-                : "bg-orange-200";
-            } else if (dayExpense >= 50000) {
-              bgColor = darkMode
-                ? "bg-yellow-900/30"
-                : "bg-yellow-100";
-            }
-
-            // 날짜 총합
-            const dayTotal = dayItems.reduce(
-              (sum, item) => {
-                if (
-                  item.type === "income"
-                ) {
-                  return (
-                    sum + item.amount
-                  );
-                }
-
-                return (
-                  sum - item.amount
-                );
-              },
-              0
-            );
-
-            const isToday =
-              dateString === today;
-
-            const weekIndex =
-              index % 7;
+            const dayStr = String(day).padStart(2, "0");
+            const fullDateStr = `${selectedMonth}-${dayStr}`;
+            
+            // 해당 날짜의 수입/지출 계산
+            const dayItems = items.filter((it) => it.date === fullDateStr);
+            const dayExpense = dayItems.filter((it) => it.type !== "income").reduce((sum, it) => sum + it.amount, 0);
+            const dayIncome = dayItems.filter((it) => it.type === "income").reduce((sum, it) => sum + it.amount, 0);
+            const isSelected = selectedDate === dayStr;
 
             return (
-              <div
-                key={index}
-                onClick={() =>
-                  setSelectedDate(
-                    dateString
-                  )
-                }
-                className={`
-                  border
-                  ${darkMode ? "border-slate-700" : ""}
-                  h-36
-                  p-2
-                  overflow-y-auto
-                  cursor-pointer
-                  ${darkMode ? "hover:bg-slate-700" : "hover:bg-gray-50"}
-                  transition
-                  ${bgColor}
-                `}
+              <button
+                key={day}
+                onClick={() => setSelectedDate(isSelected ? null : dayStr)}
+                className={`p-1.5 min-h-[64px] rounded-xl flex flex-col justify-between items-start transition-all border text-left ${
+                  isSelected
+                    ? "border-blue-500 bg-blue-500/10"
+                    : darkMode
+                    ? "border-slate-700 hover:bg-slate-700/50"
+                    : "border-gray-50 hover:bg-gray-50"
+                }`}
               >
-                {/* 날짜 */}
-                <div
-                  className={`
-                    flex justify-between items-center mb-1
-                  `}
-                >
-                  <span
-                    className={`
-                    text-sm font-bold
-                    ${weekIndex === 0
-                        ? "text-red-500"
-                        : ""
-                      }
-                    ${weekIndex === 6
-                        ? "text-blue-500"
-                        : ""
-                      }
-                    ${isToday
-                        ? "bg-black text-white rounded-full w-6 h-6 flex items-center justify-center"
-                        : ""
-                      }
-                  `}
-                  >
-                    {day}
-                  </span>
-
-                  {/* 총합 */}
-                  <span
-                    className={`text-[10px] font-semibold
-                    ${dayTotal >= 0
-                        ? "text-blue-500"
-                        : "text-red-500"
-                      }`}
-                  >
-                    ₩
-                    {Math.abs(
-                      dayTotal
-                    ).toLocaleString()}
-                  </span>
+                <span className={`text-xs font-bold ${idx % 7 === 0 ? "text-red-500" : idx % 7 === 6 ? "text-blue-500" : darkMode ? "text-gray-200" : "text-gray-700"}`}>
+                  {day}
+                </span>
+                
+                <div className="w-full text-[10px] font-semibold space-y-0.5 overflow-hidden text-right">
+                  {dayIncome > 0 && <p className="text-blue-500 truncate">+{dayIncome.toLocaleString()}</p>}
+                  {dayExpense > 0 && <p className="text-red-500 truncate">-{dayExpense.toLocaleString()}</p>}
                 </div>
-
-                {/* 내역 */}
-                <div className="space-y-1">
-                  {dayItems
-                    .slice(0, 3)
-                    .map((item) => (
-                      <div
-                        key={item.id}
-                        className={`
-                        text-[10px]
-                        rounded
-                        px-1
-                        py-[2px]
-                        truncate
-                        ${item.type ===
-                            "income"
-                            ? "bg-blue-100 text-blue-700"
-                            : item.spend_type ===
-                              "fixed"
-                              ? "bg-orange-100 text-orange-700"
-                              : "bg-red-100 text-red-700"
-                          }
-                      `}
-                      >
-                        {item.name} ₩
-                        {item.amount.toLocaleString()}
-                      </div>
-                    ))}
-
-                  {dayItems.length > 3 && (
-                    <div className="text-[10px] text-gray-400">
-                      +{dayItems.length - 3}
-                      개 더보기
-                    </div>
-                  )}
-                </div>
-              </div>
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* 상세 팝업 */}
+      {/* 날짜 클릭 시 하단에 상세 내역 모달/리스트 노출 */}
       {selectedDate && (
-        <div
-          className="
-            fixed inset-0
-            bg-black/40
-            flex items-center justify-center
-            z-50
-          "
-          onClick={() =>
-            setSelectedDate(null)
-          }
-        >
-          <div
-            className={`
-                rounded-2xl
-                p-5
-                w-[90%]
-                max-w-md
-                max-h-[80vh]
-                overflow-y-auto
-                ${darkMode
-                ? "bg-slate-800 text-white"
-                : "bg-white text-black"
-              }
-  `}
-            onClick={(e) =>
-              e.stopPropagation()
-            }
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">
-                {selectedDate}
-              </h2>
+        <div className={`mt-4 rounded-2xl p-5 border shadow-sm ${darkMode ? "bg-slate-800 border-slate-700 text-white" : "bg-white border-gray-100 text-gray-900"}`}>
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="font-extrabold text-sm">📅 {selectedMonth}-{selectedDate} 상세 내역</h4>
+            <button onClick={() => setSelectedDate(null)} className="text-xs text-gray-400 hover:text-gray-500 font-medium">닫기</button>
+          </div>
 
-              <button
-                onClick={() =>
-                  setSelectedDate(null)
-                }
-                className="text-gray-400"
-              >
-                ✕
-              </button>
-            </div>
+          <div className="space-y-3">
+            {activeItems.map((item) => (
+              <div key={item.id} className={`flex justify-between items-center p-3 border rounded-xl ${darkMode ? "bg-slate-700/40 border-slate-600" : "bg-gray-50/50 border-gray-100"}`}>
+                <div className="space-y-0.5">
+                  <p className="font-bold text-sm">{item.name}</p>
+                  {item.memo && <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>📝 {item.memo}</p>}
+                  <p className={`text-[11px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{item.category}</p>
+                </div>
+                <div className={`font-extrabold text-sm ${item.type === "income" ? "text-blue-500" : "text-red-500"}`}>
+                  {item.type === "income" ? "+" : "-"} ₩{item.amount.toLocaleString()}
+                </div>
+              </div>
+            ))}
 
-            <div className="space-y-3">
-              {selectedItems.length ===
-                0 && (
-                  <p className="text-gray-400">
-                    내역 없음
-                  </p>
-                )}
-
-              {selectedItems.map(
-                (item) => (
-                  <div
-                    key={item.id}
-                    className={`
-                        border rounded-xl p-3
-                        flex justify-between items-center
-                        ${darkMode
-                        ? "border-slate-600 bg-slate-700"
-                        : ""
-                      }
-                    `}
-                  >
-                    <div>
-                      <p className="font-medium">
-                        {item.name}
-                      </p>
-
-                      {item.memo && (
-                        <p
-                          className={`text-xs ${darkMode
-                            ? "text-gray-300"
-                            : "text-gray-400"
-                            }`}
-                        >
-                          📝 {item.memo}
-                        </p>
-                      )}
-
-                      <p
-                        className={`text-sm ${darkMode
-                          ? "text-gray-300"
-                          : "text-gray-500"
-                          }`}
-                      >
-                        {item.category}
-                      </p>
-                    </div>
-
-                    <div
-                      className={
-                        item.type ===
-                          "income"
-                          ? "text-blue-500 font-semibold"
-                          : "text-red-500 font-semibold"
-                      }
-                    >
-                      {item.type ===
-                        "income"
-                        ? "+"
-                        : "-"}
-                      ₩
-                      {item.amount.toLocaleString()}
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
+            {activeItems.length === 0 && (
+              <p className="text-center py-6 text-xs text-gray-400 font-medium">선택한 날짜에 등록된 내역이 없습니다.</p>
+            )}
           </div>
         </div>
       )}
