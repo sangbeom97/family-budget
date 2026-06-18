@@ -103,14 +103,17 @@ export default function Home() {
 
   // 소셜 로그인 공통 핸들러 함수
   const handleSocialSignIn = async (provider: "google" | "kakao" | "naver") => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: window.location.origin, // 로그인 완료 후 내 도메인 홈으로 돌아옴
-      },
-    });
-    if (error) alert(`${provider} 로그인 실패: ${error.message}`);
-  };
+  // 브라우저 환경인지 체크 후 주소 가져오기 (SSR 에러 완벽 방지)
+  const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
+
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: redirectUrl, 
+    },
+  });
+  if (error) alert(`${provider} 로그인 실패: ${error.message}`);
+};
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
