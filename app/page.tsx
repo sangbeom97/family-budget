@@ -40,8 +40,6 @@ type Group = {
 export default function Home() {
   // --- 1. 인증 및 공유 그룹 관련 상태 ---
   const [session, setSession] = useState<any>(null);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [groups, setGroups] = useState<Group[]>([]);
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
   const [newGroupName, setNewGroupName] = useState("");
@@ -103,15 +101,15 @@ export default function Home() {
     }
   }, [session]);
 
-  const handleSignUp = async () => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) alert(`회원가입 실패: ${error.message}`);
-    else alert("회원가입 성공! 인증 메일을 확인해주세요.");
-  };
-
-  const handleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) alert(`로그인 실패: ${error.message}`);
+  // 소셜 로그인 공통 핸들러 함수
+  const handleSocialSignIn = async (provider: "google" | "kakao" | "naver") => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: window.location.origin, // 로그인 완료 후 내 도메인 홈으로 돌아옴
+      },
+    });
+    if (error) alert(`${provider} 로그인 실패: ${error.message}`);
   };
 
   const handleSignOut = async () => {
@@ -165,7 +163,7 @@ export default function Home() {
     }
   };
 
-  // --- 5. 가계부 데이터 Fetch 로직 (그룹 격리 구현) ---
+  // --- 5. 가계부 데이터 Fetch 로직 ---
   const fetchItems = async () => {
     if (!currentGroupId) return;
     const startDateObj = new Date(`${selectedMonth}-01`);
@@ -394,7 +392,7 @@ export default function Home() {
       .slice(0, 5);
   }, [graphCategories, filter, categorizedNames.saving, yearlySourceItems]);
 
-  // --- 7. 비즈니스 공유 데이터 변경 액션 핸들러 구현 완료 ---
+  // --- 7. 비즈니스 액션 핸들러 ---
   const addItem = async () => {
     if (!name.trim() || !amount.trim() || !currentGroupId) return;
 
@@ -536,20 +534,38 @@ export default function Home() {
     XLSX.writeFile(workbook, `가계부_내역_${selectedMonth}.xlsx`);
   };
 
-  // --- 8. 미인증 상태 UI (Sign In / Out) ---
+  // --- 8. 미인증 상태 UI (소셜 로그인 전용 화면) ---
   if (!session) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900 px-4">
-        <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-slate-700">
-          <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-slate-900 dark:text-white">📊 무계획 속 계획</h2>
-          <p className="text-center text-xs text-gray-400 dark:text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
-          <div className="space-y-4">
-            <input type="email" placeholder="이메일 주소" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border-2 rounded-xl px-4 py-3 text-sm font-medium bg-transparent border-gray-200 dark:border-slate-700 outline-none focus:border-blue-500 text-black dark:text-white" />
-            <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border-2 rounded-xl px-4 py-3 text-sm font-medium bg-transparent border-gray-200 dark:border-slate-700 outline-none focus:border-blue-500 text-black dark:text-white" />
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <button onClick={handleSignIn} className="py-3 rounded-xl bg-black text-white text-sm font-bold shadow-sm hover:bg-slate-800 transition">로그인</button>
-              <button onClick={handleSignUp} className="py-3 rounded-xl border-2 border-gray-200 dark:border-slate-600 text-slate-700 dark:text-gray-200 text-sm font-bold hover:bg-gray-50 dark:hover:bg-slate-700 transition">회원가입</button>
-            </div>
+        <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-slate-700 text-center">
+          <h2 className="text-3xl font-extrabold mb-2 tracking-tight text-slate-900 dark:text-white">📊 무계획 속 계획</h2>
+          <p className="text-xs text-gray-400 dark:text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
+          
+          <div className="space-y-3 pt-2">
+            {/* 카카오 로그인 */}
+            <button 
+              onClick={() => handleSocialSignIn("kakao")} 
+              className="w-full py-3.5 rounded-xl bg-[#FEE500] text-[#191919] text-sm font-bold shadow-sm hover:opacity-90 transition flex items-center justify-center gap-2"
+            >
+              <span>💬</span> 카카오톡으로 시작하기
+            </button>
+
+            {/* 네이버 로그인 */}
+            <button 
+              onClick={() => handleSocialSignIn("naver")} 
+              className="w-full py-3.5 rounded-xl bg-[#03C75A] text-white text-sm font-bold shadow-sm hover:opacity-90 transition flex items-center justify-center gap-2"
+            >
+              <span>💚</span> 네이버로 시작하기
+            </button>
+
+            {/* 구글 로그인 */}
+            <button 
+              onClick={() => handleSocialSignIn("google")} 
+              className="w-full py-3.5 rounded-xl bg-white text-slate-700 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 transition flex items-center justify-center gap-2"
+            >
+              <span> G </span> 구글 계정으로 시작하기
+            </button>
           </div>
         </div>
       </main>
