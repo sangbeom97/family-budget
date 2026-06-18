@@ -104,11 +104,11 @@ export default function Home() {
   const handleSocialSignIn = async (provider: "google" | "kakao" | "naver") => {
     const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
     const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: redirectUrl,
-      },
-    });
+  provider: 'google',
+  options: {
+    redirectTo: redirectUrl,
+  },
+});
     if (error) alert(`${provider} 로그인 실패: ${error.message}`);
   };
 
@@ -542,22 +542,6 @@ export default function Home() {
           <h2 className="text-3xl font-extrabold mb-2 tracking-tight text-slate-900 dark:text-white">📊 무계획 속 계획</h2>
           <p className="text-center text-xs text-gray-400 dark:text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
           
-          <div className="space-y-3 pt-2">
-            {/* 카카오 로그인 */}
-            <button 
-              onClick={() => handleSocialSignIn("kakao")} 
-              className="w-full py-3.5 rounded-xl bg-[#FEE500] text-[#191919] text-sm font-bold shadow-sm hover:opacity-90 transition flex items-center justify-center gap-2"
-            >
-              <span>💬</span> 카카오톡으로 시작하기
-            </button>
-
-            {/* 네이버 로그인 */}
-            <button 
-              onClick={() => handleSocialSignIn("naver")} 
-              className="w-full py-3.5 rounded-xl bg-[#03C75A] text-white text-sm font-bold shadow-sm hover:opacity-90 transition flex items-center justify-center gap-2"
-            >
-              <span>💚</span> 네이버로 시작하기
-            </button>
 
             {/* 구글 로그인 */}
             <button 
