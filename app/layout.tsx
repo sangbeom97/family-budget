@@ -14,8 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "무계획 속 계획 - 가계부",
+  title: "Jellian - 가계부",
   description: "심플하고 직관적인 나만의 자산 관리 대시보드",
+
+  icons: {
+    icon: "/favicon.png",
 };
 
 export default function RootLayout({
