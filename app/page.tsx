@@ -102,15 +102,15 @@ export default function Home() {
 
   // 구글 로그인 핸들러 함수 (window is not defined 방지 처리 완료)
   const handleGoogleSignIn = async () => {
-    const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
-    const { error } = await supabase.auth.signInWithOAuth({
-  provider: provider as any, // TypeScript의 타입 제한을 일시적으로 풀어줍니다.
-  options: {
-    redirectTo: redirectUrl,
-  },
-});
-    if (error) alert(`구글 로그인 실패: ${error.message}`);
-  };
+  const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google", // 갱신: "google" 문자열을 직접 할당
+    options: {
+      redirectTo: redirectUrl,
+    },
+  });
+  if (error) alert(`구글 로그인 실패: ${error.message}`);
+};
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -250,10 +250,11 @@ export default function Home() {
   }, [categories, type, spendType]);
 
   useEffect(() => {
-    if (categorizedNames.current.length > 0 && !categorizedNames.current.includes(category)) {
-      setCategory(categorizedNames.current[0]);
-    }
-  }, [categorizedNames.current, category]);
+  if (categorizedNames.current.length > 0 && !categorizedNames.current.includes(category)) {
+    setCategory(categorizedNames.current[0]);
+  }
+// 의존성 배열에서 객체/배열 전체를 감시하는 대신, 원시값들의 변화만 감시하도록 명시합니다.
+}, [categorizedNames.current.join(","), category]);
 
   const graphCategories = useMemo(() => {
     return [
@@ -394,19 +395,22 @@ export default function Home() {
 
   // --- 7. 비즈니스 액션 핸들러 ---
   const addItem = async () => {
-    if (!name.trim() || !amount.trim() || !currentGroupId) return;
+  if (!name.trim() || !amount.trim() || !currentGroupId) return;
 
-    const payload = {
-      name,
-      amount: Number(amount),
-      type,
-      category,
-      date,
-      spend_type: type === "income" ? "income" : spendType,
-      memo,
-      user_id: session?.user?.id,
-      group_id: currentGroupId,
-    };
+  // 현재 선택된 카테고리가 없거나 비어있다면, 사용 가능한 첫 번째 카테고리 혹은 "기타"를 강제로 할당합니다.
+  const finalCategory = category || categorizedNames.current[0] || "기타";
+
+  const payload = {
+    name,
+    amount: Number(amount),
+    type,
+    category: finalCategory, // 정제된 카테고리 변수 적용
+    date,
+    spend_type: type === "income" ? "income" : spendType,
+    memo,
+    user_id: session?.user?.id,
+    group_id: currentGroupId,
+  };
 
     if (editingId) {
       await supabase.from("transactions").update(payload).eq("id", editingId);
@@ -494,17 +498,23 @@ export default function Home() {
       const ws = wb.Sheets[wsname];
       const data: any[] = XLSX.utils.sheet_to_json(ws);
 
-      const parsedItems = data.map((row: any) => ({
-        name: row["내역명"] || row["항목"] || "미지정",
-        amount: Number(row["금액"] || 0),
-        type: row["타입"] === "수입" ? "income" : "expense",
-        category: row["카테고리"] || "기타",
-        date: row["날짜"] || new Date().toISOString().split("T")[0],
-        spend_type: row["지출분류"] || "variable",
-        memo: row["메모"] || "",
-        group_id: currentGroupId,
-        user_id: session?.user?.id,
-      }));
+      const parsedItems = data.map((row: any) => {
+  // 숫자가 아닌 문자(쉼표, '원' 등)를 지우고 순수 숫자만 남깁니다.
+  const rawAmount = String(row["금액"] || "").replace(/[^0-9-]/g, "");
+  const parsedAmount = Number(rawAmount);
+
+  return {
+    name: row["내역명"] || row["항목"] || "미지정",
+    amount: isNaN(parsedAmount) ? 0 : parsedAmount, // 변환 실패 시 NaN 대신 0 탈출
+    type: row["타입"] === "수입" ? "income" : "expense",
+    category: row["카테고리"] || "기타",
+    date: row["날짜"] || new Date().toISOString().split("T")[0],
+    spend_type: row["지출분류"] || "variable",
+    memo: row["메모"] || "",
+    group_id: currentGroupId,
+    user_id: session?.user?.id,
+  };
+});
 
       if (parsedItems.length > 0) {
         await supabase.from("transactions").insert(parsedItems);
