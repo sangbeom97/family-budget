@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: "심플하고 직관적인 나만의 자산 관리 대시보드",
 
   icons: {
-    icon: "/favicon.png",
+    icon: "/favicon.ico",
 };
 
 export default function RootLayout({
