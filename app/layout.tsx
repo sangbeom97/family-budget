@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "Jellian - 가계부",
   description: "심플하고 직관적인 나만의 자산 관리 대시보드",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/favicon.png",
   }, // 👈 여기에 중괄호('}')가 빠져있던 것을 채워 넣었습니다!
 };
 
