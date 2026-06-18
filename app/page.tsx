@@ -100,7 +100,7 @@ export default function Home() {
     }
   }, [session]);
 
-// 구글 로그인 핸들러 함수 (window is not defined 방지 처리 완료)
+  // 구글 로그인 핸들러 함수 (window is not defined 방지 처리 완료)
   const handleGoogleSignIn = async () => {
     const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
     const { error } = await supabase.auth.signInWithOAuth({
@@ -530,8 +530,8 @@ export default function Home() {
 
     const worksheet = XLSX.utils.json_to_sheet(excelData);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "가계부내역");
-    XLSX.writeFile(workbook, `가계부_내역_${selectedMonth}.xlsx`);
+    XXLSX.utils.book_append_sheet(workbook, worksheet, "가계부내역");
+    XXLSX.writeFile(workbook, `가계부_내역_${selectedMonth}.xlsx`);
   };
 
   // --- 8. 미인증 상태 UI (소셜 로그인 전용 화면) ---
@@ -542,15 +542,13 @@ export default function Home() {
           <h2 className="text-3xl font-extrabold mb-2 tracking-tight text-slate-900 dark:text-white">📊 무계획 속 계획</h2>
           <p className="text-center text-xs text-gray-400 dark:text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
           
-
-{/* 구글 로그인 */}
-<button 
-  onClick={handleGoogleSignIn}
-              className="w-full py-3.5 rounded-xl bg-white text-slate-700 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 transition flex items-center justify-center gap-2"
-            >
-              <span>G</span> 구글 계정으로 시작하기
-            </button>
-          </div>
+          {/* 구글 로그인 */}
+          <button 
+            onClick={handleGoogleSignIn}
+            className="w-full py-3.5 rounded-xl bg-white text-slate-700 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 transition flex items-center justify-center gap-2"
+          >
+            <span>G</span> 구글 계정으로 시작하기
+          </button>
         </div>
       </main>
     );
