@@ -38,7 +38,7 @@ type Group = {
 };
 
 export default function Home() {
-  // --- [추가] 인증 및 공유 그룹 관련 상태 ---
+  // --- 1. 인증 및 공유 그룹 관련 상태 ---
   const [session, setSession] = useState<any>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,7 +47,7 @@ export default function Home() {
   const [newGroupName, setNewGroupName] = useState("");
   const [inviteUserId, setInviteUserId] = useState("");
 
-  // --- 기존 상태 정의 유지 ---
+  // --- 2. 일반 가계부 상태 정의 ---
   const [mainTab, setMainTab] = useState<"account" | "category" | "fridge">("account");
   const [items, setItems] = useState<Item[]>([]);
   const [yearlyItems, setYearlyItems] = useState<Item[]>([]);
@@ -78,12 +78,13 @@ export default function Home() {
   const [categoryName, setCategoryName] = useState("");
   const [categoryType, setCategoryType] = useState("variable");
 
+  // 중복 데이터 처리 모달 관련 상태
   const [duplicateItem, setDuplicateItem] = useState<any>(null);
   const [duplicateResolve, setDuplicateResolve] = useState<((value: boolean) => void) | null>(null);
   const [duplicateIndex, setDuplicateIndex] = useState(0);
   const [duplicateTotal, setDuplicateTotal] = useState(0);
 
-  // --- [변경/인증] 유저 세션 실시간 감지 및 초기 그룹 매핑 ---
+  // --- 3. 인증 및 세션 제어 흐름 ---
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -102,11 +103,10 @@ export default function Home() {
     }
   }, [session]);
 
-  // --- [추가] 인증 관련 핸들러 ---
   const handleSignUp = async () => {
     const { error } = await supabase.auth.signUp({ email, password });
     if (error) alert(`회원가입 실패: ${error.message}`);
-    else alert("회원가입 성공 인증 이메일을 확인해 주세요!");
+    else alert("회원가입 성공! 인증 메일을 확인해주세요.");
   };
 
   const handleSignIn = async () => {
@@ -120,9 +120,9 @@ export default function Home() {
     setGroups([]);
   };
 
-  // --- [추가] 가계부 방 공유 및 멤버 초대 액션 로직 ---
+  // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("group_members")
       .select("group_id, groups(id, name)")
       .eq("user_id", session?.user?.id);
@@ -138,7 +138,7 @@ export default function Home() {
 
   const createGroup = async () => {
     if (!newGroupName.trim()) return;
-    const { data: newGroup, error: groupErr } = await supabase
+    const { data: newGroup } = await supabase
       .from("groups")
       .insert([{ name: newGroupName, created_by: session?.user?.id }])
       .select()
@@ -147,7 +147,7 @@ export default function Home() {
     if (newGroup) {
       await supabase.from("group_members").insert([{ group_id: newGroup.id, user_id: session?.user?.id }]);
       setNewGroupName("");
-      fetchUserGroups();
+      await fetchUserGroups();
       setCurrentGroupId(newGroup.id);
     }
   };
@@ -158,14 +158,14 @@ export default function Home() {
       .from("group_members")
       .insert([{ group_id: currentGroupId, user_id: inviteUserId }]);
 
-    if (error) alert("초대에 실패했습니다. 유저 고유 ID(UUID)를 확인해 주세요.");
+    if (error) alert("초대에 실패했습니다. 올바른 유저 ID(UUID)인지 확인해 주세요.");
     else {
       alert("해당 유저를 가계부 그룹에 성공적으로 초대했습니다!");
       setInviteUserId("");
     }
   };
 
-  // --- [변경] 데이터 Fetch 함수들 (선택한 group_id 단위로 격리 쿼리 적용) ---
+  // --- 5. 가계부 데이터 Fetch 로직 (그룹 격리 구현) ---
   const fetchItems = async () => {
     if (!currentGroupId) return;
     const startDateObj = new Date(`${selectedMonth}-01`);
@@ -220,7 +220,6 @@ export default function Home() {
     setBudgets(budgetMap);
   };
 
-  // --- useEffect 최적화 의존성 정돈 ---
   useEffect(() => {
     if (currentGroupId) {
       fetchItems();
@@ -235,7 +234,7 @@ export default function Home() {
     }
   }, [selectedMonth, selectedYear, currentGroupId]);
 
-  // --- 기존의 비즈니스 useMemo 최적화 흐름 완벽 유지 ---
+  // --- 6. 연산 최적화 연산 메모이제이션 (useMemo) ---
   const categorizedNames = useMemo(() => {
     const filterBy = (t: string) => 
       categories.filter((c) => c.type?.trim().toLowerCase() === t).map((c) => c.name);
@@ -251,6 +250,12 @@ export default function Home() {
         .map((c) => c.name),
     };
   }, [categories, type, spendType]);
+
+  useEffect(() => {
+    if (categorizedNames.current.length > 0 && !categorizedNames.current.includes(category)) {
+      setCategory(categorizedNames.current[0]);
+    }
+  }, [categorizedNames.current, category]);
 
   const graphCategories = useMemo(() => {
     return [
@@ -389,17 +394,149 @@ export default function Home() {
       .slice(0, 5);
   }, [graphCategories, filter, categorizedNames.saving, yearlySourceItems]);
 
-  // --- 기존 목스/액션 부분 핸들러 생략 구문 유지 ---
-  const handleFileUpload = async (e: any) => {};
-  const addItem = async () => {};
-  const deleteItem = async (id: number) => {};
-  const exportToExcel = () => {};
-  const startEdit = (item: Item) => {};
-  const saveBudget = async (category: string, value: string) => {};
-  const addCategory = async () => {};
-  const deleteCategory = async (name: string) => {};
+  // --- 7. 비즈니스 공유 데이터 변경 액션 핸들러 구현 완료 ---
+  const addItem = async () => {
+    if (!name.trim() || !amount.trim() || !currentGroupId) return;
 
-  // --- [1단계 체크] 비인증 상태일 때 전용 인트로 및 로그인 UI 노출 ---
+    const payload = {
+      name,
+      amount: Number(amount),
+      type,
+      category,
+      date,
+      spend_type: type === "income" ? "income" : spendType,
+      memo,
+      user_id: session?.user?.id,
+      group_id: currentGroupId,
+    };
+
+    if (editingId) {
+      await supabase.from("transactions").update(payload).eq("id", editingId);
+      setEditingId(null);
+    } else {
+      await supabase.from("transactions").insert([payload]);
+    }
+
+    setName("");
+    setAmount("");
+    setMemo("");
+    fetchItems();
+    fetchYearlyItems();
+  };
+
+  const deleteItem = async (id: number) => {
+    if (!confirm("정말 이 내역을 삭제하시겠습니까?")) return;
+    await supabase.from("transactions").delete().eq("id", id);
+    fetchItems();
+    fetchYearlyItems();
+  };
+
+  const startEdit = (item: Item) => {
+    setEditingId(item.id);
+    setName(item.name);
+    setAmount(item.amount.toString());
+    setType(item.type);
+    setCategory(item.category);
+    setSpendType(item.type === "income" ? "variable" : item.spend_type);
+    setDate(item.date);
+    setMemo(item.memo);
+  };
+
+  const addCategory = async () => {
+    if (!categoryName.trim() || !currentGroupId) return;
+    await supabase.from("categories").insert([
+      { name: categoryName.trim(), type: categoryType, group_id: currentGroupId, user_id: session?.user?.id }
+    ]);
+    setCategoryName("");
+    fetchCategories();
+  };
+
+  const deleteCategory = async (name: string) => {
+    if (!confirm(`[${name}] 카테고리를 삭제하시겠습니까?`)) return;
+    await supabase.from("categories").delete().eq("group_id", currentGroupId).eq("name", name);
+    fetchCategories();
+  };
+
+  const saveBudget = async (catName: string, value: string) => {
+    if (!currentGroupId) return;
+    const numValue = Number(value) || 0;
+
+    const { data } = await supabase
+      .from("budgets")
+      .select("*")
+      .eq("group_id", currentGroupId)
+      .eq("month", selectedMonth)
+      .eq("category", catName);
+
+    if (data && data.length > 0) {
+      await supabase
+        .from("budgets")
+        .update({ amount: numValue })
+        .eq("group_id", currentGroupId)
+        .eq("month", selectedMonth)
+        .eq("category", catName);
+    } else {
+      await supabase.from("budgets").insert([
+        { group_id: currentGroupId, month: selectedMonth, category: catName, amount: numValue }
+      ]);
+    }
+    fetchBudgets();
+  };
+
+  const handleFileUpload = async (e: any) => {
+    const file = e.target.files[0];
+    if (!file || !currentGroupId) return;
+    setSelectedFileName(file.name);
+
+    const reader = new FileReader();
+    reader.onload = async (evt: any) => {
+      const bstr = evt.target.result;
+      const wb = XLSX.read(bstr, { type: "binary" });
+      const wsname = wb.SheetNames[0];
+      const ws = wb.Sheets[wsname];
+      const data: any[] = XLSX.utils.sheet_to_json(ws);
+
+      const parsedItems = data.map((row: any) => ({
+        name: row["내역명"] || row["항목"] || "미지정",
+        amount: Number(row["금액"] || 0),
+        type: row["타입"] === "수입" ? "income" : "expense",
+        category: row["카테고리"] || "기타",
+        date: row["날짜"] || new Date().toISOString().split("T")[0],
+        spend_type: row["지출분류"] || "variable",
+        memo: row["메모"] || "",
+        group_id: currentGroupId,
+        user_id: session?.user?.id,
+      }));
+
+      if (parsedItems.length > 0) {
+        await supabase.from("transactions").insert(parsedItems);
+        fetchItems();
+        fetchYearlyItems();
+        alert(`${parsedItems.length}건의 내역을 업로드했습니다.`);
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const exportToExcel = () => {
+    if (items.length === 0) return alert("내보낼 데이터가 없습니다.");
+    const excelData = items.map((i) => ({
+      날짜: i.date,
+      내역명: i.name,
+      금액: i.amount,
+      타입: i.type === "income" ? "수입" : "지출",
+      카테고리: i.category,
+      지출분류: i.spend_type,
+      메모: i.memo,
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "가계부내역");
+    XLSX.writeFile(workbook, `가계부_내역_${selectedMonth}.xlsx`);
+  };
+
+  // --- 8. 미인증 상태 UI (Sign In / Out) ---
   if (!session) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900 px-4">
@@ -419,15 +556,15 @@ export default function Home() {
     );
   }
 
-  // --- [2단계] 인증 통과 시 메인 대시보드 화면 ---
+  // --- 9. 메인 레이아웃 렌더링 ---
   return (
     <main className={`min-h-screen p-4 md:p-6 ${darkMode ? "bg-slate-900 text-white" : "bg-zinc-200 text-black"}`}>
       <div className="max-w-6xl mx-auto">
-        {/* 헤더 및 유저 제어 영역 */}
+        {/* 탑 유저 패널 */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight">무계획 속 계획</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-mono mt-1">내 고유 코드: {session.user.id}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-mono mt-1">내 초대 코드: {session.user.id}</p>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setDarkMode(!darkMode)} className="px-4 py-2 rounded-xl bg-black text-white text-sm font-medium">
@@ -439,9 +576,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* --- [추가] 가계부 공유 룸 컨트롤러 바 --- */}
+        {/* 공유 컨트롤 패널 바 */}
         <div className={`p-4 rounded-2xl border mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 ${darkMode ? "bg-slate-800 border-slate-700" : "bg-white border-gray-100"}`}>
-          {/* 가계부 방 선택 */}
           <div>
             <label className="block text-xs font-bold text-gray-400 mb-1">현재 활성화된 공유 가계부</label>
             <select value={currentGroupId} onChange={(e) => setCurrentGroupId(e.target.value)} className="w-full border-2 rounded-xl px-3 py-2 text-sm bg-transparent border-gray-200 dark:border-slate-600 font-bold outline-none text-black dark:text-white">
@@ -449,7 +585,6 @@ export default function Home() {
               {groups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
           </div>
-          {/* 가계부 방 생성 */}
           <div>
             <label className="block text-xs font-bold text-gray-400 mb-1">새 공유 가계부 만들기</label>
             <div className="flex gap-2">
@@ -457,17 +592,16 @@ export default function Home() {
               <button onClick={createGroup} className="bg-blue-600 text-white px-3 py-2 text-xs font-bold rounded-xl whitespace-nowrap">개설</button>
             </div>
           </div>
-          {/* 가계부 다른 멤버 초대 */}
           <div>
             <label className="block text-xs font-bold text-gray-400 mb-1">이 가계부에 다른 사람 추가</label>
             <div className="flex gap-2">
-              <input type="text" placeholder="상대방 고유 ID 입력" value={inviteUserId} onChange={(e) => setInviteUserId(e.target.value)} className="w-full border-2 rounded-xl px-3 py-1.5 text-sm bg-transparent border-gray-200 dark:border-slate-600 outline-none text-black dark:text-white" />
+              <input type="text" placeholder="상대방 초대 코드 입력" value={inviteUserId} onChange={(e) => setInviteUserId(e.target.value)} className="w-full border-2 rounded-xl px-3 py-1.5 text-sm bg-transparent border-gray-200 dark:border-slate-600 outline-none text-black dark:text-white" />
               <button onClick={inviteUser} className="bg-green-600 text-white px-3 py-2 text-xs font-bold rounded-xl whitespace-nowrap">초대</button>
             </div>
           </div>
         </div>
 
-        {/* 탭 네비게이션 */}
+        {/* 메인 메뉴 탭 링크 */}
         <div className="flex gap-2 mb-6">
           {["category", "account", "fridge"].map((tab) => (
             <button
@@ -482,8 +616,8 @@ export default function Home() {
           ))}
         </div>
 
-        {/* 방이 아직 개설되지 않은 경우의 안내 */}
-        {mainTab === "account" && !currentGroupId ? (
+        {/* 컨텐츠 조건부 뷰 출력 */}
+        {!currentGroupId && mainTab === "account" ? (
           <div className="text-center py-24 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-gray-300 dark:border-slate-600">
             <span className="text-5xl block mb-4">🏠</span>
             <p className="font-bold text-lg">활성화된 가계부 방이 존재하지 않습니다.</p>
@@ -492,74 +626,92 @@ export default function Home() {
         ) : (
           <>
             {mainTab === "account" && (
-  <AccountView
-    categoryData={categoryData}
-    yearlyCategoryData={yearlyCategoryData}
-    budgetCompareData={budgetCompareData}
-    handleFileUpload={handleFileUpload}
-    selectedFileName={selectedFileName}
-    exportToExcel={exportToExcel}
-    periodFilteredItems={periodFilteredItems}
-    deleteItem={deleteItem}
-    startEdit={startEdit}
-    monthlyData={monthlyData}
-    topCategories={topCategories}
-    items={items}
-    budgets={budgets}
-    saveBudget={saveBudget}
-    isRealExpense={isRealExpense}
-    mainTab={mainTab}
-    filter={filter}
-    setFilter={setFilter}
-    view={view}
-    setView={setView}
-    selectedYear={selectedYear}
-    setSelectedYear={setSelectedYear}
-    selectedMonth={selectedMonth}
-    setSelectedMonth={setSelectedMonth}
-    startDate={startDate}
-    setStartDate={setStartDate}
-    endDate={endDate}
-    setEndDate={setEndDate}
-    search={search}
-    setSearch={setSearch}
-    categoryFilter={categoryFilter}
-    setCategoryFilter={setCategoryFilter}
-    darkMode={darkMode}
-    graphCategories={graphCategories}
-    savingCategories={categorizedNames.saving}
-    categories={categories}
-    filteredTotal={totals.filteredTotal}
-    SummaryCards={SummaryCards}
-    incomeTotal={totals.incomeTotal}      {/* 깔끔하게 1줄로 정돈 */}
-    yearlyIncome={totals.yearlyIncome}    {/* 깔끔하게 1줄로 정돈 */}
-    expenseTotal={totals.expenseTotal}    {/* 깔끔하게 1줄로 정돈 */}
-    yearlyExpense={totals.yearlyExpense}  {/* 깔끔하게 1줄로 정돈 */}
-    savingTotal={totals.savingTotal}
-    yearlySaving={totals.yearlySaving}
-    total={totals.total}
-    yearlyTotal={totals.yearlyTotal}
-    variableBudgetTotal={variableBudgetTotal}
-    remainVariableBudget={remainVariableBudget}
-    name={name}
-    setName={setName}
-    memo={memo}
-    setMemo={setMemo}
-    amount={amount}
-    setAmount={setAmount}
-    date={date}
-    setDate={setDate}
-    type={type}
-    setType={setType}
-    category={category}
-    setCategory={setCategory}
-    spendType={spendType}
-    setSpendType={setSpendType}
-    currentCategories={categorizedNames.current}
-    addItem={addItem}
-    editingId={editingId}
-  />
-)}
+              <AccountView
+                categoryData={categoryData}
+                yearlyCategoryData={yearlyCategoryData}
+                budgetCompareData={budgetCompareData}
+                handleFileUpload={handleFileUpload}
+                selectedFileName={selectedFileName}
+                exportToExcel={exportToExcel}
+                periodFilteredItems={periodFilteredItems}
+                deleteItem={deleteItem}
+                startEdit={startEdit}
+                monthlyData={monthlyData}
+                topCategories={topCategories}
+                items={items}
+                budgets={budgets}
+                saveBudget={saveBudget}
+                isRealExpense={isRealExpense}
+                mainTab={mainTab}
+                filter={filter}
+                setFilter={setFilter}
+                view={view}
+                setView={setView}
+                selectedYear={selectedYear}
+                setSelectedYear={setSelectedYear}
+                selectedMonth={selectedMonth}
+                setSelectedMonth={setSelectedMonth}
+                startDate={startDate}
+                setStartDate={setStartDate}
+                endDate={endDate}
+                setEndDate={setEndDate}
+                search={search}
+                setSearch={setSearch}
+                categoryFilter={categoryFilter}
+                setCategoryFilter={setCategoryFilter}
+                darkMode={darkMode}
+                graphCategories={graphCategories}
+                savingCategories={categorizedNames.saving}
+                categories={categories}
+                filteredTotal={totals.filteredTotal}
+                SummaryCards={SummaryCards}
+                incomeTotal={totals.incomeTotal}
+                yearlyIncome={totals.yearlyIncome}
+                expenseTotal={totals.expenseTotal}
+                yearlyExpense={totals.yearlyExpense}
+                savingTotal={totals.savingTotal}
+                yearlySaving={totals.yearlySaving}
+                total={totals.total}
+                yearlyTotal={totals.yearlyTotal}
+                variableBudgetTotal={variableBudgetTotal}
+                remainVariableBudget={remainVariableBudget}
+                name={name}
+                setName={setName}
+                memo={memo}
+                setMemo={setMemo}
+                amount={amount}
+                setAmount={setAmount}
+                date={date}
+                setDate={setDate}
+                type={type}
+                setType={setType}
+                category={category}
+                setCategory={setCategory}
+                spendType={spendType}
+                setSpendType={setSpendType}
+                currentCategories={categorizedNames.current}
+                addItem={addItem}
+                editingId={editingId}
+              />
+            )}
+
+            {mainTab === "category" && (
+              <CategoryManager
+                darkMode={darkMode}
+                categoryName={categoryName}
+                setCategoryName={setCategoryName}
+                categoryType={categoryType}
+                setCategoryType={setCategoryType}
+                addCategory={addCategory}
+                fixedCategories={categorizedNames.fixed}
+                variableCategories={categorizedNames.variable}
+                allowanceCategories={categorizedNames.allowance}
+                savingCategories={categorizedNames.saving}
+                incomeCategories={categorizedNames.income}
+                fetchCategories={fetchCategories}
+                deleteCategory={deleteCategory}
+              />
+            )}
 
             {mainTab === "fridge" && <FridgeView />}
           </>
