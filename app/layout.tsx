@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// subsets의 이중 배열 괄호[[]] 문제를 해결했습니다.
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -16,9 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Jellian - 가계부",
   description: "심플하고 직관적인 나만의 자산 관리 대시보드",
-
   icons: {
     icon: "/favicon.ico",
+  }, // 👈 여기에 중괄호('}')가 빠져있던 것을 채워 넣었습니다!
 };
 
 export default function RootLayout({
