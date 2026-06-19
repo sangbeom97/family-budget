@@ -1,12 +1,10 @@
 'use server';
 
-import { createClient } from "@/lib/supabase"; // 🎯 파일 위치에 맞게 수정 완료!
+import { supabase } from "@/lib/supabase"; // 🎯 createClient 대신 supabase를 직접 임포트!
 
 export async function joinGroupByCode(inviteCode: string) {
-  const supabase = await createClient();
-
   // 1. 초대장을 열고 있는 로그인한 유저 정보 가져오기
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser(); // 🎯 바로 객체로 호출
   if (!user) {
     return { success: false, message: "로그인이 필요한 서비스입니다." };
   }
