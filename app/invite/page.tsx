@@ -6,36 +6,29 @@ import { supabase } from "@/lib/supabase";
 import { joinGroupByCode } from "./actions";
 
 function InviteContent() {
-  const searchParams = useSearchParams();
+  const code = useSearchParams().get("code");
   const router = useRouter();
-  const code = searchParams.get("code");
-  const [status, setStatus] = useState("초대장 확인 중...");
+  const [msg, setMsg] = useState("초대장 확인 중...");
 
   useEffect(() => {
-    if (!code) {
-      setStatus("초대 코드가 없습니다.");
-      return;
-    }
-
-    const init = async () => {
-      // 세션 확인
-      const { data: { session } } = await supabase.auth.getSession();
-      
+    if (!code) return;
+    
+    // 로그인이 완료될 때까지 기다렸다가 실행
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        const result = await joinGroupByCode(code);
-        alert(result.message);
-        router.push("/");
+        joinGroupByCode(code).then(res => {
+          alert(res.message);
+          router.push("/");
+        });
       } else {
-        // 세션 없으면 로그인 화면으로 이동
-        router.push("/");
+        setMsg("로그인이 필요합니다. 로그인 후 다시 접속해주세요.");
       }
-    };
-    init();
+    });
   }, [code, router]);
 
-  return <div className="p-10 text-center">{status}</div>;
+  return <div className="p-10 text-center">{msg}</div>;
 }
 
-export default function InvitePage() {
+export default function Page() {
   return <Suspense fallback={<div>Loading...</div>}><InviteContent /></Suspense>;
 }
