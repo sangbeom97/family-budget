@@ -2,56 +2,58 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase"; // 기존 설정 파일 사용
+import { supabase } from "@/lib/supabase"; 
 import { joinGroupByCode } from "./actions";
 
 function InviteContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const code = searchParams.get("code");
-  const [status, setStatus] = useState("초대 코드를 확인 중입니다...");
+  const [status, setStatus] = useState("초대 정보를 확인하고 있습니다...");
 
   useEffect(() => {
     if (!code) {
-      setStatus("❌ 올바르지 않은 초대 링크입니다.");
+      setStatus("❌ 잘못된 초대 링크입니다.");
       return;
     }
 
-    const processJoin = async () => {
-      // 1. 현재 세션 상태 확인
+    const handleJoin = async () => {
+      // 1. 현재 세션 상태를 가져옵니다.
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       if (session) {
-        // 이미 로그인이 되어 있다면 바로 가입 실행
+        // 이미 로그인된 상태라면 바로 가입
         const result = await joinGroupByCode(code);
         alert(result.message);
         router.push("/");
       } else {
-        // 2. 로그인이 안 되어 있다면 로그인 시도 (또는 리다이렉트)
-        // 만약 로그인 버튼이 있는 페이지로 보내야 한다면 아래 주석 해제
-        // alert("가입을 위해 로그인이 필요합니다.");
-        // router.push("/login"); 
+        // 2. 로그인 안된 상태라면 세션이 들어오길 기다립니다.
+        setStatus("로그인을 확인하고 있습니다...");
         
-        // 혹은 자동으로 로그인 페이지로 보내지 않고 상태만 표시
-        setStatus("가입을 위해 먼저 로그인을 완료해주세요.");
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+          if (event === 'SIGNED_IN' && session) {
+            subscription.unsubscribe(); // 감지기 해제
+            const result = await joinGroupByCode(code);
+            alert(result.message);
+            router.push("/");
+          }
+        });
       }
     };
 
-    processJoin();
+    handleJoin();
   }, [code, router]);
 
   return (
-    <div className="text-center p-6 bg-white border rounded-xl shadow-sm">
-      <h2 className="text-xl font-bold mb-2">무계획 속 계획</h2>
-      <p>{status}</p>
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
+      <div className="bg-white p-6 rounded-2xl shadow-sm border w-full max-w-sm">
+        <h2 className="text-xl font-black mb-2">📊 가계부 방 가입 중</h2>
+        <p className="text-slate-600 animate-pulse">{status}</p>
+      </div>
     </div>
   );
 }
 
 export default function InvitePage() {
-  return (
-    <Suspense fallback={<div>로딩 중...</div>}>
-      <InviteContent />
-    </Suspense>
-  );
+  return <Suspense fallback={<div>불러오는 중...</div>}><InviteContent /></Suspense>;
 }
