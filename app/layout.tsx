@@ -12,12 +12,23 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// 검색 엔진(SEO) 최적화를 위해 메타데이터를 확장했습니다.
 export const metadata: Metadata = {
-  title: "Jellian - 가계부",
-  description: "심플하고 직관적인 나만의 자산 관리 대시보드",
+  title: "Jellian(젤리안) - 투명한 모임 및 개인 가계부 대시보드",
+  description: "엑셀 업로드로 1초 만에 회비 정산 끝! 실시간 공유와 동시 입력이 가능한 직관적인 모임·가족·공동 가계부 플랫폼",
+  keywords: [
+    "모임 가계부",
+    "공동 가계부",
+    "회비 가계부",
+    "엑셀 가계부",
+    "가계부 웹",
+    "총무 정산",
+    "Jellian",
+    "젤리안"
+  ],
   icons: {
     icon: "/favicon.png",
-  }, // 👈 여기에 중괄호('}')가 빠져있던 것을 채워 넣었습니다!
+  },
 };
 
 export default function RootLayout({
