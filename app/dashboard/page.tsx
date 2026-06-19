@@ -1,20 +1,21 @@
 import InviteShareButton from "@/components/InviteShareButton";
-import { supabase } from "@/lib/supabase"; // 🎯 createClient 대신 supabase를 직접 임포트!
+import { supabase } from "@/lib/supabase";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
   // 1. 현재 로그인한 유저 정보 가져오기
   const {
     data: { user },
-  } = await supabase.auth.getUser(); // 🎯 함수 호출 없이 바로 supabase 객체 사용
+  } = await supabase.auth.getUser();
 
   // 로그인이 안 되어 있다면 로그인 페이지로 리다이렉트
   if (!user) {
     redirect("/login"); 
   }
 
-  // 2. 유저가 참여 중인 방의 진짜 초대 코드(invite_code) 조회
-  const { data: memberData } = await supabase
+  // 2. 유저가 참여 중인 방과 방의 초대 코드 조회
+  // [주의] 상범님의 group_members.group_id와 groups.id는 UUID 형식입니다.
+  const { data: memberData, error } = await supabase
     .from("group_members")
     .select(`
       group_id,
@@ -25,12 +26,16 @@ export default async function DashboardPage() {
     `)
     .eq("user_id", user.id)
     .limit(1)
-    .single();
+    .maybeSingle(); // single() 대신 maybeSingle()로 에러 방지
 
-  // @ts-ignore
-  const roomName = memberData?.groups?.name || "내 모임 가계부";
-  // @ts-ignore
-  const roomInviteCode = memberData?.groups?.invite_code || "";
+  // 데이터 추출 안정성 강화
+  const rawGroups = memberData?.groups;
+  
+  // 만약 Supabase 중첩 구조가 배열로 반환될 경우를 대비한 2중 안전장치
+  const targetGroup = Array.isArray(rawGroups) ? rawGroups[0] : rawGroups;
+
+  const roomName = targetGroup?.name || "무계획 속 계획";
+  const roomInviteCode = targetGroup?.invite_code || "";
 
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-900 p-8 flex items-center justify-center">
@@ -60,11 +65,12 @@ export default async function DashboardPage() {
             카톡 링크를 복사해 공유하면 친구가 클릭 한 번으로 합류합니다.
           </p>
           
+          {/* 진짜 초대 코드가 존재하면 버튼을 띄웁니다 */}
           {roomInviteCode ? (
             <InviteShareButton inviteCode={roomInviteCode} />
           ) : (
             <div className="text-center py-2 bg-amber-50 dark:bg-amber-950/20 text-amber-700 dark:text-amber-400 text-xs rounded-xl border border-amber-100 dark:border-amber-900/50">
-              ⚠️ 생성된 초대 코드가 없습니다. Supabase에서 코드를 입력해 주세요!
+              ⚠️ 불러온 초대 코드가 없습니다. Supabase 연결 혹은 코드를 재확인해 주세요.
             </div>
           )}
         </div>
