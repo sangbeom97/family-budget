@@ -11,14 +11,15 @@ function InviteContent() {
   const [status, setStatus] = useState("초대 코드를 확인하고 모임에 참여하는 중입니다...");
 
   useEffect(() => {
-    // 1. code가 null인 경우 먼저 완벽히 필터링 (이전 타입 에러 해결)
+    // 1. code가 없거나 null이면 여기서 즉시 중단
     if (!code) {
       setStatus("❌ 올바르지 않은 초대 링크입니다.");
       return;
     }
 
-    async function processJoin() {
-      const result = await joinGroupByCode(code);
+    async function processJoin(validCode: string) {
+      // 🎯 매개변수로 확실한 string(validCode)만 받아서 서버 액션에 넘깁니다.
+      const result = await joinGroupByCode(validCode);
 
       if (result.success) {
         alert(result.message);
@@ -33,7 +34,8 @@ function InviteContent() {
       }
     }
 
-    processJoin();
+    // 🎯 2. 위에서 null 검사를 마쳤으므로 code가 존재할 때만 실행합니다.
+    processJoin(code);
   }, [code, router]);
 
   return (
@@ -44,7 +46,6 @@ function InviteContent() {
   );
 }
 
-// 🎯 가장 중요: Next.js 페이지 파일은 반드시 'export default'가 붙은 컴포넌트가 있어야 합니다.
 export default function InvitePage() {
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
