@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"; // 🎯 Supabase 클라이언트 추가
 import { joinGroupByCode } from "./actions";
 
 function InviteContent() {
@@ -9,16 +10,18 @@ function InviteContent() {
   const router = useRouter();
   const code = searchParams.get("code");
   const [status, setStatus] = useState("초대 코드를 확인하고 모임에 참여하는 중입니다...");
+  
+  // Supabase 클라이언트 초기화
+  const supabase = createClientComponentClient();
 
   useEffect(() => {
-    // 1. code가 없거나 null이면 여기서 즉시 중단
     if (!code) {
       setStatus("❌ 올바르지 않은 초대 링크입니다.");
       return;
     }
 
+    // 그룹 가입 처리 핵심 로직
     async function processJoin(validCode: string) {
-      // 🎯 매개변수로 확실한 string(validCode)만 받아서 서버 액션에 넘깁니다.
       const result = await joinGroupByCode(validCode);
 
       if (result.success) {
@@ -34,9 +37,30 @@ function InviteContent() {
       }
     }
 
-    // 🎯 2. 위에서 null 검사를 마쳤으므로 code가 존재할 때만 실행합니다.
-    processJoin(code);
-  }, [code, router]);
+    // 🎯 [핵심] 현재 Supabase 로그인 세션이 완전히 로드될 때까지 대기 및 감지
+    const checkAuthAndJoin = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        // 이미 세션이 있다면 즉시 가입 진행
+        processJoin(code);
+      } else {
+        // 혹시 세션이 늦게 들어오는 중일 수 있으므로, 상태 변화를 한 번 더 감지합니다.
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+          if (session) {
+            processJoin(code);
+            subscription.unsubscribe(); // 감지기 해제
+          } else {
+            // 세션 검사 끝내고 완전히 로그아웃 상태라면 로그인 화면으로 유도
+            alert("가계부 방에 참여하려면 먼저 구글 로그인이 필요합니다! 로그인 화면으로 이동합니다.");
+            router.push("/");
+          }
+        });
+      }
+    };
+
+    checkAuthAndJoin();
+  }, [code, router, supabase]);
 
   return (
     <div className="text-center p-6 bg-white dark:bg-slate-950 rounded-2xl shadow-md border max-w-sm w-full">
