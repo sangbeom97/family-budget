@@ -1,14 +1,12 @@
 import InviteShareButton from "@/components/InviteShareButton";
-import { createClient } from "@/lib/supabase"; // 🎯 파일 위치에 맞게 수정 완료!
+import { supabase } from "@/lib/supabase"; // 🎯 createClient 대신 supabase를 직접 임포트!
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
-  const supabase = await createClient();
-
   // 1. 현재 로그인한 유저 정보 가져오기
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await supabase.auth.getUser(); // 🎯 함수 호출 없이 바로 supabase 객체 사용
 
   // 로그인이 안 되어 있다면 로그인 페이지로 리다이렉트
   if (!user) {
