@@ -3,30 +3,28 @@
 import { supabase } from "@/lib/supabase";
 
 export async function joinGroupByCode(inviteCode: string) {
+  // 1. 로그인 유저 확인
   const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return { success: false, needLogin: true, message: "로그인이 필요한 서비스입니다." };
-  }
+  if (!user) return { success: false, needLogin: true, message: "로그인 필요" };
 
-  const { data: group, error: groupError } = await supabase
+  // 2. 그룹 조회
+  const { data: group } = await supabase
     .from("groups")
     .select("id")
     .eq("invite_code", inviteCode)
     .maybeSingle();
 
-  if (groupError || !group) {
-    return { success: false, message: "유효하지 않은 초대코드입니다." };
-  }
+  if (!group) return { success: false, message: "잘못된 코드" };
 
-  const { error: joinError } = await supabase
+  // 3. 가입 처리
+  const { error } = await supabase
     .from("group_members")
     .insert({ group_id: group.id, user_id: user.id });
 
-  if (joinError) {
-    if (joinError.code === '23505') return { success: true, message: "이미 참여 중인 모임입니다." };
+  if (error) {
+    if (error.code === '23505') return { success: true, message: "이미 가입됨" };
     return { success: false, message: "가입 실패" };
   }
 
-  return { success: true, message: "모임 합류 성공!" };
+  return { success: true, message: "가입 성공!" };
 }
