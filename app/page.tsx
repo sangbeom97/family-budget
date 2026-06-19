@@ -42,7 +42,9 @@ export default function Home() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
   const [newGroupName, setNewGroupName] = useState("");
-  const [inviteUserId, setInviteUserId] = useState("");
+  
+  // 🎯 진짜 초대 코드(invite_code)를 저장할 상태 추가
+  const [currentInviteCode, setCurrentInviteCode] = useState<string>("");
 
   // --- 2. 일반 가계부 상태 정의 ---
   const [mainTab, setMainTab] = useState<"account" | "category" | "fridge">("account");
@@ -100,21 +102,22 @@ export default function Home() {
     }
   }, [session]);
 
-  // 구글 로그인 핸들러 함수 (window is not defined 방지 처리 완료)
+  // 구글 로그인 핸들러 함수
   const handleGoogleSignIn = async () => {
-  const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: "google", // 갱신: "google" 문자열을 직접 할당
-    options: {
-      redirectTo: redirectUrl,
-    },
-  });
-  if (error) alert(`구글 로그인 실패: ${error.message}`);
-};
+    const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: redirectUrl,
+      },
+    });
+    if (error) alert(`구글 로그인 실패: ${error.message}`);
+  };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setCurrentGroupId("");
+    setCurrentInviteCode(""); // 초기화
     setGroups([]);
   };
 
@@ -134,6 +137,25 @@ export default function Home() {
     }
   };
 
+  // 🎯 활성화된 방이 바뀔 때마다 해당 방의 진짜 invite_code를 조회해 오는 로직
+  const fetchCurrentGroupInviteCode = async () => {
+    if (!currentGroupId) {
+      setCurrentInviteCode("");
+      return;
+    }
+    const { data } = await supabase
+      .from("groups")
+      .select("invite_code")
+      .eq("id", currentGroupId)
+      .maybeSingle();
+
+    setCurrentInviteCode(data?.invite_code || "");
+  };
+
+  useEffect(() => {
+    fetchCurrentGroupInviteCode();
+  }, [currentGroupId]);
+
   const createGroup = async () => {
     if (!newGroupName.trim()) return;
     const { data: newGroup } = await supabase
@@ -150,16 +172,22 @@ export default function Home() {
     }
   };
 
-  const inviteUser = async () => {
-    if (!inviteUserId.trim() || !currentGroupId) return;
-    const { error } = await supabase
-      .from("group_members")
-      .insert([{ group_id: currentGroupId, user_id: inviteUserId }]);
+  // 🎯 원클릭 초대링크 생성 및 카카오톡 복사 핸들러 함수
+  const handleCopyInviteLink = () => {
+    if (!currentInviteCode) {
+      alert("현재 가계부 방에 설정된 초대 코드가 없습니다. Supabase groups 테이블에 코드를 채워주세요!");
+      return;
+    }
 
-    if (error) alert("초대에 실패했습니다. 올바른 유저 ID(UUID)인지 확인해 주세요.");
-    else {
-      alert("해당 유저를 가계부 그룹에 성공적으로 초대했습니다!");
-      setInviteUserId("");
+    const domain = typeof window !== "undefined" ? window.location.origin : "";
+    const inviteUrl = `${domain}/invite?code=${currentInviteCode}`;
+
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(inviteUrl)
+        .then(() => alert("✨ 카카오톡 초대 링크가 클립보드에 복사되었습니다!\n카톡창에 Ctrl+V로 공유해 보세요."))
+        .catch(() => alert("링크 복사에 실패했습니다. 주소: " + inviteUrl));
+    } else {
+      alert("초대 링크 주소: " + inviteUrl);
     }
   };
 
@@ -250,11 +278,10 @@ export default function Home() {
   }, [categories, type, spendType]);
 
   useEffect(() => {
-  if (categorizedNames.current.length > 0 && !categorizedNames.current.includes(category)) {
-    setCategory(categorizedNames.current[0]);
-  }
-// 의존성 배열에서 객체/배열 전체를 감시하는 대신, 원시값들의 변화만 감시하도록 명시합니다.
-}, [categorizedNames.current.join(","), category]);
+    if (categorizedNames.current.length > 0 && !categorizedNames.current.includes(category)) {
+      setCategory(categorizedNames.current[0]);
+    }
+  }, [categorizedNames.current.join(","), category]);
 
   const graphCategories = useMemo(() => {
     return [
@@ -395,22 +422,21 @@ export default function Home() {
 
   // --- 7. 비즈니스 액션 핸들러 ---
   const addItem = async () => {
-  if (!name.trim() || !amount.trim() || !currentGroupId) return;
+    if (!name.trim() || !amount.trim() || !currentGroupId) return;
 
-  // 현재 선택된 카테고리가 없거나 비어있다면, 사용 가능한 첫 번째 카테고리 혹은 "기타"를 강제로 할당합니다.
-  const finalCategory = category || categorizedNames.current[0] || "기타";
+    const finalCategory = category || categorizedNames.current[0] || "기타";
 
-  const payload = {
-    name,
-    amount: Number(amount),
-    type,
-    category: finalCategory, // 정제된 카테고리 변수 적용
-    date,
-    spend_type: type === "income" ? "income" : spendType,
-    memo,
-    user_id: session?.user?.id,
-    group_id: currentGroupId,
-  };
+    const payload = {
+      name,
+      amount: Number(amount),
+      type,
+      category: finalCategory,
+      date,
+      spend_type: type === "income" ? "income" : spendType,
+      memo,
+      user_id: session?.user?.id,
+      group_id: currentGroupId,
+    };
 
     if (editingId) {
       await supabase.from("transactions").update(payload).eq("id", editingId);
@@ -499,22 +525,21 @@ export default function Home() {
       const data: any[] = XLSX.utils.sheet_to_json(ws);
 
       const parsedItems = data.map((row: any) => {
-  // 숫자가 아닌 문자(쉼표, '원' 등)를 지우고 순수 숫자만 남깁니다.
-  const rawAmount = String(row["금액"] || "").replace(/[^0-9-]/g, "");
-  const parsedAmount = Number(rawAmount);
+        const rawAmount = String(row["금액"] || "").replace(/[^0-9-]/g, "");
+        const parsedAmount = Number(rawAmount);
 
-  return {
-    name: row["내역명"] || row["항목"] || "미지정",
-    amount: isNaN(parsedAmount) ? 0 : parsedAmount, // 변환 실패 시 NaN 대신 0 탈출
-    type: row["타입"] === "수입" ? "income" : "expense",
-    category: row["카테고리"] || "기타",
-    date: row["날짜"] || new Date().toISOString().split("T")[0],
-    spend_type: row["지출분류"] || "variable",
-    memo: row["메모"] || "",
-    group_id: currentGroupId,
-    user_id: session?.user?.id,
-  };
-});
+        return {
+          name: row["내역명"] || row["항목"] || "미지정",
+          amount: isNaN(parsedAmount) ? 0 : parsedAmount,
+          type: row["타입"] === "수입" ? "income" : "expense",
+          category: row["카테고리"] || "기타",
+          date: row["날짜"] || new Date().toISOString().split("T")[0],
+          spend_type: row["지출분류"] || "variable",
+          memo: row["메모"] || "",
+          group_id: currentGroupId,
+          user_id: session?.user?.id,
+        };
+      });
 
       if (parsedItems.length > 0) {
         await supabase.from("transactions").insert(parsedItems);
@@ -552,7 +577,6 @@ export default function Home() {
           <h2 className="text-3xl font-extrabold mb-2 tracking-tight text-slate-900 dark:text-white">📊 무계획 속 계획</h2>
           <p className="text-center text-xs text-gray-400 dark:text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
           
-          {/* 구글 로그인 */}
           <button 
             onClick={handleGoogleSignIn}
             className="w-full py-3.5 rounded-xl bg-white text-slate-700 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 transition flex items-center justify-center gap-2"
@@ -572,7 +596,7 @@ export default function Home() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight">무계획 속 계획</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-mono mt-1">내 초대 코드: {session.user.id}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-mono mt-1">내 유저 ID: {session.user.id}</p>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setDarkMode(!darkMode)} className="px-4 py-2 rounded-xl bg-black text-white text-sm font-medium">
@@ -600,12 +624,16 @@ export default function Home() {
               <button onClick={createGroup} className="bg-blue-600 text-white px-3 py-2 text-xs font-bold rounded-xl whitespace-nowrap">개설</button>
             </div>
           </div>
+          
+          {/* 🎯 [구조 변경 완료] 수동 UUID 초대창 대신 원클릭 카카오톡 링크 초대 버튼으로 완성 */}
           <div>
-            <label className="block text-xs font-bold text-gray-400 mb-1">이 가계부에 다른 사람 추가</label>
-            <div className="flex gap-2">
-              <input type="text" placeholder="상대방 초대 코드 입력" value={inviteUserId} onChange={(e) => setInviteUserId(e.target.value)} className="w-full border-2 rounded-xl px-3 py-1.5 text-sm bg-transparent border-gray-200 dark:border-slate-600 outline-none text-black dark:text-white" />
-              <button onClick={inviteUser} className="bg-green-600 text-white px-3 py-2 text-xs font-bold rounded-xl whitespace-nowrap">초대</button>
-            </div>
+            <label className="block text-xs font-bold text-gray-400 mb-1">가계부 멤버 간편 초대</label>
+            <button 
+              onClick={handleCopyInviteLink}
+              className="w-full py-2 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-slate-900 text-sm font-black rounded-xl shadow-sm transition flex items-center justify-center gap-1.5 border border-yellow-300"
+            >
+              💬 카카오톡 초대 링크 복사
+            </button>
           </div>
         </div>
 
