@@ -1,10 +1,10 @@
 'use server';
 
-import { supabase } from "@/lib/supabase"; // 🎯 createClient 대신 supabase를 직접 임포트!
+import { supabase } from "@/lib/supabase";
 
 export async function joinGroupByCode(inviteCode: string) {
   // 1. 초대장을 열고 있는 로그인한 유저 정보 가져오기
-  const { data: { user } } = await supabase.auth.getUser(); // 🎯 바로 객체로 호출
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     return { success: false, message: "로그인이 필요한 서비스입니다." };
   }
@@ -14,7 +14,7 @@ export async function joinGroupByCode(inviteCode: string) {
     .from("groups")
     .select("id")
     .eq("invite_code", inviteCode)
-    .single();
+    .maybeSingle();
 
   if (groupError || !group) {
     return { success: false, message: "존재하지 않거나 만료된 초대코드입니다." };
@@ -24,12 +24,11 @@ export async function joinGroupByCode(inviteCode: string) {
   const { error: joinError } = await supabase
     .from("group_members")
     .insert({
-      group_id: group.id,
+      group_id: group.id, // UUID 포맷에 맞춰 정상 바인딩
       user_id: user.id
     });
 
   if (joinError) {
-    // 이미 참여한 방일 경우 (중복 참여 방지)
     if (joinError.code === '23505') {
       return { success: true, message: "이미 참여 중인 모임 방입니다!" };
     }
