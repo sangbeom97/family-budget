@@ -2,18 +2,17 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
-import { joinGroupByCode } from "./actions"; // 💡 1단계에서 만든 서버 액션 임포트
+import { joinGroupByCode } from "./actions"; // 💡 서버 액션 파일 연동
 
 function InviteContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // URL 주소창에서 ?code= 뒤에 오는 값을 자동으로 추출합니다.
+  // 주소창에서 ?code= 뒤의 값을 자동 추출
   const codeFromUrl = searchParams.get("code") || "";
   const [inviteCode, setInviteCode] = useState(codeFromUrl);
 
-  // 주소창의 코드가 바뀌면 실시간으로 input 창에도 반영해 줍니다.
   useEffect(() => {
     if (codeFromUrl) setInviteCode(codeFromUrl);
   }, [codeFromUrl]);
@@ -28,12 +27,12 @@ function InviteContent() {
     setIsSubmitting(true);
 
     try {
-      // 💡 Supabase 서버 액션을 호출하여 DB에 멤버를 추가합니다.
+      // 💡 Supabase 서버 액션 호출하여 DB 연동 실행
       const result = await joinGroupByCode(inviteCode);
 
       if (result.success) {
         alert(result.message);
-        router.push("/dashboard"); // 성공 시 대시보드로 이동하여 데이터 갱신
+        router.push("/dashboard"); // 성공 시 대시보드로 이동
       } else {
         alert(result.message);
       }
@@ -48,12 +47,10 @@ function InviteContent() {
   return (
     <div className="w-full max-w-md bg-white dark:bg-slate-950 p-8 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-850 text-center">
       
-      {/* 초대 아이콘 구역 */}
       <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 shadow-inner">
         ✉️
       </div>
       
-      {/* 타이틀 구역 */}
       <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
         모임 가계부 초대장
       </h1>
@@ -62,7 +59,6 @@ function InviteContent() {
         초대 코드가 자동으로 주입되었으니 버튼을 눌러 합류하세요!
       </p>
 
-      {/* 폼 구역 */}
       <form onSubmit={handleJoinGroup} className="space-y-4">
         <div>
           <label className="block text-left text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
@@ -91,7 +87,6 @@ function InviteContent() {
   );
 }
 
-// Next.js App Router에서 useSearchParams를 사용하려면 반드시 Suspense로 감싸주어야 빌드 에러가 나지 않습니다.
 export default function InvitePage() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 px-4">
