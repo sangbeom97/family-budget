@@ -1,11 +1,11 @@
 'use server';
 
-import { createClient } from "@/utils/supabase/server"; // ⚠️ 상범님의 프로젝트 Supabase 서버 클라이언트 경로에 맞게 수정하세요!
+import { createClient } from "@/lib/supabase"; // 🎯 파일 위치에 맞게 수정 완료!
 
 export async function joinGroupByCode(inviteCode: string) {
   const supabase = await createClient();
 
-  // 1. 현재 초대장을 열고 있는 로그인한 유저(친구) 정보 가져오기
+  // 1. 초대장을 열고 있는 로그인한 유저 정보 가져오기
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     return { success: false, message: "로그인이 필요한 서비스입니다." };
@@ -31,7 +31,7 @@ export async function joinGroupByCode(inviteCode: string) {
     });
 
   if (joinError) {
-    // 이미 참여한 방일 경우 (중복 참여 방지 제약조건 충돌)
+    // 이미 참여한 방일 경우 (중복 참여 방지)
     if (joinError.code === '23505') {
       return { success: true, message: "이미 참여 중인 모임 방입니다!" };
     }
