@@ -2,59 +2,56 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase"; // 기존 설정 파일 사용
 import { joinGroupByCode } from "./actions";
 
-// 컴포넌트를 분리하여 타입 안정성을 확보합니다.
 function InviteContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
-  // 1. searchParams에서 code를 안전하게 가져옵니다.
   const code = searchParams.get("code");
-  const [status, setStatus] = useState("초대 코드를 확인하고 모임에 참여하는 중입니다...");
+  const [status, setStatus] = useState("초대 코드를 확인 중입니다...");
 
   useEffect(() => {
-    // 2. code가 null인 경우를 명확히 처리합니다.
     if (!code) {
       setStatus("❌ 올바르지 않은 초대 링크입니다.");
       return;
     }
 
-    async function processJoin() {
-      // 3. code가 string임을 TypeScript가 인지하도록 보장합니다.
-      const result = await joinGroupByCode(code as string);
-
-      if (result.success) {
+    const processJoin = async () => {
+      // 1. 현재 세션 상태 확인
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        // 이미 로그인이 되어 있다면 바로 가입 실행
+        const result = await joinGroupByCode(code);
         alert(result.message);
         router.push("/");
       } else {
-        if (result.needLogin) {
-          alert("로그인이 필요합니다.");
-          router.push("/");
-        } else {
-          setStatus(`❌ 오류: ${result.message}`);
-        }
+        // 2. 로그인이 안 되어 있다면 로그인 시도 (또는 리다이렉트)
+        // 만약 로그인 버튼이 있는 페이지로 보내야 한다면 아래 주석 해제
+        // alert("가입을 위해 로그인이 필요합니다.");
+        // router.push("/login"); 
+        
+        // 혹은 자동으로 로그인 페이지로 보내지 않고 상태만 표시
+        setStatus("가입을 위해 먼저 로그인을 완료해주세요.");
       }
-    }
+    };
 
     processJoin();
   }, [code, router]);
 
   return (
-    <div className="text-center p-6 bg-white rounded-2xl shadow-md border">
-      <h2 className="text-2xl font-black mb-2">📊 무계획 속 계획</h2>
-      <p className="text-sm font-medium animate-pulse">{status}</p>
+    <div className="text-center p-6 bg-white border rounded-xl shadow-sm">
+      <h2 className="text-xl font-bold mb-2">무계획 속 계획</h2>
+      <p>{status}</p>
     </div>
   );
 }
 
-// 4. 페이지 파일은 반드시 export default로 내보내야 합니다.
 export default function InvitePage() {
   return (
-    <main className="min-h-screen flex items-center justify-center p-4">
-      <Suspense fallback={<div>초대 정보를 불러오는 중...</div>}>
-        <InviteContent />
-      </Suspense>
-    </main>
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <InviteContent />
+    </Suspense>
   );
 }
