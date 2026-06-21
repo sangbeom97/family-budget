@@ -11,26 +11,37 @@ function InviteContent() {
   const code = searchParams.get("code");
   const [status, setStatus] = useState("초대장 확인 중...");
 
-    useEffect(() => {
-  if (!code) return;
+  useEffect(() => {
+    async function processInvite() {
+      if (!code) return;
 
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    console.log("CLIENT SESSION", session);
+      const { data: { session } } =
+        await supabase.auth.getSession();
 
-    if (session) {
-      joinGroupByCode(code).then((res) => {
-        alert(res.message);
+      console.log("CLIENT SESSION", session);
+
+      if (!session) {
+        alert("세션 없음");
         router.push("/");
-      });
-    } else {
+        return;
+      }
+
+      const res = await joinGroupByCode(code);
+
+      alert(res.message);
       router.push("/");
     }
-  });
-}, [code, router]);
+
+    processInvite();
+  }, [code, router]);
 
   return <div className="p-10 text-center">{status}</div>;
 }
 
 export default function Page() {
-  return <Suspense fallback={<div>Loading...</div>}><InviteContent /></Suspense>;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <InviteContent />
+    </Suspense>
+  );
 }
