@@ -9,6 +9,9 @@ function InviteContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const code = searchParams.get("code");
+
+  console.log("CODE =", code);
+  
   const [status, setStatus] = useState("초대장 확인 중...");
 
   useEffect(() => {
