@@ -20,6 +20,21 @@ function InviteContent() {
 
       console.log("CLIENT SESSION", session);
 
+      // 추가
+      const { data: { user } } =
+        await supabase.auth.getUser();
+
+      console.log("CLIENT USER", user);
+
+      // 추가
+      const { data: group, error } = await supabase
+        .from("groups")
+        .select("*")
+        .eq("invite_code", code);
+
+      console.log("GROUP", group);
+      console.log("GROUP ERROR", error);
+
       if (!session) {
         alert("세션 없음");
         router.push("/");
