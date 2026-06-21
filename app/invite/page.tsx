@@ -11,7 +11,7 @@ function InviteContent() {
   const code = searchParams.get("code");
 
   console.log("CODE =", code);
-  
+
   const [status, setStatus] = useState("초대장 확인 중...");
 
   useEffect(() => {
@@ -45,6 +45,8 @@ function InviteContent() {
       }
 
       const res = await joinGroupByCode(code);
+
+      console.log("JOIN RESULT", res);
 
       alert(res.message);
       router.push("/");
