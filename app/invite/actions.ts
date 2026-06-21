@@ -6,6 +6,8 @@ export async function joinGroupByCode(inviteCode: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, message: "로그인 필요" };
 
+  const { data: { user } } =
+
   // 1. 초대 코드로 그룹 찾기
   const { data: group, error: groupError } = await supabase
     .from("groups")
