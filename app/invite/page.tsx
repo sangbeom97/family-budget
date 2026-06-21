@@ -18,7 +18,7 @@ function InviteContent() {
       const { data: { session } } =
         await supabase.auth.getSession();
 
-      console.log("CLIENT SESSION", session);
+      alert("CLIENT SESSION");
 
       // 추가
       const { data: { user } } =
