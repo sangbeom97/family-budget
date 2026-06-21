@@ -11,25 +11,22 @@ function InviteContent() {
   const code = searchParams.get("code");
   const [status, setStatus] = useState("초대장 확인 중...");
 
-  useEffect(() => {
-    if (!code) return;
-    
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      supabase.auth.getSession().then(({ data: { session } }) => {
+    useEffect(() => {
+  if (!code) return;
 
-  console.log("CLIENT SESSION", session);
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    console.log("CLIENT SESSION", session);
 
-  if (session) {
-      if (session) {
-        joinGroupByCode(code).then(res => {
-          alert(res.message);
-          router.push("/");
-        });
-      } else {
+    if (session) {
+      joinGroupByCode(code).then((res) => {
+        alert(res.message);
         router.push("/");
-      }
-    });
-  }, [code, router]);
+      });
+    } else {
+      router.push("/");
+    }
+  });
+}, [code, router]);
 
   return <div className="p-10 text-center">{status}</div>;
 }
