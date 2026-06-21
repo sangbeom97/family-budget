@@ -15,6 +15,11 @@ function InviteContent() {
     if (!code) return;
     
     supabase.auth.getSession().then(({ data: { session } }) => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+
+  console.log("CLIENT SESSION", session);
+
+  if (session) {
       if (session) {
         joinGroupByCode(code).then(res => {
           alert(res.message);
