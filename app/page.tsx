@@ -167,6 +167,25 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    const fetchRole = async () => {
+      if (!currentGroupId || !session?.user?.id) return;
+
+      const { data } = await supabase
+        .from("group_members")
+        .select("role")
+        .eq("group_id", currentGroupId)
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (data) {
+        setRole(data.role);
+      }
+    };
+
+    fetchRole();
+  }, [currentGroupId, session]);
+
   // 🎯 활성화된 방이 바뀔 때마다 해당 방의 진짜 invite_code를 조회해 오는 로직
   const fetchCurrentGroupInviteCode = async () => {
     if (!currentGroupId) {
@@ -761,6 +780,7 @@ export default function Home() {
                 currentCategories={categorizedNames.current}
                 addItem={addItem}
                 editingId={editingId}
+                role={role}
               />
             )}
 
