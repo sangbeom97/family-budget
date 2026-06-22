@@ -111,7 +111,9 @@ export default function AccountView(props: AccountViewProps) {
 
     const viewTabs = [
         { id: "year", label: "연요약" },
-        { id: "budget", label: "예산" },
+        ...(role !== "member"
+            ? [{ id: "budget", label: "예산" }]
+            : []),
         { id: "list", label: "리스트" },
         { id: "calendar", label: "달력" },
     ] as const;
@@ -162,7 +164,9 @@ export default function AccountView(props: AccountViewProps) {
                 {viewTabs.map((tab) => (
                     <button
                         key={tab.id}
-                        onClick={() => setView(tab.id)}
+                        onClick={() =>
+                            setView(tab.id as "year" | "list" | "calendar" | "budget")
+                        }
                         className={`${btnBaseClass} ${view === tab.id ? activeClass : inactiveClass}`}
                     >
                         {tab.label}
@@ -374,7 +378,7 @@ export default function AccountView(props: AccountViewProps) {
             )}
 
             {/* 10. 예산 관리 뷰 영역 */}
-            {view === "budget" && (
+            {view === "budget" && role !== "member" && (
                 <div className="space-y-3 mt-4">
                     {graphCategories
                         .filter((cat) => !savingCategories.includes(cat))
