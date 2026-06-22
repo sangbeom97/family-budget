@@ -31,6 +31,11 @@ function InviteContent() {
       console.log("USER CHECK =", user);
 
       if (!user) {
+        localStorage.setItem(
+          "pendingInvite",
+          window.location.href
+        );
+
         alert("로그인이 필요합니다.");
         router.push("/");
         return;
