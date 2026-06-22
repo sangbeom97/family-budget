@@ -3,59 +3,85 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { joinGroupByCode } from "./actions";
 
 function InviteContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const code = searchParams.get("code");
 
-  console.log("CODE =", code);
-
   const [status, setStatus] = useState("초대장 확인 중...");
 
   useEffect(() => {
-    async function processInvite() {
-      if (!code) return;
+    const joinGroup = async () => {
+      if (!code) {
+        setStatus("잘못된 초대 링크");
+        return;
+      }
 
-      const { data: { session } } =
-        await supabase.auth.getSession();
+      console.log("CODE =", code);
 
-      alert("CLIENT SESSION");
-
-      // 추가
-      const { data: { user } } =
-        await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       console.log("CLIENT USER", user);
 
-      // 추가
-      const { data: group, error } = await supabase
+      if (!user) {
+        alert("로그인이 필요합니다.");
+
+        const currentUrl = encodeURIComponent(window.location.href);
+
+        router.push(`/login?redirect=${currentUrl}`);
+        return;
+      }
+
+      const { data: group, error: groupError } = await supabase
         .from("groups")
-        .select("*")
-        .eq("invite_code", code);
+        .select("id,name,invite_code")
+        .eq("invite_code", code)
+        .single();
 
       console.log("GROUP", group);
-      console.log("GROUP ERROR", error);
+      console.log("GROUP ERROR", groupError);
 
-      if (!session) {
-        alert("세션 없음");
+      if (groupError || !group) {
+        alert("잘못된 초대 코드입니다.");
         router.push("/");
         return;
       }
 
-      const res = await joinGroupByCode(code);
+      const { error: insertError } = await supabase
+        .from("group_members")
+        .insert({
+          group_id: group.id,
+          user_id: user.id,
+        });
 
-      console.log("JOIN RESULT", res);
+      if (insertError) {
+        console.log("INSERT ERROR", insertError);
 
-      alert(res.message);
+        if (insertError.code === "23505") {
+          alert("이미 가입된 그룹입니다.");
+        } else {
+          alert("가입 실패: " + insertError.message);
+        }
+
+        router.push("/");
+        return;
+      }
+
+      alert(`${group.name} 그룹에 가입되었습니다.`);
       router.push("/");
-    }
+    };
 
-    processInvite();
+    joinGroup();
   }, [code, router]);
 
-  return <div className="p-10 text-center">{status}</div>;
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-lg">{status}</div>
+    </div>
+  );
 }
 
 export default function Page() {
