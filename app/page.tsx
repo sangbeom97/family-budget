@@ -41,6 +41,7 @@ export default function Home() {
   const [session, setSession] = useState<any>(null);
   const [groups, setGroups] = useState<Group[]>([]);
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
+  const [role, setRole] = useState("member");
   const [newGroupName, setNewGroupName] = useState("");
 
   // 🎯 진짜 초대 코드(invite_code)를 저장할 상태 추가
@@ -87,20 +88,26 @@ export default function Home() {
 
   // --- 3. 인증 및 세션 제어 흐름 ---
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
     const { data: { subscription } } =
-      supabase.auth.onAuthStateChange((_event, session) => {
+      supabase.auth.onAuthStateChange(async (_event, session) => {
         setSession(session);
 
-        if (session) {
-          const pendingInvite = localStorage.getItem("pendingInvite");
+        if (session?.user) {
+          await supabase
+            .from("profiles")
+            .upsert({
+              id: session.user.id,
+              email: session.user.email,
+              nickname:
+                session.user.user_metadata?.name ||
+                session.user.email?.split("@")[0],
+            });
+
+          const pendingInvite =
+            localStorage.getItem("pendingInvite");
 
           if (pendingInvite) {
             localStorage.removeItem("pendingInvite");
-
             window.location.href = pendingInvite;
           }
         }
