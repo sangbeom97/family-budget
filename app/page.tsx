@@ -6,7 +6,7 @@ import * as XLSX from "xlsx";
 import ListView from "@/components/ListView";
 import CalendarView from "@/components/CalendarView";
 import CategoryChart from "@/components/CategoryChart";
-import FridgeView from "@/components/FridgeView";
+import MemberView from "@/components/MemberView";
 import SummaryCards from "@/components/SummaryCards";
 import DuplicateModal from "@/components/DuplicateModal";
 import CategoryManager from "@/components/CategoryManager";
@@ -47,7 +47,9 @@ export default function Home() {
   const [currentInviteCode, setCurrentInviteCode] = useState<string>("");
 
   // --- 2. 일반 가계부 상태 정의 ---
-  const [mainTab, setMainTab] = useState<"account" | "category" | "fridge">("account");
+  const [mainTab, setMainTab] = useState<
+    "account" | "category" | "members"
+  >("account");
   const [items, setItems] = useState<Item[]>([]);
   const [yearlyItems, setYearlyItems] = useState<Item[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -660,14 +662,18 @@ export default function Home() {
 
         {/* 메인 메뉴 탭 링크 */}
         <div className="flex gap-2 mb-6">
-          {["category", "account", "fridge"].map((tab) => (
+          {["category", "account", "members"].map((tab) => (
             <button
               key={tab}
               onClick={() => setMainTab(tab as any)}
               className={`px-4 py-2 rounded-xl border font-medium shadow-sm ${mainTab === tab ? "bg-black text-white" : "bg-white/95 text-gray-800 border-gray-300"
                 }`}
             >
-              {tab === "category" ? "카테고리관리" : tab === "account" ? "가계부" : "냉장고"}
+              {tab === "category"
+                ? "카테고리관리"
+                : tab === "account"
+                  ? "가계부"
+                  : "그룹멤버"}
             </button>
           ))}
         </div>
@@ -769,7 +775,11 @@ export default function Home() {
               />
             )}
 
-            {mainTab === "fridge" && <FridgeView />}
+            {mainTab === "members" && (
+              <MemberView
+                currentGroupId={currentGroupId}
+              />
+            )}
           </>
         )}
       </div>
