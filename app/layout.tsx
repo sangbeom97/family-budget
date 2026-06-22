@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: "엑셀 업로드로 1초 만에 회비 정산 끝! 실시간 공유와 동시 입력이 가능한 직관적인 모임·가족·공동 가계부 플랫폼",
   keywords: ["모임 가계부", "공동 가계부", "회비 가계부", "엑셀 가계부", "가계부 웹", "총무 정산", "Jellian", "젤리안"],
   icons: {
-    icon: "/favicon.png",
+    icon: "/favicon.ico",
   },
 };
 
