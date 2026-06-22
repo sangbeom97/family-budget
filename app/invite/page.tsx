@@ -20,18 +20,19 @@ function InviteContent() {
 
       console.log("CODE =", code);
 
+      // 세션 확인
+      const sessionResult = await supabase.auth.getSession();
+      console.log("SESSION =", sessionResult);
+
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
-      console.log("CLIENT USER", user);
+      console.log("USER CHECK =", user);
 
       if (!user) {
         alert("로그인이 필요합니다.");
-
-        const currentUrl = encodeURIComponent(window.location.href);
-
-        router.push(`/login?redirect=${currentUrl}`);
+        router.push("/");
         return;
       }
 
@@ -41,8 +42,8 @@ function InviteContent() {
         .eq("invite_code", code)
         .single();
 
-      console.log("GROUP", group);
-      console.log("GROUP ERROR", groupError);
+      console.log("GROUP =", group);
+      console.log("GROUP ERROR =", groupError);
 
       if (groupError || !group) {
         alert("잘못된 초대 코드입니다.");
@@ -57,9 +58,9 @@ function InviteContent() {
           user_id: user.id,
         });
 
-      if (insertError) {
-        console.log("INSERT ERROR", insertError);
+      console.log("INSERT ERROR =", insertError);
 
+      if (insertError) {
         if (insertError.code === "23505") {
           alert("이미 가입된 그룹입니다.");
         } else {
