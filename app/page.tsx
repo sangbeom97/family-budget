@@ -42,7 +42,7 @@ export default function Home() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
   const [newGroupName, setNewGroupName] = useState("");
-  
+
   // 🎯 진짜 초대 코드(invite_code)를 저장할 상태 추가
   const [currentInviteCode, setCurrentInviteCode] = useState<string>("");
 
@@ -89,9 +89,20 @@ export default function Home() {
       setSession(session);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+    const { data: { subscription } } =
+      supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+
+        if (session) {
+          const pendingInvite = localStorage.getItem("pendingInvite");
+
+          if (pendingInvite) {
+            localStorage.removeItem("pendingInvite");
+
+            window.location.href = pendingInvite;
+          }
+        }
+      });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -104,14 +115,24 @@ export default function Home() {
 
   // 구글 로그인 핸들러 함수
   const handleGoogleSignIn = async () => {
-    const redirectUrl = typeof window !== "undefined" ? window.location.origin : "";
+    const pendingInvite = localStorage.getItem("pendingInvite");
+
+    const redirectUrl = pendingInvite
+      ? pendingInvite
+      : window.location.origin;
+
+    console.log("REDIRECT URL =", redirectUrl);
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: redirectUrl,
       },
     });
-    if (error) alert(`구글 로그인 실패: ${error.message}`);
+
+    if (error) {
+      alert(`구글 로그인 실패: ${error.message}`);
+    }
   };
 
   const handleSignOut = async () => {
@@ -262,7 +283,7 @@ export default function Home() {
 
   // --- 6. 연산 최적화 연산 메모이제이션 (useMemo) ---
   const categorizedNames = useMemo(() => {
-    const filterBy = (t: string) => 
+    const filterBy = (t: string) =>
       categories.filter((c) => c.type?.trim().toLowerCase() === t).map((c) => c.name);
 
     return {
@@ -300,14 +321,14 @@ export default function Home() {
     const keyword = search.trim().toLowerCase();
 
     return baseItems.filter((item) => {
-      const filterMatch = filter === "all" 
-        ? true 
-        : filter === "income" 
-          ? item.type === "income" 
+      const filterMatch = filter === "all"
+        ? true
+        : filter === "income"
+          ? item.type === "income"
           : item.type === "expense" && item.spend_type === filter;
 
       const searchMatch = (item.name || "").toLowerCase().includes(keyword) ||
-                          (item.memo || "").toLowerCase().includes(keyword);
+        (item.memo || "").toLowerCase().includes(keyword);
 
       const categoryMatch = categoryFilter === "all" ? true : item.category === categoryFilter;
       const startMatch = !startDate || item.date >= startDate;
@@ -344,7 +365,7 @@ export default function Home() {
     const inc = items.filter((i) => i.type === "income").reduce((s, i) => s + (Number(i.amount) || 0), 0);
     const exp = items.filter(isRealExpense).reduce((s, i) => s + (Number(i.amount) || 0), 0);
     const sav = items.filter((i) => i.spend_type === "saving").reduce((s, i) => s + (Number(i.amount) || 0), 0);
-    
+
     const yInc = yearlySourceItems.filter((i) => i.type === "income").reduce((s, i) => s + (Number(i.amount) || 0), 0);
     const yExp = yearlySourceItems.filter(isRealExpense).reduce((s, i) => s + (Number(i.amount) || 0), 0);
     const ySav = yearlySourceItems.filter((i) => i.spend_type === "saving").reduce((s, i) => s + (Number(i.amount) || 0), 0);
@@ -376,7 +397,7 @@ export default function Home() {
   const { variableBudgetTotal, remainVariableBudget } = useMemo(() => {
     const sourceItems = view === "year" ? yearlyItems : items;
     const targets = graphCategories.filter((cat) => !categorizedNames.saving.includes(cat));
-    
+
     const vBudgetTot = targets.reduce((s, cat) => s + Number(budgets[cat] || 0), 0);
     const rVariableBudget = targets.reduce((sum, cat) => {
       const spent = sourceItems.filter((i) => i.category === cat && isRealExpense(i)).reduce((s, i) => s + (Number(i.amount) || 0), 0);
@@ -576,8 +597,8 @@ export default function Home() {
         <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-slate-700 text-center">
           <h2 className="text-3xl font-extrabold mb-2 tracking-tight text-slate-900 dark:text-white">📊 무계획 속 계획</h2>
           <p className="text-center text-xs text-gray-400 dark:text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
-          
-          <button 
+
+          <button
             onClick={handleGoogleSignIn}
             className="w-full py-3.5 rounded-xl bg-white text-slate-700 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 transition flex items-center justify-center gap-2"
           >
@@ -624,11 +645,11 @@ export default function Home() {
               <button onClick={createGroup} className="bg-blue-600 text-white px-3 py-2 text-xs font-bold rounded-xl whitespace-nowrap">개설</button>
             </div>
           </div>
-          
+
           {/* 🎯 [구조 변경 완료] 수동 UUID 초대창 대신 원클릭 카카오톡 링크 초대 버튼으로 완성 */}
           <div>
             <label className="block text-xs font-bold text-gray-400 mb-1">가계부 멤버 간편 초대</label>
-            <button 
+            <button
               onClick={handleCopyInviteLink}
               className="w-full py-2 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-slate-900 text-sm font-black rounded-xl shadow-sm transition flex items-center justify-center gap-1.5 border border-yellow-300"
             >
@@ -643,9 +664,8 @@ export default function Home() {
             <button
               key={tab}
               onClick={() => setMainTab(tab as any)}
-              className={`px-4 py-2 rounded-xl border font-medium shadow-sm ${
-                mainTab === tab ? "bg-black text-white" : "bg-white/95 text-gray-800 border-gray-300"
-              }`}
+              className={`px-4 py-2 rounded-xl border font-medium shadow-sm ${mainTab === tab ? "bg-black text-white" : "bg-white/95 text-gray-800 border-gray-300"
+                }`}
             >
               {tab === "category" ? "카테고리관리" : tab === "account" ? "가계부" : "냉장고"}
             </button>
