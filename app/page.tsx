@@ -199,7 +199,6 @@ export default function Home() {
     console.log("MAPPED GROUPS =", mappedGroups);
 
     setGroups(mappedGroups);
-    setLoadingGroups(false);
 
     const savedGroupId =
       localStorage.getItem("currentGroupId");
@@ -209,14 +208,20 @@ export default function Home() {
       mappedGroups.some((g: any) => g.id === savedGroupId)
     ) {
       setCurrentGroupId(savedGroupId);
-    } else if (mappedGroups.length > 0) {
-      setCurrentGroupId(mappedGroups[0].id);
+    } else {
+      const firstGroupId = mappedGroups[0]?.id || "";
 
-      localStorage.setItem(
-        "currentGroupId",
-        mappedGroups[0].id
-      );
+      setCurrentGroupId(firstGroupId);
+
+      if (firstGroupId) {
+        localStorage.setItem(
+          "currentGroupId",
+          firstGroupId
+        );
+      }
     }
+
+    setLoadingGroups(false);
     console.log(
       "RESTORED GROUP =",
       localStorage.getItem("currentGroupId")
