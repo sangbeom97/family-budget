@@ -40,6 +40,8 @@ export default function Home() {
   // --- 1. 인증 및 공유 그룹 관련 상태 ---
   const [session, setSession] = useState<any>(null);
   const [groups, setGroups] = useState<Group[]>([]);
+  const [loadingGroups, setLoadingGroups] =
+    useState(true);
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
   useEffect(() => {
     const savedGroupId = localStorage.getItem("currentGroupId");
@@ -185,7 +187,10 @@ export default function Home() {
     console.log("GROUP DATA =", data);
     console.log("GROUP ERROR =", error);
 
-    if (error) return;
+    if (error) {
+      setLoadingGroups(false);
+      return;
+    }
 
     const mappedGroups =
       data
@@ -195,6 +200,7 @@ export default function Home() {
     console.log("MAPPED GROUPS =", mappedGroups);
 
     setGroups(mappedGroups);
+    setLoadingGroups(false);
 
     const savedGroupId =
       localStorage.getItem("currentGroupId");
@@ -212,6 +218,10 @@ export default function Home() {
         mappedGroups[0].id
       );
     }
+    console.log(
+      "RESTORED GROUP =",
+      localStorage.getItem("currentGroupId")
+    );
   };
 
   useEffect(() => {
@@ -757,7 +767,11 @@ export default function Home() {
         </div>
 
         {/* 컨텐츠 조건부 뷰 출력 */}
-        {!currentGroupId && mainTab === "account" ? (
+        {loadingGroups ? (
+          <div className="text-center py-20">
+            불러오는 중...
+          </div>
+        ) : !currentGroupId && mainTab === "account" ? (
           <div className="text-center py-24 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-gray-300 dark:border-slate-600">
             <span className="text-5xl block mb-4">🏠</span>
             <p className="font-bold text-lg">활성화된 가계부 방이 존재하지 않습니다.</p>
