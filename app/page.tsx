@@ -39,10 +39,12 @@ type Group = {
 export default function Home() {
   // --- 1. 인증 및 공유 그룹 관련 상태 ---
   const [session, setSession] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [groups, setGroups] = useState<Group[]>([]);
   const [loadingGroups, setLoadingGroups] =
     useState(true);
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
+  const [groupReady, setGroupReady] = useState(false);
   useEffect(() => {
     const savedGroupId = localStorage.getItem("currentGroupId");
 
@@ -99,6 +101,7 @@ export default function Home() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
+      setAuthLoading(false);
     });
 
     const {
@@ -189,6 +192,7 @@ export default function Home() {
 
     if (error) {
       setLoadingGroups(false);
+      setGroupReady(true);
       return;
     }
 
@@ -222,6 +226,13 @@ export default function Home() {
       "RESTORED GROUP =",
       localStorage.getItem("currentGroupId")
     );
+
+    console.log(
+      "CURRENT GROUP STATE =",
+      currentGroupId
+    );
+
+    setGroupReady(true);
   };
 
   useEffect(() => {
@@ -676,6 +687,14 @@ export default function Home() {
   };
 
   // --- 8. 미인증 상태 UI (소셜 로그인 전용 화면) ---
+  if (authLoading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        로딩중...
+      </main>
+    );
+  }
+
   if (!session) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900 px-4">
@@ -767,7 +786,7 @@ export default function Home() {
         </div>
 
         {/* 컨텐츠 조건부 뷰 출력 */}
-        {loadingGroups ? (
+        {loadingGroups || !groupReady ? (
           <div className="text-center py-20">
             불러오는 중...
           </div>
