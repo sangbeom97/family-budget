@@ -167,6 +167,9 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
+    console.log("SESSION", session);
+    console.log("USER", session?.user?.id);
+
     const { data } = await supabase
       .from("group_members")
       .select("group_id, groups(id, name)")
