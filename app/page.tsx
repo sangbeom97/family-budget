@@ -44,14 +44,6 @@ export default function Home() {
   const [loadingGroups, setLoadingGroups] =
     useState(true);
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
-  const [groupReady, setGroupReady] = useState(false);
-  useEffect(() => {
-    const savedGroupId = localStorage.getItem("currentGroupId");
-
-    if (savedGroupId) {
-      setCurrentGroupId(savedGroupId);
-    }
-  }, []);
   const [role, setRole] = useState("member");
   const [newGroupName, setNewGroupName] = useState("");
 
@@ -136,10 +128,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (session) {
+    if (session?.user?.id) {
       fetchUserGroups();
     }
-  }, [session]);
+  }, [session?.user?.id]);
 
   // 구글 로그인 핸들러 함수
   const handleGoogleSignIn = async () => {
@@ -164,17 +156,21 @@ export default function Home() {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    setCurrentGroupId("");
+    localStorage.removeItem("currentGroupId");
 
-    setCurrentInviteCode(""); // 초기화
+    await supabase.auth.signOut();
+
+    setCurrentGroupId("");
+    setCurrentInviteCode("");
     setGroups([]);
   };
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
+    setLoadingGroups(true);
+
+    console.log("FETCH USER GROUPS START");
     console.log("SESSION", session);
-    console.log("USER", session?.user?.id);
 
     const { data, error } = await supabase
       .from("group_members")
@@ -192,7 +188,6 @@ export default function Home() {
 
     if (error) {
       setLoadingGroups(false);
-      setGroupReady(true);
       return;
     }
 
@@ -226,13 +221,6 @@ export default function Home() {
       "RESTORED GROUP =",
       localStorage.getItem("currentGroupId")
     );
-
-    console.log(
-      "CURRENT GROUP STATE =",
-      currentGroupId
-    );
-
-    setGroupReady(true);
   };
 
   useEffect(() => {
@@ -786,7 +774,7 @@ export default function Home() {
         </div>
 
         {/* 컨텐츠 조건부 뷰 출력 */}
-        {loadingGroups || !groupReady ? (
+        {loadingGroups ? (
           <div className="text-center py-20">
             불러오는 중...
           </div>
