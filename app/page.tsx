@@ -41,6 +41,13 @@ export default function Home() {
   const [session, setSession] = useState<any>(null);
   const [groups, setGroups] = useState<Group[]>([]);
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
+  useEffect(() => {
+    const savedGroupId = localStorage.getItem("currentGroupId");
+
+    if (savedGroupId) {
+      setCurrentGroupId(savedGroupId);
+    }
+  }, []);
   const [role, setRole] = useState("member");
   const [newGroupName, setNewGroupName] = useState("");
 
@@ -161,8 +168,20 @@ export default function Home() {
     if (data) {
       const mappedGroups = data.map((item: any) => item.groups).filter(Boolean);
       setGroups(mappedGroups);
-      if (mappedGroups.length > 0 && !currentGroupId) {
+      const savedGroupId = localStorage.getItem("currentGroupId");
+
+      if (
+        savedGroupId &&
+        mappedGroups.some((g) => g.id === savedGroupId)
+      ) {
+        setCurrentGroupId(savedGroupId);
+      } else if (mappedGroups.length > 0) {
         setCurrentGroupId(mappedGroups[0].id);
+
+        localStorage.setItem(
+          "currentGroupId",
+          mappedGroups[0].id
+        );
       }
     }
   };
@@ -661,7 +680,12 @@ export default function Home() {
         <div className={`p-4 rounded-2xl border mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 ${darkMode ? "bg-slate-800 border-slate-700" : "bg-white border-gray-100"}`}>
           <div>
             <label className="block text-xs font-bold text-gray-400 mb-1">현재 활성화된 공유 가계부</label>
-            <select value={currentGroupId} onChange={(e) => setCurrentGroupId(e.target.value)} className="w-full border-2 rounded-xl px-3 py-2 text-sm bg-transparent border-gray-200 dark:border-slate-600 font-bold outline-none text-black dark:text-white">
+            <select
+              value={currentGroupId}
+              onChange={(e) => {
+                setCurrentGroupId(e.target.value);
+                localStorage.setItem("currentGroupId", e.target.value);
+              }} className="w-full border-2 rounded-xl px-3 py-2 text-sm bg-transparent border-gray-200 dark:border-slate-600 font-bold outline-none text-black dark:text-white">
               {groups.length === 0 && <option value="">소속된 방이 없습니다</option>}
               {groups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
@@ -805,6 +829,7 @@ export default function Home() {
             {mainTab === "members" && (
               <MemberView
                 currentGroupId={currentGroupId}
+                role={role}
               />
             )}
           </>
