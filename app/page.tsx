@@ -128,10 +128,13 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (session?.user?.id) {
+    console.log("SESSION EFFECT =", session);
+
+    if (session) {
+      console.log("CALL FETCH USER GROUPS");
       fetchUserGroups();
     }
-  }, [session?.user?.id]);
+  }, [session]);
 
   // 구글 로그인 핸들러 함수
   const handleGoogleSignIn = async () => {
