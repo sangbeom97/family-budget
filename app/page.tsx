@@ -95,8 +95,14 @@ export default function Home() {
 
   // --- 3. 인증 및 세션 제어 흐름 ---
   useEffect(() => {
-    const { data: { subscription } } =
-      supabase.auth.onAuthStateChange(async (_event, session) => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
         setSession(session);
 
         if (session?.user) {
@@ -118,7 +124,8 @@ export default function Home() {
             window.location.href = pendingInvite;
           }
         }
-      });
+      }
+    );
 
     return () => subscription.unsubscribe();
   }, []);
