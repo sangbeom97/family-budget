@@ -161,6 +161,7 @@ export default function Home() {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setCurrentGroupId("");
+
     setCurrentInviteCode(""); // 초기화
     setGroups([]);
   };
@@ -170,29 +171,46 @@ export default function Home() {
     console.log("SESSION", session);
     console.log("USER", session?.user?.id);
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("group_members")
-      .select("group_id, groups(id, name)")
+      .select(`
+      group_id,
+      groups (
+        id,
+        name
+      )
+    `)
       .eq("user_id", session?.user?.id);
 
-    if (data) {
-      const mappedGroups = data.map((item: any) => item.groups).filter(Boolean);
-      setGroups(mappedGroups);
-      const savedGroupId = localStorage.getItem("currentGroupId");
+    console.log("GROUP DATA =", data);
+    console.log("GROUP ERROR =", error);
 
-      if (
-        savedGroupId &&
-        mappedGroups.some((g) => g.id === savedGroupId)
-      ) {
-        setCurrentGroupId(savedGroupId);
-      } else if (mappedGroups.length > 0) {
-        setCurrentGroupId(mappedGroups[0].id);
+    if (error) return;
 
-        localStorage.setItem(
-          "currentGroupId",
-          mappedGroups[0].id
-        );
-      }
+    const mappedGroups =
+      data
+        ?.map((item: any) => item.groups)
+        .filter(Boolean) || [];
+
+    console.log("MAPPED GROUPS =", mappedGroups);
+
+    setGroups(mappedGroups);
+
+    const savedGroupId =
+      localStorage.getItem("currentGroupId");
+
+    if (
+      savedGroupId &&
+      mappedGroups.some((g: any) => g.id === savedGroupId)
+    ) {
+      setCurrentGroupId(savedGroupId);
+    } else if (mappedGroups.length > 0) {
+      setCurrentGroupId(mappedGroups[0].id);
+
+      localStorage.setItem(
+        "currentGroupId",
+        mappedGroups[0].id
+      );
     }
   };
 
