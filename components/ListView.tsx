@@ -14,6 +14,7 @@ type Props = {
   deleteItem: (id: number) => void;
   startEdit: (item: Item) => void;
   darkMode: boolean;
+  role: string;
 };
 
 export default function ListView({
@@ -21,12 +22,12 @@ export default function ListView({
   deleteItem,
   startEdit,
   darkMode,
+  role,
 }: Props) {
   return (
     <div
-      className={`rounded-2xl p-5 shadow-sm border ${
-        darkMode ? "bg-slate-800 border-slate-700 text-white" : "bg-white border-gray-100 text-gray-900"
-      }`}
+      className={`rounded-2xl p-5 shadow-sm border ${darkMode ? "bg-slate-800 border-slate-700 text-white" : "bg-white border-gray-100 text-gray-900"
+        }`}
     >
       <h3 className={`font-extrabold mb-4 text-sm ${darkMode ? "text-white" : "text-gray-800"}`}>
         내역 목록
@@ -36,9 +37,8 @@ export default function ListView({
         {items.map((item) => (
           <div
             key={item.id}
-            className={`border rounded-xl p-4 flex justify-between items-center transition-colors ${
-              darkMode ? "bg-slate-700/50 border-slate-600 hover:bg-slate-700" : "bg-gray-50/50 border-gray-100 hover:bg-gray-50"
-            }`}
+            className={`border rounded-xl p-4 flex justify-between items-center transition-colors ${darkMode ? "bg-slate-700/50 border-slate-600 hover:bg-slate-700" : "bg-gray-50/50 border-gray-100 hover:bg-gray-50"
+              }`}
           >
             {/* 왼쪽: 내역 정보 */}
             <div className="space-y-1">
@@ -67,23 +67,26 @@ export default function ListView({
                 {item.type === "income" ? "+" : "-"} ₩{item.amount.toLocaleString()}
               </p>
 
-              <div className="flex gap-2 mt-3 justify-end">
-                <button
-                  onClick={() => startEdit(item)}
-                  className={`text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors ${
-                    darkMode ? "bg-slate-600 text-gray-100 hover:bg-slate-500" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                  }`}
-                >
-                  수정
-                </button>
+              {role !== "member" && (
+                <div className="flex gap-2 mt-3 justify-end">
+                  <button
+                    onClick={() => startEdit(item)}
+                    className={`text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors ${darkMode
+                        ? "bg-slate-600 text-gray-100 hover:bg-slate-500"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      }`}
+                  >
+                    수정
+                  </button>
 
-                <button
-                  onClick={() => deleteItem(item.id)}
-                  className="text-xs px-2.5 py-1.5 rounded-lg font-medium bg-red-500 text-white hover:bg-red-600 transition-colors"
-                >
-                  삭제
-                </button>
-              </div>
+                  <button
+                    onClick={() => deleteItem(item.id)}
+                    className="text-xs px-2.5 py-1.5 rounded-lg font-medium bg-red-500 text-white hover:bg-red-600 transition-colors"
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
