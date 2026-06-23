@@ -326,7 +326,13 @@ export default function AccountView(props: AccountViewProps) {
                             </div>
                         </div>
 
-                        <ListView items={periodFilteredItems} deleteItem={deleteItem} startEdit={startEdit} darkMode={darkMode} />
+                        <ListView
+                            items={periodFilteredItems}
+                            deleteItem={deleteItem}
+                            startEdit={startEdit}
+                            darkMode={darkMode}
+                            role={role}
+                        />
                     </div>
                 </div>
             )}
