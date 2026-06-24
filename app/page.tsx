@@ -174,6 +174,9 @@ export default function Home() {
 
     console.log("FETCH USER GROUPS START");
     console.log("SESSION", session);
+    console.log("BEFORE QUERY");
+
+    console.log("QUERY START");
 
     const { data, error } = await supabase
       .from("group_members")
