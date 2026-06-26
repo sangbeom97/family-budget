@@ -91,8 +91,21 @@ export default function Home() {
 
   // --- 3. 인증 및 세션 제어 흐름 ---
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
+    supabase.auth.getSession().then(async ({ data }) => {
+
+      if (data.session) {
+        const { data: userData } = await supabase.auth.getUser();
+
+        if (userData.user) {
+          setSession(data.session);
+        } else {
+          setSession(null);
+        }
+
+      } else {
+        setSession(null);
+      }
+
       setAuthLoading(false);
     });
 
@@ -100,6 +113,8 @@ export default function Home() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
+        console.log("AUTH EVENT =", _event);
+        
         setSession(session);
 
         if (session?.user) {
@@ -170,6 +185,14 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setLoadingGroups(false);
+      return;
+    }
     setLoadingGroups(true);
 
     console.log("FETCH USER GROUPS START");
@@ -187,7 +210,7 @@ export default function Home() {
         name
       )
     `)
-      .eq("user_id", session?.user?.id);
+      .eq("user_id", user.id);
 
     console.log("GROUP DATA =", data);
     console.log("GROUP ERROR =", error);
