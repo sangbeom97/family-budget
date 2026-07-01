@@ -202,15 +202,12 @@ export default function Home() {
     console.log("QUERY START");
 
     const { data, error } = await supabase
-      .from("group_members")
-      .select(`
-      group_id,
-      groups (
-        id,
-        name
-      )
-    `)
-      .eq("user_id", user.id);
+  .from("group_members")
+  .select("*")
+  .eq("user_id", session?.user?.id);
+
+console.log("GROUP DATA =", data);
+console.log("GROUP ERROR =", error);
 
     console.log("GROUP DATA =", data);
     console.log("GROUP ERROR =", error);
