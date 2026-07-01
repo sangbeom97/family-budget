@@ -204,7 +204,7 @@ export default function Home() {
     const { data, error } = await supabase
   .from("group_members")
   .select("*")
-  .eq("user_id", session?.user?.id);
+  .eq("user_id", user.id);
 
 console.log("GROUP DATA =", data);
 console.log("GROUP ERROR =", error);
