@@ -188,10 +188,15 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
-    console.log("FETCH USER GROUPS START");
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  console.log("FETCH USER GROUPS START");
+
+  console.log("BEFORE GET USER");
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  console.log("AFTER GET USER", user);
 
     if (!user) {
       setLoadingGroups(false);
