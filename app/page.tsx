@@ -203,24 +203,27 @@ export default function Home() {
 
     const { data, error } = await supabase
   .from("group_members")
-  .select("*")
+  .select(`
+    group_id,
+    groups (
+      id,
+      name
+    )
+  `)
   .eq("user_id", user.id);
 
 console.log("GROUP DATA =", data);
 console.log("GROUP ERROR =", error);
 
-    console.log("GROUP DATA =", data);
-    console.log("GROUP ERROR =", error);
+if (error) {
+  setLoadingGroups(false);
+  return;
+}
 
-    if (error) {
-      setLoadingGroups(false);
-      return;
-    }
-
-    const mappedGroups =
-      data
-        ?.map((item: any) => item.groups)
-        .filter(Boolean) || [];
+const mappedGroups =
+  data
+    ?.map((item: any) => item.groups)
+    .filter(Boolean) || [];
 
     console.log("MAPPED GROUPS =", mappedGroups);
 
