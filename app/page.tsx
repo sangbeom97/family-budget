@@ -143,13 +143,16 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log("SESSION EFFECT =", session);
+  console.log("SESSION EFFECT =", session);
 
-    if (session) {
-      console.log("CALL FETCH USER GROUPS");
-      fetchUserGroups();
-    }
-  }, [session]);
+  if (session) {
+    console.log("CALL FETCH USER GROUPS");
+
+    fetchUserGroups().catch((e) => {
+      console.error("fetchUserGroups ERROR =", e);
+    });
+  }
+}, [session]);
 
   // 구글 로그인 핸들러 함수
   const handleGoogleSignIn = async () => {
@@ -185,6 +188,7 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
+    console.log("FETCH USER GROUPS START");
     const {
       data: { user },
     } = await supabase.auth.getUser();
