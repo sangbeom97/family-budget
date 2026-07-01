@@ -192,16 +192,12 @@ export default function Home() {
 
   console.log("BEFORE GET USER");
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = session?.user;
 
-  console.log("AFTER GET USER", user);
-
-    if (!user) {
-      setLoadingGroups(false);
-      return;
-    }
+if (!user) {
+  setLoadingGroups(false);
+  return;
+}
     setLoadingGroups(true);
 
     console.log("FETCH USER GROUPS START");
