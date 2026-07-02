@@ -201,16 +201,14 @@ if (!user) {
     console.log("FETCH USER GROUPS START");
     console.log("SESSION", session);
 
-    const query = supabase
-  .from("group_members")
-  .select(`
-    group_id,
-    groups (
-      id,
-      name
-    )
-  `)
-  .eq("user_id", user.id);
+    const { data, error } = await supabase
+  .from("groups")
+  .select("*");
+
+console.log(data);
+console.log(error);
+
+return;
 
 const result = await Promise.race([
   query,
