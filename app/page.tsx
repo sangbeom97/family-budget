@@ -192,23 +192,23 @@ export default function Home() {
 
   const user = session?.user;
 
-if (!user) {
+  if (!user) {
+    setLoadingGroups(false);
+    return;
+  }
+
+  setLoadingGroups(true);
+
+  const { data, error } = await supabase
+    .from("groups")
+    .select("*");
+
+  console.log("GROUPS =", data);
+  console.log("ERROR =", error);
+
   setLoadingGroups(false);
   return;
-}
-    setLoadingGroups(true);
-
-    console.log("FETCH USER GROUPS START");
-    console.log("SESSION", session);
-
-    const { data, error } = await supabase
-  .from("groups")
-  .select("*");
-
-console.log(data);
-console.log(error);
-
-return;
+};
 
 const result = await Promise.race([
   query,
