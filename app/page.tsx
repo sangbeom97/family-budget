@@ -188,8 +188,6 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
-  console.log("FETCH USER GROUPS START");
-
   const user = session?.user;
 
   if (!user) {
@@ -207,66 +205,7 @@ export default function Home() {
   console.log("ERROR =", error);
 
   setLoadingGroups(false);
-  return;
 };
-
-const result = await Promise.race([
-  query,
-  new Promise((_, reject) =>
-    setTimeout(() => reject(new Error("QUERY TIMEOUT")), 5000)
-  ),
-]);
-
-console.log("AFTER AWAIT", result);
-
-const { data, error } = result as any;
-
-console.log("GROUP DATA =", data);
-console.log("GROUP ERROR =", error);
-
-if (error) {
-  setLoadingGroups(false);
-  return;
-}
-
-console.log("GROUP DATA =", data);
-
-const mappedGroups =
-  data
-    ?.map((item: any) => item.groups)
-    .filter(Boolean) || [];
-
-console.log("MAPPED GROUPS =", mappedGroups);
-
-setGroups(mappedGroups);
-
-    const savedGroupId =
-      localStorage.getItem("currentGroupId");
-
-    if (
-      savedGroupId &&
-      mappedGroups.some((g: any) => g.id === savedGroupId)
-    ) {
-      setCurrentGroupId(savedGroupId);
-    } else {
-      const firstGroupId = mappedGroups[0]?.id || "";
-
-      setCurrentGroupId(firstGroupId);
-
-      if (firstGroupId) {
-        localStorage.setItem(
-          "currentGroupId",
-          firstGroupId
-        );
-      }
-    }
-
-    setLoadingGroups(false);
-    console.log(
-      "RESTORED GROUP =",
-      localStorage.getItem("currentGroupId")
-    );
-  };
 
   useEffect(() => {
     const fetchRole = async () => {
