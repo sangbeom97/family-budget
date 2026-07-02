@@ -208,13 +208,7 @@ if (!user) {
 
     const query = supabase
   .from("group_members")
-  .select(`
-    group_id,
-    groups (
-      id,
-      name
-    )
-  `)
+  .select("*")
   .eq("user_id", user.id);
 
 console.log("BEFORE AWAIT");
@@ -238,10 +232,10 @@ if (error) {
   return;
 }
 
-const mappedGroups =
-  data
-    ?.map((item: any) => item.groups)
-    .filter(Boolean) || [];
+console.log("GROUP DATA =", data);
+
+setLoadingGroups(false);
+return;
 
     console.log("MAPPED GROUPS =", mappedGroups);
 
