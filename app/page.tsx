@@ -234,12 +234,14 @@ if (error) {
 
 console.log("GROUP DATA =", data);
 
-setLoadingGroups(false);
-return;
+const mappedGroups =
+  data
+    ?.map((item: any) => item.groups)
+    .filter(Boolean) || [];
 
-    console.log("MAPPED GROUPS =", mappedGroups);
+console.log("MAPPED GROUPS =", mappedGroups);
 
-    setGroups(mappedGroups);
+setGroups(mappedGroups);
 
     const savedGroupId =
       localStorage.getItem("currentGroupId");
