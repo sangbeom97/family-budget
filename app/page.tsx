@@ -206,7 +206,7 @@ if (!user) {
 
     console.log("QUERY START");
 
-    const { data, error } = await supabase
+    const query = supabase
   .from("group_members")
   .select(`
     group_id,
@@ -216,6 +216,19 @@ if (!user) {
     )
   `)
   .eq("user_id", user.id);
+
+console.log("BEFORE AWAIT");
+
+const result = await Promise.race([
+  query,
+  new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("QUERY TIMEOUT")), 5000)
+  ),
+]);
+
+console.log("AFTER AWAIT", result);
+
+const { data, error } = result as any;
 
 console.log("GROUP DATA =", data);
 console.log("GROUP ERROR =", error);
