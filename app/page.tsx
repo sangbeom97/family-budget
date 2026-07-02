@@ -188,7 +188,43 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
+  console.log("1");
+
   const user = session?.user;
+
+  console.log("2");
+
+  if (!user) {
+    console.log("NO USER");
+    setLoadingGroups(false);
+    return;
+  }
+
+  console.log("3");
+
+  setLoadingGroups(true);
+
+  console.log("4");
+
+  const client = supabase
+    .from("groups");
+
+  console.log("5");
+
+  const builder = client.select("*");
+
+  console.log("6");
+
+  const { data, error } = await builder;
+
+  console.log("7");
+
+  console.log(data);
+  console.log(error);
+
+  setGroups(data || []);
+  setLoadingGroups(false);
+};
 
   if (!user) {
     setLoadingGroups(false);
