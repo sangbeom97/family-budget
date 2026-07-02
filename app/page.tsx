@@ -190,8 +190,6 @@ export default function Home() {
   const fetchUserGroups = async () => {
   console.log("FETCH USER GROUPS START");
 
-  console.log("BEFORE GET USER");
-
   const user = session?.user;
 
 if (!user) {
@@ -202,16 +200,17 @@ if (!user) {
 
     console.log("FETCH USER GROUPS START");
     console.log("SESSION", session);
-    console.log("BEFORE QUERY");
-
-    console.log("QUERY START");
 
     const query = supabase
   .from("group_members")
-  .select("*")
+  .select(`
+    group_id,
+    groups (
+      id,
+      name
+    )
+  `)
   .eq("user_id", user.id);
-
-console.log("BEFORE AWAIT");
 
 const result = await Promise.race([
   query,
