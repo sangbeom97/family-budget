@@ -143,14 +143,15 @@ export default function Home() {
   }, []);
 
  useEffect(() => {
-  // 인증 로딩이 끝났고, 세션이 있을 때만 안전하게 실행
+  // 컴포넌트 마운트 혹은 세션 확인 완료 시점에만 실행
   if (!authLoading && session) {
-    console.log("CALL FETCH USER GROUPS");
-    fetchUserGroups().catch((e) => {
-      console.error("fetchUserGroups ERROR =", e);
-    });
+    fetchUserGroups();
   }
-}, [session, authLoading]); // authLoading 의존성 추가
+  // authLoading이 완료된 후, session이 없을 때도 로딩을 꺼줘야 함
+  if (!authLoading && !session) {
+    setLoadingGroups(false);
+  }
+}, [session, authLoading]);
 
   // 구글 로그인 핸들러 함수
   const handleGoogleSignIn = async () => {
@@ -186,38 +187,39 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
-  const user = session?.user;
-  if (!user) {
-    setLoadingGroups(false);
-    return;
-  }
-  setLoadingGroups(true);
-
-  const { data, error } = await supabase
-    .from("group_members")
-    .select(`group_id, groups (id, name)`)
-    .eq("user_id", user.id);
-
-  if (error || !data) {
+  if (!session?.user) {
     setLoadingGroups(false);
     return;
   }
 
-  const mappedGroups = data.map((item: any) => item.groups).filter(Boolean);
-  setGroups(mappedGroups);
+  setLoadingGroups(true); // 반드시 여기서 시작
 
-  // 로직 강화: 저장된 ID가 유효한지 확인 후 없으면 첫 번째 방 강제 설정
-  const savedGroupId = localStorage.getItem("currentGroupId");
-  const isValid = mappedGroups.some((g: any) => g.id === savedGroupId);
+  try {
+    const { data, error } = await supabase
+      .from("group_members")
+      .select(`group_id, groups (id, name)`)
+      .eq("user_id", session.user.id);
 
-  if (isValid) {
-    setCurrentGroupId(savedGroupId!);
-  } else if (mappedGroups.length > 0) {
-    const firstId = mappedGroups[0].id;
-    setCurrentGroupId(firstId);
-    localStorage.setItem("currentGroupId", firstId);
+    if (error) throw error;
+
+    const mappedGroups = (data || []).map((item: any) => item.groups).filter(Boolean);
+    setGroups(mappedGroups);
+
+    const savedGroupId = localStorage.getItem("currentGroupId");
+    const isValid = mappedGroups.some((g: any) => g.id === savedGroupId);
+
+    if (isValid) {
+      setCurrentGroupId(savedGroupId!);
+    } else if (mappedGroups.length > 0) {
+      const firstId = mappedGroups[0].id;
+      setCurrentGroupId(firstId);
+      localStorage.setItem("currentGroupId", firstId);
+    }
+  } catch (err) {
+    console.error("그룹 로드 실패:", err);
+  } finally {
+    setLoadingGroups(false); // 성공하든 실패하든 무조건 여기서 로딩 종료
   }
-  setLoadingGroups(false);
 };
 
   useEffect(() => {
