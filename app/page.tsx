@@ -142,17 +142,16 @@ export default function Home() {
     return () => subscription.unsubscribe();
   }, []);
 
- useEffect(() => {
-  // 로딩 중이면 아무것도 하지 않음
-  if (authLoading) return; 
-
-  // 로딩이 끝난 후 세션이 있다면 그룹을 불러오고, 없으면 로딩 종료
-  if (session) {
-    fetchUserGroups();
-  } else {
-    setLoadingGroups(false); 
+ // [안전장치] 새로고침 시 5초 동안 로딩이 안 풀리면 강제로 끄는 타임아웃
+useEffect(() => {
+  if (loadingGroups) {
+    const timer = setTimeout(() => {
+      setLoadingGroups(false);
+      console.warn("로딩 타임아웃 발생: 강제 해제됨");
+    }, 5000);
+    return () => clearTimeout(timer);
   }
-}, [session, authLoading]);
+}, [loadingGroups]);
 
   // 구글 로그인 핸들러 함수
   const handleGoogleSignIn = async () => {
