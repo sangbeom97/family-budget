@@ -143,12 +143,14 @@ export default function Home() {
   }, []);
 
  useEffect(() => {
-  if (!authLoading) {
-    if (session) {
-      fetchUserGroups();
-    } else {
-      setLoadingGroups(false); // 로그아웃 상태면 로딩을 즉시 종료
-    }
+  // 로딩 중이면 아무것도 하지 않음
+  if (authLoading) return; 
+
+  // 로딩이 끝난 후 세션이 있다면 그룹을 불러오고, 없으면 로딩 종료
+  if (session) {
+    fetchUserGroups();
+  } else {
+    setLoadingGroups(false); 
   }
 }, [session, authLoading]);
 
