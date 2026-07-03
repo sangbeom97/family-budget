@@ -188,53 +188,30 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
-  console.log("1");
-
   const user = session?.user;
-
-  console.log("2");
-
   if (!user) {
-    console.log("NO USER");
     setLoadingGroups(false);
     return;
   }
-
-  console.log("3");
-
   setLoadingGroups(true);
 
-  console.log("4");
+  const { data, error } = await supabase
+    .from("group_members")
+    .select(`group_id, groups (id, name)`)
+    .eq("user_id", user.id);
 
-  const client = supabase
-    .from("groups");
-
-  console.log("5");
-
-  const builder = client.select("*");
-
-  console.log("6");
-
-  const { data, error } = await builder;
-
-  console.log("7");
-
-  console.log(data);
-  console.log(error);
-
-  setGroups(data || []);
+  if (error) {
+    console.error("그룹 불러오기 실패:", error);
+  } else {
+    const mappedGroups = data?.map((item: any) => item.groups).filter(Boolean) || [];
+    setGroups(mappedGroups);
+    
+    // 로컬 스토리지 확인 및 설정
+    const savedGroupId = localStorage.getItem("currentGroupId");
+    setCurrentGroupId(mappedGroups.some((g: any) => g.id === savedGroupId) ? savedGroupId! : (mappedGroups[0]?.id || ""));
+  }
   setLoadingGroups(false);
 };
-
-  const fetchUserGroups = async () => {
-  console.log("FETCH USER GROUPS START");
-
-  const user = session?.user;
-
-  if (!user) {
-    setLoadingGroups(false);
-    return;
-  }
 
   setLoadingGroups(true);
 
