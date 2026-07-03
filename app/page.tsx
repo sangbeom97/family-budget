@@ -188,75 +188,51 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
-  const user = session?.user;
-  if (!user) {
-    setLoadingGroups(false);
-    return;
-  }
-  setLoadingGroups(true);
-
-  const { data, error } = await supabase
-    .from("group_members")
-    .select(`group_id, groups (id, name)`)
-    .eq("user_id", user.id);
-
-  if (error) {
-    console.error("그룹 불러오기 실패:", error);
-  } else {
-    const mappedGroups = data?.map((item: any) => item.groups).filter(Boolean) || [];
-    setGroups(mappedGroups);
-    
-    // 로컬 스토리지 확인 및 설정
-    const savedGroupId = localStorage.getItem("currentGroupId");
-    setCurrentGroupId(mappedGroups.some((g: any) => g.id === savedGroupId) ? savedGroupId! : (mappedGroups[0]?.id || ""));
-  }
-  setLoadingGroups(false);
-};
-
-  setLoadingGroups(true);
-
-  const { data, error } = await supabase
-    .from("group_members")
-    .select(`
-      group_id,
-      groups (
-        id,
-        name
-      )
-    `)
-    .eq("user_id", user.id);
-
-  console.log("GROUP DATA =", data);
-  console.log("GROUP ERROR =", error);
-
-  if (error) {
-    setLoadingGroups(false);
-    return;
-  }
-
-  const mappedGroups =
-    data?.map((item: any) => item.groups).filter(Boolean) || [];
-
-  setGroups(mappedGroups);
-
-  const savedGroupId = localStorage.getItem("currentGroupId");
-
-  if (
-    savedGroupId &&
-    mappedGroups.some((g: any) => g.id === savedGroupId)
-  ) {
-    setCurrentGroupId(savedGroupId);
-  } else {
-    const firstGroupId = mappedGroups[0]?.id || "";
-    setCurrentGroupId(firstGroupId);
-
-    if (firstGroupId) {
-      localStorage.setItem("currentGroupId", firstGroupId);
+    const user = session?.user;
+    if (!user) {
+      setLoadingGroups(false);
+      return;
     }
-  }
+    setLoadingGroups(true);
 
-  setLoadingGroups(false);
-};
+    const { data, error } = await supabase
+      .from("group_members")
+      .select(`
+        group_id,
+        groups (
+          id,
+          name
+        )
+      `)
+      .eq("user_id", user.id);
+
+    console.log("GROUP DATA =", data);
+    console.log("GROUP ERROR =", error);
+
+    if (error) {
+      setLoadingGroups(false);
+      return;
+    }
+
+    const mappedGroups = data?.map((item: any) => item.groups).filter(Boolean) || [];
+
+    setGroups(mappedGroups);
+
+    const savedGroupId = localStorage.getItem("currentGroupId");
+
+    if (savedGroupId && mappedGroups.some((g: any) => g.id === savedGroupId)) {
+      setCurrentGroupId(savedGroupId);
+    } else {
+      const firstGroupId = mappedGroups[0]?.id || "";
+      setCurrentGroupId(firstGroupId);
+
+      if (firstGroupId) {
+        localStorage.setItem("currentGroupId", firstGroupId);
+      }
+    }
+
+    setLoadingGroups(false);
+  };
 
   useEffect(() => {
     const fetchRole = async () => {
