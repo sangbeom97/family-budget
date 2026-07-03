@@ -143,13 +143,12 @@ export default function Home() {
   }, []);
 
  useEffect(() => {
-  // 컴포넌트 마운트 혹은 세션 확인 완료 시점에만 실행
-  if (!authLoading && session) {
-    fetchUserGroups();
-  }
-  // authLoading이 완료된 후, session이 없을 때도 로딩을 꺼줘야 함
-  if (!authLoading && !session) {
-    setLoadingGroups(false);
+  if (!authLoading) {
+    if (session) {
+      fetchUserGroups();
+    } else {
+      setLoadingGroups(false); // 로그아웃 상태면 로딩을 즉시 종료
+    }
   }
 }, [session, authLoading]);
 
@@ -187,12 +186,11 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
-  if (!session?.user) {
+  if (!session?.user?.id) {
     setLoadingGroups(false);
     return;
   }
-
-  setLoadingGroups(true); // 반드시 여기서 시작
+  setLoadingGroups(true);
 
   try {
     const { data, error } = await supabase
@@ -218,7 +216,7 @@ export default function Home() {
   } catch (err) {
     console.error("그룹 로드 실패:", err);
   } finally {
-    setLoadingGroups(false); // 성공하든 실패하든 무조건 여기서 로딩 종료
+    setLoadingGroups(false); // [핵심] 성공/실패 상관없이 무조건 로딩 종료
   }
 };
 
