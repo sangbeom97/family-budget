@@ -142,17 +142,15 @@ export default function Home() {
     return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => {
-  console.log("SESSION EFFECT =", session);
-
-  if (session) {
+ useEffect(() => {
+  // 인증 로딩이 끝났고, 세션이 있을 때만 안전하게 실행
+  if (!authLoading && session) {
     console.log("CALL FETCH USER GROUPS");
-
     fetchUserGroups().catch((e) => {
       console.error("fetchUserGroups ERROR =", e);
     });
   }
-}, [session]);
+}, [session, authLoading]); // authLoading 의존성 추가
 
   // 구글 로그인 핸들러 함수
   const handleGoogleSignIn = async () => {
@@ -188,51 +186,39 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
-    const user = session?.user;
-    if (!user) {
-      setLoadingGroups(false);
-      return;
-    }
-    setLoadingGroups(true);
-
-    const { data, error } = await supabase
-      .from("group_members")
-      .select(`
-        group_id,
-        groups (
-          id,
-          name
-        )
-      `)
-      .eq("user_id", user.id);
-
-    console.log("GROUP DATA =", data);
-    console.log("GROUP ERROR =", error);
-
-    if (error) {
-      setLoadingGroups(false);
-      return;
-    }
-
-    const mappedGroups = data?.map((item: any) => item.groups).filter(Boolean) || [];
-
-    setGroups(mappedGroups);
-
-    const savedGroupId = localStorage.getItem("currentGroupId");
-
-    if (savedGroupId && mappedGroups.some((g: any) => g.id === savedGroupId)) {
-      setCurrentGroupId(savedGroupId);
-    } else {
-      const firstGroupId = mappedGroups[0]?.id || "";
-      setCurrentGroupId(firstGroupId);
-
-      if (firstGroupId) {
-        localStorage.setItem("currentGroupId", firstGroupId);
-      }
-    }
-
+  const user = session?.user;
+  if (!user) {
     setLoadingGroups(false);
-  };
+    return;
+  }
+  setLoadingGroups(true);
+
+  const { data, error } = await supabase
+    .from("group_members")
+    .select(`group_id, groups (id, name)`)
+    .eq("user_id", user.id);
+
+  if (error || !data) {
+    setLoadingGroups(false);
+    return;
+  }
+
+  const mappedGroups = data.map((item: any) => item.groups).filter(Boolean);
+  setGroups(mappedGroups);
+
+  // 로직 강화: 저장된 ID가 유효한지 확인 후 없으면 첫 번째 방 강제 설정
+  const savedGroupId = localStorage.getItem("currentGroupId");
+  const isValid = mappedGroups.some((g: any) => g.id === savedGroupId);
+
+  if (isValid) {
+    setCurrentGroupId(savedGroupId!);
+  } else if (mappedGroups.length > 0) {
+    const firstId = mappedGroups[0].id;
+    setCurrentGroupId(firstId);
+    localStorage.setItem("currentGroupId", firstId);
+  }
+  setLoadingGroups(false);
+};
 
   useEffect(() => {
     const fetchRole = async () => {
