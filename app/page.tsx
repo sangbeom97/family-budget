@@ -186,22 +186,30 @@ useEffect(() => {
   };
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
-  const fetchUserGroups = async () => {
+  // 이 함수 하나만 남기세요
+const fetchUserGroups = async () => {
+  console.log("FETCH START"); 
+  
   if (!session?.user?.id) {
     setLoadingGroups(false);
     return;
   }
+  
   setLoadingGroups(true);
 
   try {
     const { data, error } = await supabase
       .from("group_members")
-      .select(`group_id, groups (id, name)`)
+      .select(`group_id, role, groups (id, name)`) // role 추가
       .eq("user_id", session.user.id);
 
     if (error) throw error;
 
-    const mappedGroups = (data || []).map((item: any) => item.groups).filter(Boolean);
+    const mappedGroups = (data || []).map((item: any) => ({
+      ...item.groups,
+      role: item.role 
+    })).filter(Boolean);
+
     setGroups(mappedGroups);
 
     const savedGroupId = localStorage.getItem("currentGroupId");
@@ -214,10 +222,11 @@ useEffect(() => {
       setCurrentGroupId(firstId);
       localStorage.setItem("currentGroupId", firstId);
     }
+    
   } catch (err) {
-    console.error("그룹 로드 실패:", err);
+    console.error("데이터 로드 실패:", err);
   } finally {
-    setLoadingGroups(false); // [핵심] 성공/실패 상관없이 무조건 로딩 종료
+    setLoadingGroups(false); // [핵심] 여기서 무조건 로딩 해제
   }
 };
 
