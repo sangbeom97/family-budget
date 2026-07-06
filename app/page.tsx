@@ -142,16 +142,14 @@ export default function Home() {
     return () => subscription.unsubscribe();
   }, []);
 
- // [안전장치] 새로고침 시 5초 동안 로딩이 안 풀리면 강제로 끄는 타임아웃
-useEffect(() => {
-  if (loadingGroups) {
-    const timer = setTimeout(() => {
-      setLoadingGroups(false);
-      console.warn("로딩 타임아웃 발생: 강제 해제됨");
-    }, 5000);
-    return () => clearTimeout(timer);
-  }
-}, [loadingGroups]);
+  useEffect(() => {
+    console.log("SESSION EFFECT =", session);
+
+    if (session) {
+      console.log("CALL FETCH USER GROUPS");
+      fetchUserGroups();
+    }
+  }, [session]);
 
   // 구글 로그인 핸들러 함수
   const handleGoogleSignIn = async () => {
@@ -186,49 +184,78 @@ useEffect(() => {
   };
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
-  // 이 함수 하나만 남기세요
-const fetchUserGroups = async () => {
-  console.log("FETCH START"); 
-  
-  if (!session?.user?.id) {
-    setLoadingGroups(false);
-    return;
-  }
-  
-  setLoadingGroups(true);
+  const fetchUserGroups = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  try {
+    if (!user) {
+      setLoadingGroups(false);
+      return;
+    }
+    setLoadingGroups(true);
+
+    console.log("FETCH USER GROUPS START");
+    console.log("SESSION", session);
+    console.log("BEFORE QUERY");
+
+    console.log("QUERY START");
+
     const { data, error } = await supabase
       .from("group_members")
-      .select(`group_id, role, groups (id, name)`) // role 추가
-      .eq("user_id", session.user.id);
+      .select(`
+      group_id,
+      groups (
+        id,
+        name
+      )
+    `)
+      .eq("user_id", user.id);
 
-    if (error) throw error;
+    console.log("GROUP DATA =", data);
+    console.log("GROUP ERROR =", error);
 
-    const mappedGroups = (data || []).map((item: any) => ({
-      ...item.groups,
-      role: item.role 
-    })).filter(Boolean);
+    if (error) {
+      setLoadingGroups(false);
+      return;
+    }
+
+    const mappedGroups =
+      data
+        ?.map((item: any) => item.groups)
+        .filter(Boolean) || [];
+
+    console.log("MAPPED GROUPS =", mappedGroups);
 
     setGroups(mappedGroups);
 
-    const savedGroupId = localStorage.getItem("currentGroupId");
-    const isValid = mappedGroups.some((g: any) => g.id === savedGroupId);
+    const savedGroupId =
+      localStorage.getItem("currentGroupId");
 
-    if (isValid) {
-      setCurrentGroupId(savedGroupId!);
-    } else if (mappedGroups.length > 0) {
-      const firstId = mappedGroups[0].id;
-      setCurrentGroupId(firstId);
-      localStorage.setItem("currentGroupId", firstId);
+    if (
+      savedGroupId &&
+      mappedGroups.some((g: any) => g.id === savedGroupId)
+    ) {
+      setCurrentGroupId(savedGroupId);
+    } else {
+      const firstGroupId = mappedGroups[0]?.id || "";
+
+      setCurrentGroupId(firstGroupId);
+
+      if (firstGroupId) {
+        localStorage.setItem(
+          "currentGroupId",
+          firstGroupId
+        );
+      }
     }
-    
-  } catch (err) {
-    console.error("데이터 로드 실패:", err);
-  } finally {
-    setLoadingGroups(false); // [핵심] 여기서 무조건 로딩 해제
-  }
-};
+
+    setLoadingGroups(false);
+    console.log(
+      "RESTORED GROUP =",
+      localStorage.getItem("currentGroupId")
+    );
+  };
 
   useEffect(() => {
     const fetchRole = async () => {
