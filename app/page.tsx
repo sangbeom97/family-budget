@@ -91,56 +91,32 @@ export default function Home() {
 
   // --- 3. 인증 및 세션 제어 흐름 ---
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
+  const init = async () => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      if (data.session) {
-        const { data: userData } = await supabase.auth.getUser();
-
-        if (userData.user) {
-          setSession(data.session);
-        } else {
-          setSession(null);
-        }
-
-      } else {
-        setSession(null);
-      }
-
+      setSession(session);
+    } finally {
       setAuthLoading(false);
-    });
+    }
+  };
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        console.log("AUTH EVENT =", _event);
-        
-        setSession(session);
+  init();
 
-        if (session?.user) {
-          await supabase
-            .from("profiles")
-            .upsert({
-              id: session.user.id,
-              email: session.user.email,
-              nickname:
-                session.user.user_metadata?.name ||
-                session.user.email?.split("@")[0],
-            });
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      console.log("AUTH EVENT =", _event);
 
-          const pendingInvite =
-            localStorage.getItem("pendingInvite");
+      setSession(session);
+    }
+  );
 
-          if (pendingInvite) {
-            localStorage.removeItem("pendingInvite");
-            window.location.href = pendingInvite;
-          }
-        }
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
+  return () => subscription.unsubscribe();
+}, []);
 
   useEffect(() => {
   if (session?.user) {
