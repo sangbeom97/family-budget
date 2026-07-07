@@ -706,12 +706,16 @@ export default function Home() {
 
   // --- 8. 미인증 상태 UI (소셜 로그인 전용 화면) ---
   if (authLoading) {
-    return (
-      <main className="min-h-screen flex items-center justify-center">
-        로딩중...
-      </main>
-    );
-  }
+  return (
+    <main className="min-h-screen flex items-center justify-center">
+      <div>
+        <div>auth 로딩중...</div>
+        <div>session : {session ? "O" : "X"}</div>
+        <div>authLoading : {String(authLoading)}</div>
+      </div>
+    </main>
+  );
+}
 
   if (!session) {
     return (
