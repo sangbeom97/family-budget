@@ -143,13 +143,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log("SESSION EFFECT =", session);
-
-    if (session) {
-      console.log("CALL FETCH USER GROUPS");
-      fetchUserGroups();
-    }
-  }, [session]);
+  if (session?.user) {
+    fetchUserGroups();
+  } else {
+    setGroups([]);
+    setCurrentGroupId("");
+    setLoadingGroups(false);
+  }
+}, [session]);
 
   // 구글 로그인 핸들러 함수
   const handleGoogleSignIn = async () => {
@@ -185,52 +186,47 @@ export default function Home() {
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  const user = session?.user;
 
-    if (!user) {
-      setLoadingGroups(false);
-      return;
-    }
-    setLoadingGroups(true);
+  if (!user) {
+    setGroups([]);
+    setCurrentGroupId("");
+    setLoadingGroups(false);
+    return;
+  }
 
-    console.log("FETCH USER GROUPS START");
-    console.log("SESSION", session);
-    console.log("BEFORE QUERY");
+  setLoadingGroups(true);
 
-    console.log("QUERY START");
+  try {
+    const { data: memberRows, error: memberError } = await supabase
+      .from("group_members")
+      .select("group_id, role")
+      .eq("user_id", user.id);
 
-    const { data, error } = await supabase
-  .from("group_members")
-  .select(`
-    group_id,
-    groups (
-      id,
-      name
-    )
-  `)
-  .eq("user_id", user.id);
+    if (memberError) throw memberError;
 
-    console.log("GROUP DATA =", data);
-    console.log("GROUP ERROR =", error);
+    const groupIds =
+      memberRows?.map((row: any) => row.group_id).filter(Boolean) || [];
 
-    if (error) {
-      setLoadingGroups(false);
+    if (groupIds.length === 0) {
+      setGroups([]);
+      setCurrentGroupId("");
+      localStorage.removeItem("currentGroupId");
       return;
     }
 
-    const mappedGroups =
-      data
-        ?.map((item: any) => item.groups)
-        .filter(Boolean) || [];
+    const { data: groupRows, error: groupError } = await supabase
+      .from("groups")
+      .select("id, name")
+      .in("id", groupIds);
 
-    console.log("MAPPED GROUPS =", mappedGroups);
+    if (groupError) throw groupError;
+
+    const mappedGroups = groupRows || [];
 
     setGroups(mappedGroups);
 
-    const savedGroupId =
-      localStorage.getItem("currentGroupId");
+    const savedGroupId = localStorage.getItem("currentGroupId");
 
     if (
       savedGroupId &&
@@ -243,19 +239,19 @@ export default function Home() {
       setCurrentGroupId(firstGroupId);
 
       if (firstGroupId) {
-        localStorage.setItem(
-          "currentGroupId",
-          firstGroupId
-        );
+        localStorage.setItem("currentGroupId", firstGroupId);
+      } else {
+        localStorage.removeItem("currentGroupId");
       }
     }
-
+  } catch (error) {
+    console.error("fetchUserGroups error:", error);
+    setGroups([]);
+    setCurrentGroupId("");
+  } finally {
     setLoadingGroups(false);
-    console.log(
-      "RESTORED GROUP =",
-      localStorage.getItem("currentGroupId")
-    );
-  };
+  }
+};
 
   useEffect(() => {
     const fetchRole = async () => {
