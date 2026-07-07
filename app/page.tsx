@@ -805,10 +805,14 @@ export default function Home() {
 
         {/* 컨텐츠 조건부 뷰 출력 */}
         {loadingGroups ? (
-          <div className="text-center py-20">
-            불러오는 중...
-          </div>
-        ) : !currentGroupId && mainTab === "account" ? (
+  <div className="text-center py-20">
+    <div>불러오는 중...</div>
+    <div>session : {session ? "O" : "X"}</div>
+    <div>groups : {groups.length}</div>
+    <div>currentGroupId : {currentGroupId || "(없음)"}</div>
+    <div>authLoading : {String(authLoading)}</div>
+  </div>
+) : !currentGroupId && mainTab === "account" ? (
           <div className="text-center py-24 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-gray-300 dark:border-slate-600">
             <span className="text-5xl block mb-4">🏠</span>
             <p className="font-bold text-lg">활성화된 가계부 방이 존재하지 않습니다.</p>
