@@ -720,7 +720,7 @@ export default function Home() {
         </div>
 
         {/* 공유 컨트롤 패널 바 */}
-        <div className={`p-4 rounded-2xl border mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 ${darkMode ? "bg-slate-800 border-slate-700" : "bg-white border-gray-100"}`}>
+        <div className="p-4 rounded-2xl border mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white border-gray-100">
           <div>
             <label className="block text-xs font-bold text-gray-400 mb-1">현재 활성화된 공유 가계부</label>
             <select
