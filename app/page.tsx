@@ -74,7 +74,6 @@ export default function Home() {
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
-  const [darkMode, setDarkMode] = useState(false);
   const [selectedFileName, setSelectedFileName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -109,7 +108,6 @@ export default function Home() {
     data: { subscription },
   } = supabase.auth.onAuthStateChange(
     (_event, session) => {
-      console.log("AUTH EVENT =", _event);
 
       setSession(session);
     }
@@ -135,8 +133,6 @@ export default function Home() {
     const redirectUrl = pendingInvite
       ? pendingInvite
       : window.location.origin;
-
-    console.log("REDIRECT URL =", redirectUrl);
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -684,11 +680,7 @@ export default function Home() {
   if (authLoading) {
   return (
     <main className="min-h-screen flex items-center justify-center">
-      <div>
-        <div>auth 로딩중...</div>
-        <div>session : {session ? "O" : "X"}</div>
-        <div>authLoading : {String(authLoading)}</div>
-      </div>
+      로딩중...
     </main>
   );
 }
@@ -713,18 +705,14 @@ export default function Home() {
 
   // --- 9. 메인 레이아웃 렌더링 ---
   return (
-    <main className={`min-h-screen p-4 md:p-6 ${darkMode ? "bg-slate-900 text-white" : "bg-zinc-200 text-black"}`}>
+    <main className="min-h-screen p-4 md:p-6 bg-zinc-200 text-black">
       <div className="max-w-6xl mx-auto">
         {/* 탑 유저 패널 */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight">무계획 속 계획</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-mono mt-1">내 유저 ID: {session.user.id}</p>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => setDarkMode(!darkMode)} className="px-4 py-2 rounded-xl bg-black text-white text-sm font-medium">
-              {darkMode ? "☀️ 라이트모드" : "🌙 다크모드"}
-            </button>
             <button onClick={handleSignOut} className="px-4 py-2 rounded-xl bg-red-500 text-white text-sm font-bold shadow-sm">
               로그아웃
             </button>
@@ -787,10 +775,6 @@ export default function Home() {
         {loadingGroups ? (
   <div className="text-center py-20">
     <div>불러오는 중...</div>
-    <div>session : {session ? "O" : "X"}</div>
-    <div>groups : {groups.length}</div>
-    <div>currentGroupId : {currentGroupId || "(없음)"}</div>
-    <div>authLoading : {String(authLoading)}</div>
   </div>
 ) : !currentGroupId && mainTab === "account" ? (
           <div className="text-center py-24 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-gray-300 dark:border-slate-600">
