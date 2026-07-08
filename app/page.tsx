@@ -777,7 +777,7 @@ export default function Home() {
     <div>불러오는 중...</div>
   </div>
 ) : !currentGroupId && mainTab === "account" ? (
-          <div className="text-center py-24 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-gray-300 dark:border-slate-600">
+          <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-gray-300">
             <span className="text-5xl block mb-4">🏠</span>
             <p className="font-bold text-lg">활성화된 가계부 방이 존재하지 않습니다.</p>
             <p className="text-sm text-gray-400 mt-1">상단에서 새 가계부를 개설하거나 다른 가계부에 초대받아야 내역 관리가 가능합니다.</p>
