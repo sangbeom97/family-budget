@@ -687,14 +687,14 @@ export default function Home() {
 
   if (!session) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900 px-4">
-        <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-slate-700 text-center">
-          <h2 className="text-3xl font-extrabold mb-2 tracking-tight text-slate-900 dark:text-white">📊 무계획 속 계획</h2>
-          <p className="text-center text-xs text-gray-400 dark:text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
+      <main className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
+        <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-xl border border-gray-100 text-center">
+          <h2 className="text-3xl font-extrabold mb-2 tracking-tight text-slate-900">📊 무계획 속 계획</h2>
+          <p className="text-center text-xs text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
 
           <button
             onClick={handleGoogleSignIn}
-            className="w-full py-3.5 rounded-xl bg-white text-slate-700 border-2 border-gray-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white text-sm font-bold shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 transition flex items-center justify-center gap-2"
+            className="w-full border-2 rounded-xl px-3 py-2 text-sm bg-transparent border-gray-200 font-bold outline-none text-black"
           >
             <span>G</span> 구글 계정으로 시작하기
           </button>
@@ -736,7 +736,7 @@ export default function Home() {
           <div>
             <label className="block text-xs font-bold text-gray-400 mb-1">새 공유 가계부 만들기</label>
             <div className="flex gap-2">
-              <input type="text" placeholder="방 이름 (예: 부부 가계부)" value={newGroupName} onChange={(e) => setNewGroupName(e.target.value)} className="w-full border-2 rounded-xl px-3 py-1.5 text-sm bg-transparent border-gray-200 dark:border-slate-600 outline-none text-black dark:text-white" />
+              <input type="text" placeholder="방 이름 (예: 부부 가계부)" value={newGroupName} onChange={(e) => setNewGroupName(e.target.value)} className="w-full border-2 rounded-xl px-3 py-1.5 text-sm bg-transparent border-gray-200 outline-none text-black" />
               <button onClick={createGroup} className="bg-blue-600 text-white px-3 py-2 text-xs font-bold rounded-xl whitespace-nowrap">개설</button>
             </div>
           </div>
