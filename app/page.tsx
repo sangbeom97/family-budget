@@ -818,7 +818,6 @@ export default function Home() {
                 setSearch={setSearch}
                 categoryFilter={categoryFilter}
                 setCategoryFilter={setCategoryFilter}
-                darkMode={darkMode}
                 graphCategories={graphCategories}
                 savingCategories={categorizedNames.saving}
                 categories={categories}
@@ -857,7 +856,6 @@ export default function Home() {
 
             {mainTab === "category" && (
               <CategoryManager
-                darkMode={darkMode}
                 categoryName={categoryName}
                 setCategoryName={setCategoryName}
                 categoryType={categoryType}
@@ -884,7 +882,6 @@ export default function Home() {
       </div>
 
       <DuplicateModal
-        darkMode={darkMode}
         duplicateItem={duplicateItem}
         duplicateIndex={duplicateIndex}
         duplicateTotal={duplicateTotal}
