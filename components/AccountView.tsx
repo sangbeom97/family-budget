@@ -40,7 +40,6 @@ type AccountViewProps = {
     setSearch: (v: string) => void;
     categoryFilter: string;
     setCategoryFilter: (v: string) => void;
-    darkMode: boolean;
     graphCategories: string[];
     savingCategories: string[];
     categories: any[];
@@ -80,7 +79,7 @@ export default function AccountView(props: AccountViewProps) {
     const {
         mainTab, filter, setFilter, view, setView, selectedYear, setSelectedYear,
         selectedMonth, setSelectedMonth, startDate, setStartDate, endDate, setEndDate,
-        search, setSearch, categoryFilter, setCategoryFilter, darkMode, graphCategories,
+        search, setSearch, categoryFilter, setCategoryFilter, graphCategories,
         savingCategories, categories, filteredTotal, SummaryCards, yearlyIncome, incomeTotal,
         yearlyExpense, expenseTotal, yearlySaving, savingTotal, yearlyTotal, total,
         categoryData, yearlyCategoryData, budgetCompareData, handleFileUpload, selectedFileName,
@@ -93,12 +92,11 @@ export default function AccountView(props: AccountViewProps) {
     // 스타일 설정
     const btnBaseClass = "px-4 py-2 rounded-xl whitespace-nowrap transition-all font-medium text-sm";
     const activeClass = "bg-black text-white shadow-sm";
-    const inactiveClass = darkMode
-        ? "bg-slate-800 border border-slate-700 text-gray-200 hover:bg-slate-700"
-        : "bg-white/95 border border-gray-300 shadow-sm text-gray-800 hover:bg-gray-50";
+    const inactiveClass =
+        "bg-white/95 border border-gray-300 shadow-sm text-gray-800 hover:bg-gray-50";
 
-    const inputClass = `border-2 rounded-xl px-3 py-2 ${darkMode ? "bg-slate-700 text-white border-slate-600" : "bg-white/95 text-black border-gray-300"
-        }`;
+    const inputClass =
+    "border-2 rounded-xl px-3 py-2 bg-white/95 text-black border-gray-300";
 
     const filterTabs = [
         { id: "all", label: "전체" },
@@ -211,12 +209,12 @@ export default function AccountView(props: AccountViewProps) {
             {(view === "list" || view === "year") && (
                 <div className="flex gap-2 mb-4 items-center">
                     <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
-                    <span className={darkMode ? "text-gray-400" : "text-gray-500"}>~</span>
+                    <span className="text-gray-500">~</span>
                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
                     {(startDate || endDate) && (
                         <button
                             onClick={() => { setStartDate(""); setEndDate(""); }}
-                            className={`px-3 py-2 rounded-xl text-sm font-medium ${darkMode ? "bg-slate-700 text-white" : "bg-gray-200 text-black"}`}
+                            className="px-3 py-2 rounded-xl text-sm font-medium bg-gray-200 text-black"
                         >
                             초기화
                         </button>
@@ -226,8 +224,7 @@ export default function AccountView(props: AccountViewProps) {
 
             {/* 기간조회 안내 */}
             {(startDate || endDate) && (
-                <div className={`mb-4 rounded-xl px-3 py-2 text-sm font-medium ${darkMode ? "bg-orange-900/30 border border-orange-700 text-orange-300" : "bg-orange-50 border border-orange-200 text-orange-700"
-                    }`}>
+                <div className="mb-4 rounded-xl px-3 py-2 text-sm font-medium bg-orange-50 border border-orange-200 text-orange-700">
                     📅 기간조회 사용 중 (월 선택 무시)
                 </div>
             )}
@@ -249,8 +246,8 @@ export default function AccountView(props: AccountViewProps) {
                     ))}
                 </select>
 
-                <div className={`border-2 rounded-xl px-4 py-2 flex items-center justify-between ${darkMode ? "bg-slate-800 border-slate-700" : "bg-white/95 border-gray-300"}`}>
-                    <span className={`text-sm font-semibold ${darkMode ? "text-gray-200" : "text-gray-700"}`}>현재 합계</span>
+                <div className="border-2 rounded-xl px-4 py-2 flex items-center justify-between bg-white/95 border-gray-300">
+                    <span className={`text-sm font-semibold ${현재 합계</span>
                     <span className="font-extrabold text-lg text-red-600">₩ {filteredTotal.toLocaleString()}</span>
                 </div>
             </div>
@@ -258,7 +255,6 @@ export default function AccountView(props: AccountViewProps) {
             {/* 6. 요약 대시보드 카드 */}
             {view !== "calendar" && (
                 <SummaryCards
-                    darkMode={darkMode}
                     totalIncome={view === "year" ? yearlyIncome : incomeTotal}
                     totalExpense={view === "year" ? yearlyExpense : expenseTotal}
                     totalSaving={view === "year" ? yearlySaving : savingTotal}
@@ -273,11 +269,11 @@ export default function AccountView(props: AccountViewProps) {
                 <div className="mt-4">
                     {filter !== "income" && (
                         <>
-                            <div className={`rounded-2xl p-5 shadow-md mb-4 ${darkMode ? "bg-slate-800" : "bg-white/95"}`}>
+                            <div className="rounded-2xl p-5 shadow-md mb-4 bg-white/95">
                                 <CategoryChart view={view} categoryData={categoryData} yearlyCategoryData={yearlyCategoryData} />
                             </div>
 
-                            <div className={`rounded-2xl p-5 shadow-md mb-4 ${darkMode ? "bg-slate-800" : "bg-white/95"}`}>
+                            <div className={`rounded-2xl p-5 shadow-md mb-4 ${bg-white/95}`}>
                                 <h3 className="font-extrabold mb-4 text-sm text-gray-800 dark:text-gray-100">예산 대비 사용 현황</h3>
                                 <div className="h-72">
                                     <ResponsiveContainer width="100%" height="100%">
@@ -297,10 +293,10 @@ export default function AccountView(props: AccountViewProps) {
                         </>
                     )}
 
-                    <div className={`pb-3 rounded-2xl ${darkMode ? "bg-slate-900" : "bg-transparent"}`}>
+                    <div className={`pb-3 rounded-2xl ${"bg-slate-900" : "bg-transparent"}`}>
                         {role !== "member" && (
                             <TransactionForm
-                                darkMode={darkMode} name={name} setName={setName} memo={memo} setMemo={setMemo}
+                                name={name} setName={setName} memo={memo} setMemo={setMemo}
                                 amount={amount} setAmount={setAmount} date={date} setDate={setDate}
                                 type={type} setType={setType} category={category} setCategory={setCategory}
                                 spendType={spendType} setSpendType={setSpendType} categories={categories}
@@ -308,10 +304,10 @@ export default function AccountView(props: AccountViewProps) {
                             />
                         )}
 
-                        <div className={`mb-5 mt-4 rounded-2xl border-2 border-dashed p-6 text-center ${darkMode ? "border-slate-600 bg-slate-800" : "border-gray-300 bg-gray-50"}`}>
+                        <div className="mb-5 mt-4 rounded-2xl border-2 border-dashed p-6 text-center border-gray-300 bg-gray-50">
                             <div className="text-3xl mb-2">📊</div>
                             <h3 className="font-bold text-base mb-1">Excel 가져오기 / 내보내기</h3>
-                            <p className={`text-xs mb-4 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>파일을 선택하거나 기존 데이터를 내보낼 수 있습니다.</p>
+                            <p className="text-xs mb-4 text-gray-500">파일을 선택하거나 기존 데이터를 내보낼 수 있습니다.</p>
                             <div className="flex justify-center gap-3">
                                 <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-500 text-white text-sm font-medium cursor-pointer hover:bg-blue-600 transition">
                                     📁 파일 선택
@@ -321,7 +317,7 @@ export default function AccountView(props: AccountViewProps) {
                                     📥 Excel 내보내기
                                 </button>
                             </div>
-                            <div className={`mt-3 text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
+                            <div className="mt-3 text-xs text-gray-500">
                                 {selectedFileName ? <span>✅ {selectedFileName}</span> : <span>선택된 파일 없음</span>}
                             </div>
                         </div>
@@ -330,7 +326,6 @@ export default function AccountView(props: AccountViewProps) {
                             items={periodFilteredItems}
                             deleteItem={deleteItem}
                             startEdit={startEdit}
-                            darkMode={darkMode}
                             role={role}
                         />
                     </div>
@@ -339,7 +334,7 @@ export default function AccountView(props: AccountViewProps) {
 
             {/* 8. 달력 뷰 영역 */}
             {view === "calendar" && (
-                <CalendarView items={periodFilteredItems} selectedMonth={selectedMonth} darkMode={darkMode} />
+                <CalendarView items={periodFilteredItems} selectedMonth={selectedMonth} />
             )}
 
             {/* 9. 연요약 통계 뷰 영역 */}
@@ -350,7 +345,7 @@ export default function AccountView(props: AccountViewProps) {
                         { title: "월별 저축률", key: "저축률", color: "#22c55e", isPercent: true },
                         { title: "월별 소비패턴", keys: ["수입", "지출", "저축"], colors: ["#2563eb", "#ef4444", "#22c55e"], isMulti: true }
                     ].map((chart, idx) => (
-                        <div key={idx} className={`p-5 rounded-2xl shadow-md ${darkMode ? "bg-slate-800" : "bg-white/95"}`}>
+                        <div key={idx} className={`p-5 rounded-2xl shadow-md ${bg-white/95}`}>
                             <h3 className="font-extrabold mb-4 text-sm">{chart.title}</h3>
                             <div className="h-72">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -369,12 +364,12 @@ export default function AccountView(props: AccountViewProps) {
                         </div>
                     ))}
 
-                    <div className={`p-5 rounded-2xl shadow-md ${darkMode ? "bg-slate-800" : "bg-white/95"}`}>
+                    <div className={`p-5 rounded-2xl shadow-md ${bg-white/95}`}>
                         <h3 className="font-extrabold mb-4 text-sm">연간 카테고리 TOP5</h3>
                         <div className="space-y-3">
                             {topCategories.map((item, index) => (
-                                <div key={item.category} className="flex justify-between border-b dark:border-slate-700 pb-2 text-sm">
-                                    <span className={darkMode ? "text-gray-300" : "text-gray-700"}>{index + 1}. {item.category}</span>
+                                <div key={item.category} className="flex justify-between border-b border-gray-200 pb-2 text-sm">
+                                    <span className={text-gray-700}>{index + 1}. {item.category}</span>
                                     <span className="font-extrabold text-red-500">₩ {item.total.toLocaleString()}</span>
                                 </div>
                             ))}
@@ -397,9 +392,9 @@ export default function AccountView(props: AccountViewProps) {
                             const percent = budget > 0 ? (spent / budget) * 100 : 0;
 
                             return (
-                                <div key={cat} className={`rounded-xl p-4 shadow-sm ${darkMode ? "bg-slate-800" : "bg-gray-50"}`}>
+                                <div key={cat} className={`rounded-xl p-4 shadow-sm ${"bg-slate-800" : "bg-gray-50"}`}>
                                     <div className="flex justify-between mb-2 text-sm">
-                                        <span className={`font-semibold ${darkMode ? "text-gray-200" : "text-gray-800"}`}>{cat}</span>
+                                        <span className={`font-semibold ${"text-gray-200" : "text-gray-800"}`}>{cat}</span>
                                         <span className="font-extrabold">
                                             ₩{spent.toLocaleString()} / ₩{budget.toLocaleString()}
                                         </span>
