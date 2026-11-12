@@ -53,7 +53,7 @@ export default function ListView({
         {items.map((item) => (
           <div
             key={item.id}
-            className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#eef0f3] bg-white p-4 transition-colors hover:bg-[#fafbfc] sm:flex-row sm:items-center sm:justify-between"
+            className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#e9edf2] bg-white p-4 shadow-sm transition-all hover:border-[#d5e3f7] hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="min-w-0 flex-1 space-y-1.5">
               <p className="break-words text-sm font-bold text-[#191f28]">
@@ -79,7 +79,7 @@ export default function ListView({
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 sm:flex-col sm:items-end">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f2f4f6] pt-3 sm:flex-col sm:items-end sm:border-0 sm:pt-0">
               <p
                 className={`whitespace-nowrap text-base font-extrabold tracking-tight ${
                   item.type === "income"
