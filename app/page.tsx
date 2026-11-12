@@ -894,6 +894,7 @@ export default function Home() {
 
             {mainTab === "category" && (
               <CategoryManager
+                darkMode={darkMode}
                 categoryName={categoryName}
                 setCategoryName={setCategoryName}
                 categoryType={categoryType}
