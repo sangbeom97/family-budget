@@ -24,6 +24,7 @@ type AccountViewProps = {
     selectedFileName: string;
     exportToExcel: () => void;
     periodFilteredItems: any[];
+    loadingItems: boolean;
     groupMembers: { id: string; nickname: string }[];
     selectedCreator: string;
     setSelectedCreator: (value: string) => void;
@@ -95,7 +96,7 @@ export default function AccountView(props: AccountViewProps) {
         savingCategories, categories, filteredTotal, SummaryCards, yearlyIncome, incomeTotal,
         yearlyExpense, expenseTotal, yearlySaving, savingTotal, yearlyTotal, total,
         categoryData, yearlyCategoryData, budgetCompareData, handleFileUpload, selectedFileName,
-        exportToExcel, periodFilteredItems, groupMembers, selectedCreator, setSelectedCreator,
+        exportToExcel, periodFilteredItems, loadingItems, groupMembers, selectedCreator, setSelectedCreator,
         deleteItem, startEdit, monthlyData, topCategories,
         items, budgets, saveBudget, isRealExpense, variableBudgetTotal, remainVariableBudget,
         name, setName, memo, setMemo, amount, setAmount, date, setDate, type, setType,
@@ -482,6 +483,7 @@ const inputClass =
 
                         <ListView
                             items={periodFilteredItems}
+                            loadingItems={loadingItems}
                             groupMembers={groupMembers}
                             deleteItem={deleteItem}
                             startEdit={startEdit}
