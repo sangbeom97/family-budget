@@ -394,9 +394,9 @@ export default function AccountView(props: AccountViewProps) {
                             const percent = budget > 0 ? (spent / budget) * 100 : 0;
 
                             return (
-                                <div key={cat} className={`rounded-xl p-4 shadow-sm ${"bg-slate-800" : "bg-gray-50"}`}>
+                                <div key={cat} className="rounded-xl p-4 shadow-sm bg-gray-50">
                                     <div className="flex justify-between mb-2 text-sm">
-                                        <span className={`font-semibold ${"text-gray-200" : "text-gray-800"}`}>{cat}</span>
+                                        <span className="font-semibold text-gray-800">{cat}</span>
                                         <span className="font-extrabold">
                                             ₩{spent.toLocaleString()} / ₩{budget.toLocaleString()}
                                         </span>
