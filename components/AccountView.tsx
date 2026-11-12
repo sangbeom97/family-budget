@@ -162,7 +162,7 @@ const inputClass =
     return (
         <>
             {/* 1. 상단 내역 필터 탭 */}
-            <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="mb-4 flex gap-2 overflow-x-auto rounded-2xl border border-[#e9edf2] bg-white p-3 pb-3 shadow-sm scrollbar-hide">
                 {filterTabs.map((tab) => (
                     <button
                         key={tab.id}
@@ -175,7 +175,7 @@ const inputClass =
             </div>
 
             {/* 2. 보기 방식 탭 */}
-            <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+            <div className="mb-4 flex gap-2 overflow-x-auto rounded-2xl border border-[#e9edf2] bg-white p-3 pb-3 shadow-sm scrollbar-hide">
                 {viewTabs.map((tab) => (
                     <button
                         key={tab.id}
