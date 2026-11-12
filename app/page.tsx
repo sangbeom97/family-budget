@@ -55,6 +55,7 @@ export default function Home() {
     "account" | "category" | "members"
   >("account");
   const [items, setItems] = useState<Item[]>([]);
+  const [loadingItems, setLoadingItems] = useState(false);
   const [yearlyItems, setYearlyItems] = useState<Item[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [groupMembers, setGroupMembers] = useState<{ id: string; nickname: string }[]>([]);
@@ -294,7 +295,9 @@ export default function Home() {
 
   // --- 5. 가계부 데이터 Fetch 로직 ---
   const fetchItems = async () => {
-    if (!currentGroupId) return;
+  if (!currentGroupId) return;
+
+  setLoadingItems(true);
     const startDateObj = new Date(`${selectedMonth}-01`);
     const endDateObj = new Date(startDateObj.getFullYear(), startDateObj.getMonth() + 1, 0);
 
@@ -310,6 +313,7 @@ export default function Home() {
       .order("date", { ascending: false });
 
     setItems(data || []);
+setLoadingItems(false);
   };
 
   const fetchYearlyItems = async () => {
@@ -891,6 +895,7 @@ export default function Home() {
                 selectedFileName={selectedFileName}
                 exportToExcel={exportToExcel}
                 periodFilteredItems={periodFilteredItems}
+                loadingItems={loadingItems}
                 groupMembers={groupMembers}
                 selectedCreator={selectedCreator}
                 setSelectedCreator={setSelectedCreator}
