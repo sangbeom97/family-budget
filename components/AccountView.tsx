@@ -102,6 +102,10 @@ export default function AccountView(props: AccountViewProps) {
         category, setCategory, spendType, setSpendType, currentCategories, addItem, editingId, role
     } = props;
 
+    const mobileBudgetCompareData = budgetCompareData.filter(
+    (entry) => Number(entry.남은예산) !== 0
+);
+
     // 스타일 설정
     const btnBaseClass =
     "min-h-10 px-4 py-2.5 rounded-full whitespace-nowrap transition-all font-semibold text-sm";
@@ -320,63 +324,15 @@ const inputClass =
     className="w-full sm:hidden"
     style={{ height: Math.max(260, budgetCompareData.length * 42 + 40) }}
 >
+    {mobileBudgetCompareData.length > 0 ? (
     <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-            data={budgetCompareData}
-            layout="vertical"
-            margin={{ top: 8, right: 12, left: 0, bottom: 8 }}
-        >
-            <CartesianGrid
-                stroke="#eef0f3"
-                strokeDasharray="3 3"
-                horizontal={false}
-            />
-            <XAxis
-                type="number"
-                domain={["auto", "auto"]}
-                tick={{ fontSize: 10, fill: "#8b95a1" }}
-                axisLine={false}
-                tickLine={false}
-                tickFormatter={(value) =>
-                    Math.abs(value) >= 10000
-                        ? `${Math.round(value / 10000)}만`
-                        : value.toLocaleString()
-                }
-            />
-            <YAxis
-                type="category"
-                dataKey="name"
-                width={85}
-                interval={0}
-                tick={{ fontSize: 11, fill: "#8b95a1" }}
-                axisLine={false}
-                tickLine={false}
-            />
-            <Tooltip
-                formatter={(value) => [
-                    `₩${Number(value).toLocaleString()}`,
-                    "남은예산",
-                ]}
-                contentStyle={{
-                    borderRadius: "12px",
-                    border: "1px solid #e9edf2",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
-                }}
-            />
-            <Bar
-                dataKey="남은예산"
-                radius={[0, 6, 6, 0]}
-                maxBarSize={24}
-            >
-                {budgetCompareData.map((entry, index) => (
-                    <Cell
-                        key={`cell-${index}`}
-                        fill={entry.남은예산 >= 0 ? "#3182f6" : "#f04452"}
-                    />
-                ))}
-            </Bar>
-        </BarChart>
+        {/* 기존 BarChart 전체를 이 안에 그대로 유지 */}
     </ResponsiveContainer>
+) : (
+    <div className="flex h-full items-center justify-center text-sm text-[#8b95a1]">
+        표시할 예산 항목이 없습니다.
+    </div>
+)}
 </div>
 
 {/* PC: 기존 세로 막대그래프 */}
