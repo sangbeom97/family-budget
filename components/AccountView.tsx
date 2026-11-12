@@ -605,75 +605,7 @@ const inputClass =
                                         </span>
                                     </div>
 
-                                    {/* 모바일: 0원 제외 가로 막대그래프 */}
-<div
-    className="w-full sm:hidden"
-    style={{ height: Math.max(260, mobileBudgetCompareData.length * 42 + 40) }}
->
-    {mobileBudgetCompareData.length > 0 ? (
-        <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-                data={mobileBudgetCompareData}
-                layout="vertical"
-                margin={{ top: 8, right: 12, left: 0, bottom: 8 }}
-            >
-                <CartesianGrid
-                    stroke="#eef0f3"
-                    strokeDasharray="3 3"
-                    horizontal={false}
-                />
-                <XAxis
-                    type="number"
-                    domain={["auto", "auto"]}
-                    tick={{ fontSize: 10, fill: "#8b95a1" }}
-                    axisLine={false}
-                    tickLine={false}
-                    tickFormatter={(value) =>
-                        Math.abs(value) >= 10000
-                            ? `${Math.round(value / 10000)}만`
-                            : value.toLocaleString()
-                    }
-                />
-                <YAxis
-                    type="category"
-                    dataKey="name"
-                    width={85}
-                    interval={0}
-                    tick={{ fontSize: 11, fill: "#8b95a1" }}
-                    axisLine={false}
-                    tickLine={false}
-                />
-                <Tooltip
-                    formatter={(value) => [
-                        `₩${Number(value).toLocaleString()}`,
-                        "남은예산",
-                    ]}
-                    contentStyle={{
-                        borderRadius: "12px",
-                        border: "1px solid #e9edf2",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
-                    }}
-                />
-                <Bar
-                    dataKey="남은예산"
-                    radius={[0, 6, 6, 0]}
-                    maxBarSize={24}
-                >
-                    {mobileBudgetCompareData.map((entry, index) => (
-                        <Cell
-                            key={`cell-${index}`}
-                            fill={entry.남은예산 >= 0 ? "#3182f6" : "#f04452"}
-                        />
-                    ))}
-                </Bar>
-            </BarChart>
-        </ResponsiveContainer>
-    ) : (
-        <div className="flex h-full items-center justify-center text-sm text-[#8b95a1]">
-            표시할 예산 항목이 없습니다.
-        </div>
-    )}
-</div>
+                                    
 
                                     <div className="flex justify-between mt-3 items-center">
                                         <input
