@@ -108,7 +108,7 @@ export default function AccountView(props: AccountViewProps) {
 
     // 스타일 설정
     const btnBaseClass =
-    "min-h-10 px-4 py-2.5 rounded-full whitespace-nowrap transition-all font-semibold text-sm";
+        "min-h-10 shrink-0 px-4 py-2.5 rounded-full whitespace-nowrap transition-all font-semibold text-sm";
 
 const activeClass =
     "bg-[#3182f6] text-white shadow-sm";
@@ -166,7 +166,7 @@ const inputClass =
     return (
         <>
             {/* 1. 상단 내역 필터 탭 */}
-            <div className="mb-4 flex gap-2 overflow-x-auto rounded-2xl border border-[#e9edf2] bg-white p-3 pb-3 shadow-sm scrollbar-hide">
+            <div className="mb-4 flex gap-2 overflow-x-auto overscroll-x-contain rounded-2xl border border-[#e9edf2] bg-white p-3 pb-3 shadow-sm">
                 {filterTabs.map((tab) => (
                     <button
                         key={tab.id}
@@ -179,7 +179,7 @@ const inputClass =
             </div>
 
             {/* 2. 보기 방식 탭 */}
-            <div className="mb-4 flex gap-2 overflow-x-auto rounded-2xl border border-[#e9edf2] bg-white p-3 pb-3 shadow-sm scrollbar-hide">
+            <div className="mb-4 flex gap-2 overflow-x-auto overscroll-x-contain rounded-2xl border border-[#e9edf2] bg-white p-3 pb-3 shadow-sm">
                 {viewTabs.map((tab) => (
                     <button
                         key={tab.id}
@@ -285,7 +285,7 @@ const inputClass =
         <button
             key={member.id}
             onClick={() => setSelectedCreator(member.id)}
-            className={`px-4 py-2.5 rounded-full whitespace-nowrap text-sm font-semibold transition-all ${
+            className={`shrink-0 px-4 py-2.5 rounded-full whitespace-nowrap text-sm font-semibold transition-all ${
     selectedCreator === member.id
         ? "bg-[#3182f6] text-white shadow-sm"
         : "bg-white text-[#4e5968] border border-[#e9edf2] hover:bg-[#f7f8fa]"
