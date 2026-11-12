@@ -753,39 +753,91 @@ export default function Home() {
       <div className="max-w-6xl mx-auto">
         
 
-        {/* 공유 컨트롤 패널 바 */}
-        <div className="p-4 rounded-2xl border mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white border-gray-100">
-          <div>
-            <label className="block text-xs font-bold text-gray-400 mb-1">현재 활성화된 공유 가계부</label>
+        
+        {/* 공유 가계부 관리 패널 */}
+        <div className="mb-6 grid grid-cols-1 gap-4 rounded-2xl border border-[#e9edf2] bg-white p-4 shadow-sm sm:p-5 md:grid-cols-3">
+
+          {/* 현재 가계부 선택 */}
+          <div className="min-w-0 rounded-xl bg-[#f7f8fa] p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="text-lg">🏠</span>
+              <label className="text-sm font-bold text-[#191f28]">
+                현재 가계부
+              </label>
+            </div>
+
             <select
               value={currentGroupId}
               onChange={(e) => {
                 setCurrentGroupId(e.target.value);
                 localStorage.setItem("currentGroupId", e.target.value);
-              }} className="w-full border-2 rounded-xl px-3 py-2 text-sm bg-transparent border-gray-200 dark:border-slate-600 font-bold outline-none text-black dark:text-white">
-              {groups.length === 0 && <option value="">소속된 방이 없습니다</option>}
-              {groups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
+              }}
+              className="min-h-11 w-full rounded-xl border border-[#e9edf2] bg-white px-3 py-2 text-sm font-semibold text-[#191f28] outline-none transition focus:border-[#3182f6]"
+            >
+              {groups.length === 0 && (
+                <option value="">소속된 방이 없습니다</option>
+              )}
+              {groups.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.name}
+                </option>
+              ))}
             </select>
-          </div>
-          <div>
-            <label className="block text-xs font-bold text-gray-400 mb-1">새 공유 가계부 만들기</label>
-            <div className="flex gap-2">
-              <input type="text" placeholder="방 이름 (예: 부부 가계부)" value={newGroupName} onChange={(e) => setNewGroupName(e.target.value)} className="w-full border-2 rounded-xl px-3 py-1.5 text-sm bg-transparent border-gray-200 outline-none text-black" />
-              <button onClick={createGroup} className="bg-blue-600 text-white px-3 py-2 text-xs font-bold rounded-xl whitespace-nowrap">개설</button>
-            </div>
+            <p className="mt-2 text-xs text-[#8b95a1]">
+              관리할 공유 가계부를 선택하세요.
+            </p>
           </div>
 
-          {/* 🎯 [구조 변경 완료] 수동 UUID 초대창 대신 원클릭 카카오톡 링크 초대 버튼으로 완성 */}
-          <div>
-            <label className="block text-xs font-bold text-gray-400 mb-1">가계부 멤버 간편 초대</label>
+          {/* 새 가계부 만들기 */}
+          <div className="min-w-0 rounded-xl bg-[#f7f8fa] p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="text-lg">➕</span>
+              <label className="text-sm font-bold text-[#191f28]">
+                새 가계부 만들기
+              </label>
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="예: 우리 가족 가계부"
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+                className="min-w-0 flex-1 rounded-xl border border-[#e9edf2] bg-white px-3 py-2 text-sm text-[#191f28] outline-none transition placeholder:text-[#b0b8c1] focus:border-[#3182f6]"
+              />
+              <button
+                onClick={createGroup}
+                className="shrink-0 rounded-xl bg-[#3182f6] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#1b64da]"
+              >
+                개설
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-[#8b95a1]">
+              새로운 공유 가계부를 생성합니다.
+            </p>
+          </div>
+
+          {/* 멤버 초대 */}
+          <div className="min-w-0 rounded-xl bg-[#f7f8fa] p-4">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="text-lg">👥</span>
+              <label className="text-sm font-bold text-[#191f28]">
+                멤버 초대
+              </label>
+            </div>
+
             <button
               onClick={handleCopyInviteLink}
-              className="w-full py-2 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 text-slate-900 text-sm font-black rounded-xl shadow-sm transition flex items-center justify-center gap-1.5 border border-yellow-300"
+              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#f5d778] bg-[#fff5d6] px-3 py-2 text-sm font-bold text-[#805b10] transition hover:bg-[#ffedb5]"
             >
               💬 카카오톡 초대 링크 복사
             </button>
+            <p className="mt-2 text-xs text-[#8b95a1]">
+              링크를 공유해 멤버를 초대하세요.
+            </p>
           </div>
         </div>
+
 
         {/* 메인 메뉴 탭 링크 */}
         <div className="flex gap-2 mb-6">
