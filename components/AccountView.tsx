@@ -248,7 +248,7 @@ export default function AccountView(props: AccountViewProps) {
                 </select>
 
                 <div className="border-2 rounded-xl px-4 py-2 flex items-center justify-between bg-white/95 border-gray-300">
-                    <span className={`text-sm font-semibold ${현재 합계</span>
+                    <span className="text-sm font-semibold text-gray-700">현재 합계</span>
                     <span className="font-extrabold text-lg text-red-600">₩ {filteredTotal.toLocaleString()}</span>
                 </div>
             </div>
