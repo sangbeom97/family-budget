@@ -319,14 +319,7 @@ const inputClass =
 
                             <div className="mb-4 rounded-2xl border border-[#e9edf2] bg-white p-5 shadow-sm">
                                 <h3 className="font-extrabold mb-4 text-sm text-gray-800 dark:text-gray-100">예산 대비 사용 현황</h3>
-                                {/* 모바일: 가로 막대그래프 */}
-<div
-    className="w-full sm:hidden"
-    style={{ height: Math.max(260, budgetCompareData.length * 42 + 40) }}
->
-    {mobileBudgetCompareData.length > 0 ? (
-    <ResponsiveContainer width="100%" height="100%">
-        {/* 모바일: 0원 제외 가로 막대그래프 */}
+                                {/* 모바일: 0원 제외 가로 막대그래프 */}
 <div
     className="w-full sm:hidden"
     style={{ height: Math.max(260, mobileBudgetCompareData.length * 42 + 40) }}
@@ -395,9 +388,6 @@ const inputClass =
         </div>
     )}
 </div>
-)}
-</div>
-
 {/* PC: 기존 세로 막대그래프 */}
 <div className="hidden h-64 w-full sm:block sm:h-80">
     <ResponsiveContainer width="100%" height="100%">
