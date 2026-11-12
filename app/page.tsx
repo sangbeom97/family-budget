@@ -840,22 +840,28 @@ export default function Home() {
 
 
         {/* 메인 메뉴 탭 링크 */}
-        <div className="flex gap-2 mb-6">
+        
+        {/* 메인 메뉴 탭 */}
+        <div className="mb-6 flex w-full gap-2 rounded-2xl border border-[#e9edf2] bg-white p-1.5 shadow-sm">
           {["category", "account", "members"].map((tab) => (
             <button
               key={tab}
               onClick={() => setMainTab(tab as any)}
-              className={`px-4 py-2 rounded-xl border font-medium shadow-sm ${mainTab === tab ? "bg-black text-white" : "bg-white/95 text-gray-800 border-gray-300"
-                }`}
+              className={`min-h-11 min-w-0 flex-1 rounded-xl px-2 py-2.5 text-sm font-bold transition-all sm:px-4 ${
+                mainTab === tab
+                  ? "bg-[#3182f6] text-white shadow-sm"
+                  : "bg-white text-[#8b95a1] hover:bg-[#f7f8fa] hover:text-[#191f28]"
+              }`}
             >
               {tab === "category"
-                ? "카테고리관리"
+                ? "카테고리 관리"
                 : tab === "account"
                   ? "가계부"
-                  : "그룹멤버"}
+                  : "그룹 멤버"}
             </button>
           ))}
         </div>
+
 
         {/* 컨텐츠 조건부 뷰 출력 */}
         {loadingGroups ? (
