@@ -16,6 +16,8 @@ type AccountViewProps = {
     exportToExcel: () => void;
     periodFilteredItems: any[];
     groupMembers: { id: string; nickname: string }[];
+    selectedCreator: string;
+    setSelectedCreator: (value: string) => void;
     deleteItem: (id: any) => void;
     startEdit: (item: any) => void;
     monthlyData: any[];
@@ -84,7 +86,8 @@ export default function AccountView(props: AccountViewProps) {
         savingCategories, categories, filteredTotal, SummaryCards, yearlyIncome, incomeTotal,
         yearlyExpense, expenseTotal, yearlySaving, savingTotal, yearlyTotal, total,
         categoryData, yearlyCategoryData, budgetCompareData, handleFileUpload, selectedFileName,
-        exportToExcel, periodFilteredItems, groupMembers, deleteItem, startEdit, monthlyData, topCategories,
+        exportToExcel, periodFilteredItems, groupMembers, selectedCreator, setSelectedCreator,
+        deleteItem, startEdit, monthlyData, topCategories,
         items, budgets, saveBudget, isRealExpense, variableBudgetTotal, remainVariableBudget,
         name, setName, memo, setMemo, amount, setAmount, date, setDate, type, setType,
         category, setCategory, spendType, setSpendType, currentCategories, addItem, editingId, role
@@ -252,6 +255,29 @@ export default function AccountView(props: AccountViewProps) {
                     <span className="font-extrabold text-lg text-red-600">₩ {filteredTotal.toLocaleString()}</span>
                 </div>
             </div>
+
+            {/* 작성자별 전체 통계 필터 */}
+<div className="flex gap-2 mb-4 overflow-x-auto pb-1">
+    {[
+        { id: "all", label: "전체" },
+        ...groupMembers.map((member) => ({
+            id: member.id,
+            label: member.nickname,
+        })),
+    ].map((member) => (
+        <button
+            key={member.id}
+            onClick={() => setSelectedCreator(member.id)}
+            className={`px-3 py-2 rounded-xl whitespace-nowrap text-sm font-semibold transition-colors ${
+                selectedCreator === member.id
+                    ? "bg-black text-white"
+                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+            }`}
+        >
+            {member.label}
+        </button>
+    ))}
+</div>
 
             {/* 6. 요약 대시보드 카드 */}
             {view !== "calendar" && (
