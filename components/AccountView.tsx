@@ -15,6 +15,7 @@ type AccountViewProps = {
     selectedFileName: string;
     exportToExcel: () => void;
     periodFilteredItems: any[];
+    groupMembers: { id: string; nickname: string }[];
     deleteItem: (id: any) => void;
     startEdit: (item: any) => void;
     monthlyData: any[];
@@ -83,7 +84,7 @@ export default function AccountView(props: AccountViewProps) {
         savingCategories, categories, filteredTotal, SummaryCards, yearlyIncome, incomeTotal,
         yearlyExpense, expenseTotal, yearlySaving, savingTotal, yearlyTotal, total,
         categoryData, yearlyCategoryData, budgetCompareData, handleFileUpload, selectedFileName,
-        exportToExcel, periodFilteredItems, deleteItem, startEdit, monthlyData, topCategories,
+        exportToExcel, periodFilteredItems, groupMembers, deleteItem, startEdit, monthlyData, topCategories,
         items, budgets, saveBudget, isRealExpense, variableBudgetTotal, remainVariableBudget,
         name, setName, memo, setMemo, amount, setAmount, date, setDate, type, setType,
         category, setCategory, spendType, setSpendType, currentCategories, addItem, editingId, role
@@ -324,6 +325,7 @@ export default function AccountView(props: AccountViewProps) {
 
                         <ListView
                             items={periodFilteredItems}
+                            groupMembers={groupMembers}
                             deleteItem={deleteItem}
                             startEdit={startEdit}
                             role={role}
