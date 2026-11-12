@@ -247,23 +247,23 @@ const inputClass =
             )}
 
             {/* 5. 검색 및 카테고리 필터 바 */}
-            <div className="grid grid-cols-1 gap-3 mb-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mb-5 grid grid-cols-1 gap-3 rounded-2xl border border-[#e9edf2] bg-white p-4 shadow-sm sm:grid-cols-2 sm:p-5 lg:grid-cols-3">
                 <input
                     type="text"
                     placeholder="검색어 입력"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className={inputClass}
+                    className={`${inputClass} w-full`}
                 />
 
-                <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className={inputClass}>
+                <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className={`${inputClass} w-full`}>
                     <option value="all">전체 카테고리</option>
                     {filteredOptions.map((cat) => (
                         <option key={cat} value={cat}>{cat}</option>
                     ))}
                 </select>
 
-                <div className="min-h-11 rounded-xl border px-4 py-2.5 flex items-center justify-between bg-white border-[#e9edf2]">
+                <div className="min-h-11 rounded-xl border border-[#e9edf2] bg-[#f7f8fa] px-4 py-2.5 flex items-center justify-between">
                     <span className="text-sm font-semibold text-gray-700">현재 합계</span>
                     <span className="font-extrabold text-lg text-red-600">₩ {filteredTotal.toLocaleString()}</span>
                 </div>
