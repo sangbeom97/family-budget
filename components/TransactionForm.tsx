@@ -108,7 +108,7 @@ export default function TransactionForm({
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <div className="min-w-0">
-          <label className="mb-2 block text-xs font-semibold text-[#8b95a1]">
+          <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
             항목명
           </label>
           <input
@@ -121,7 +121,7 @@ export default function TransactionForm({
         </div>
 
         <div className="min-w-0">
-          <label className="mb-2 block text-xs font-semibold text-[#8b95a1]">
+          <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
             금액
           </label>
           <input
@@ -134,7 +134,7 @@ export default function TransactionForm({
         </div>
 
         <div className="min-w-0">
-          <label className="mb-2 block text-xs font-semibold text-[#8b95a1]">
+          <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
             날짜
           </label>
           <input
@@ -146,7 +146,7 @@ export default function TransactionForm({
         </div>
 
         <div className="min-w-0">
-          <label className="mb-2 block text-xs font-semibold text-[#8b95a1]">
+          <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
             카테고리
           </label>
           <select
@@ -164,7 +164,7 @@ export default function TransactionForm({
 
         {type === "expense" && (
           <div className="min-w-0">
-            <label className="mb-2 block text-xs font-semibold text-[#8b95a1]">
+            <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
               지출 유형
             </label>
             <select
@@ -181,7 +181,7 @@ export default function TransactionForm({
         )}
 
         <div className="min-w-0">
-          <label className="mb-2 block text-xs font-semibold text-[#8b95a1]">
+          <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
             메모
           </label>
           <input
