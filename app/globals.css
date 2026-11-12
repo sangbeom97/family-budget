@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
+
+@import "tailwindcss";
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f8fa;
+  --foreground: #191f28;
+  --surface: #ffffff;
+  --border: #e9edf2;
+  --muted: #8b95a1;
+  --primary: #3182f6;
 }
 
 @theme inline {
@@ -12,12 +19,15 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), "Pretendard",
+    "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
 }
+
 
 body {
   background: var(--background);
