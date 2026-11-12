@@ -374,7 +374,7 @@ const inputClass =
                         </>
                     )}
 
-                    <div className="pb-3 rounded-2xl bg-transparent">
+                    <div className="space-y-4 pb-3">
                         {role !== "member" && (
                             <TransactionForm
                                 darkMode={false}
@@ -386,11 +386,11 @@ const inputClass =
                             />
                         )}
 
-                        <div className="mb-5 mt-4 rounded-2xl border-2 border-dashed p-6 text-center border-gray-300 bg-gray-50">
+                        <div className="mb-5 mt-4 rounded-2xl border border-[#e9edf2] bg-white p-5 text-center shadow-sm sm:p-6">
                             <div className="text-3xl mb-2">📊</div>
                             <h3 className="font-bold text-base mb-1">Excel 가져오기 / 내보내기</h3>
                             <p className="text-xs mb-4 text-gray-500">파일을 선택하거나 기존 데이터를 내보낼 수 있습니다.</p>
-                            <div className="flex justify-center gap-3">
+                            <div className="flex flex-col justify-center gap-3 sm:flex-row">
                                 <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-500 text-white text-sm font-medium cursor-pointer hover:bg-blue-600 transition">
                                     📁 파일 선택
                                     <input type="file" accept=".xlsx,.xls" onChange={handleFileUpload} className="hidden" />
