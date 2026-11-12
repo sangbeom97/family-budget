@@ -294,7 +294,7 @@ export default function AccountView(props: AccountViewProps) {
                         </>
                     )}
 
-                    <div className={`pb-3 rounded-2xl ${"bg-slate-900" : "bg-transparent"}`}>
+                    <div className="pb-3 rounded-2xl bg-transparent">
                         {role !== "member" && (
                             <TransactionForm
                                 name={name} setName={setName} memo={memo} setMemo={setMemo}
