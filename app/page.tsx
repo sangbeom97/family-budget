@@ -57,6 +57,7 @@ export default function Home() {
   const [items, setItems] = useState<Item[]>([]);
   const [yearlyItems, setYearlyItems] = useState<Item[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [groupMembers, setGroupMembers] = useState<{ id: string; nickname: string }[]>([]);
   const [view, setView] = useState<"list" | "year" | "budget" | "calendar">("list");
 
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -339,6 +340,37 @@ export default function Home() {
     setCategories(data || []);
   };
 
+  // 현재 그룹 멤버의 표시 이름 조회
+  const fetchGroupMembers = async () => {
+    if (!currentGroupId) {
+      setGroupMembers([]);
+      return;
+    }
+
+    const { data: memberRows, error } = await supabase
+      .from("group_members")
+      .select("user_id")
+      .eq("group_id", currentGroupId);
+
+    if (error || !memberRows?.length) {
+      setGroupMembers([]);
+      return;
+    }
+
+    const userIds = memberRows.map((member) => member.user_id);
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, nickname")
+      .in("id", userIds);
+
+    setGroupMembers(
+      (profiles || []).map((profile) => ({
+        id: profile.id,
+        nickname: profile.nickname || "이름 없음",
+      }))
+    );
+  };
+
   const fetchBudgets = async () => {
     if (!currentGroupId) return;
     const { data } = await supabase
@@ -359,11 +391,13 @@ export default function Home() {
       fetchYearlyItems();
       fetchBudgets();
       fetchCategories();
+      fetchGroupMembers();
     } else {
       setItems([]);
       setYearlyItems([]);
       setBudgets({});
       setCategories([]);
+      setGroupMembers([]);
     }
   }, [selectedMonth, selectedYear, currentGroupId]);
 
@@ -541,15 +575,18 @@ export default function Home() {
       date,
       spend_type: type === "income" ? "income" : spendType,
       memo,
-      user_id: session?.user?.id,
       group_id: currentGroupId,
     };
 
     if (editingId) {
+      // 수정 시 최초 작성자(user_id)는 변경하지 않습니다.
       await supabase.from("transactions").update(payload).eq("id", editingId);
       setEditingId(null);
     } else {
-      await supabase.from("transactions").insert([payload]);
+      await supabase.from("transactions").insert([{
+        ...payload,
+        user_id: session?.user?.id,
+      }]);
     }
 
     setName("");
@@ -793,6 +830,7 @@ export default function Home() {
                 selectedFileName={selectedFileName}
                 exportToExcel={exportToExcel}
                 periodFilteredItems={periodFilteredItems}
+                groupMembers={groupMembers}
                 deleteItem={deleteItem}
                 startEdit={startEdit}
                 monthlyData={monthlyData}
