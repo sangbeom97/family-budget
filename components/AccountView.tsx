@@ -309,11 +309,11 @@ const inputClass =
                 <div className="mt-4">
                     {filter !== "income" && (
                         <>
-                            <div className="rounded-2xl p-5 shadow-md mb-4 bg-white/95">
+                            <div className="mb-4 rounded-2xl border border-[#e9edf2] bg-white p-5 shadow-sm">
                                 <CategoryChart view={view} categoryData={categoryData} yearlyCategoryData={yearlyCategoryData} />
                             </div>
 
-                            <div className="rounded-2xl p-5 shadow-md mb-4 bg-white/95">
+                            <div className="mb-4 rounded-2xl border border-[#e9edf2] bg-white p-5 shadow-sm">
                                 <h3 className="font-extrabold mb-4 text-sm text-gray-800 dark:text-gray-100">예산 대비 사용 현황</h3>
                                 <div className="h-64 w-full sm:h-80">
     <ResponsiveContainer width="100%" height="100%">
@@ -428,7 +428,7 @@ const inputClass =
                         { title: "월별 저축률", key: "저축률", color: "#22c55e", isPercent: true },
                         { title: "월별 소비패턴", keys: ["수입", "지출", "저축"], colors: ["#2563eb", "#ef4444", "#22c55e"], isMulti: true }
                     ].map((chart, idx) => (
-                        <div key={idx} className="p-5 rounded-2xl shadow-md bg-white/95">
+                        <div key={idx} className="rounded-2xl border border-[#e9edf2] bg-white p-4 shadow-sm sm:p-5">
                             <h3 className="font-extrabold mb-4 text-sm">{chart.title}</h3>
                             <div className="h-64 w-full sm:h-80">
     <ResponsiveContainer width="100%" height="100%">
@@ -495,7 +495,7 @@ const inputClass =
                         </div>
                     ))}
 
-                    <div className="p-5 rounded-2xl shadow-md bg-white/95">
+                    <div className="rounded-2xl border border-[#e9edf2] bg-white p-4 shadow-sm sm:p-5">
                         <h3 className="font-extrabold mb-4 text-sm">연간 카테고리 TOP5</h3>
                         <div className="space-y-3">
                             {topCategories.map((item, index) => (
@@ -523,7 +523,7 @@ const inputClass =
                             const percent = budget > 0 ? (spent / budget) * 100 : 0;
 
                             return (
-                                <div key={cat} className="rounded-xl p-4 shadow-sm bg-gray-50">
+                                <div key={cat} className="rounded-xl border border-[#e9edf2] bg-[#f7f8fa] p-4">
                                     <div className="flex justify-between mb-2 text-sm">
                                         <span className="font-semibold text-gray-800">{cat}</span>
                                         <span className="font-extrabold">
