@@ -297,6 +297,7 @@ export default function AccountView(props: AccountViewProps) {
                     <div className="pb-3 rounded-2xl bg-transparent">
                         {role !== "member" && (
                             <TransactionForm
+                                darkMode={false}
                                 name={name} setName={setName} memo={memo} setMemo={setMemo}
                                 amount={amount} setAmount={setAmount} date={date} setDate={setDate}
                                 type={type} setType={setType} category={category} setCategory={setCategory}
