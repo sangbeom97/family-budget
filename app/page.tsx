@@ -749,8 +749,8 @@ export default function Home() {
 
   // --- 9. 메인 레이아웃 렌더링 ---
   return (
-    <main className="min-h-screen bg-[#f7f8fa] px-3 py-4 text-[#191f28] sm:px-4 md:px-6">
-      <div className="max-w-6xl mx-auto">
+    <main className="min-h-screen bg-[#f7f8fa] px-3 py-4 text-[#191f28] sm:px-5 sm:py-6 md:px-6">
+      <div className="mx-auto w-full max-w-6xl">
         
 
         
