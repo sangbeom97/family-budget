@@ -148,15 +148,7 @@ export default function Home() {
     }
   };
 
-  const handleSignOut = async () => {
-    localStorage.removeItem("currentGroupId");
-
-    await supabase.auth.signOut();
-
-    setCurrentGroupId("");
-    setCurrentInviteCode("");
-    setGroups([]);
-  };
+  
 
   // --- 4. 그룹 및 공유 관리 비즈니스 로직 ---
   const fetchUserGroups = async () => {
@@ -759,17 +751,7 @@ export default function Home() {
   return (
     <main className="min-h-screen p-4 md:p-6 bg-zinc-200 text-black">
       <div className="max-w-6xl mx-auto">
-        {/* 탑 유저 패널 */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <div>
-            <h1 className="text-4xl font-extrabold tracking-tight">무계획 속 계획</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <button onClick={handleSignOut} className="px-4 py-2 rounded-xl bg-red-500 text-white text-sm font-bold shadow-sm">
-              로그아웃
-            </button>
-          </div>
-        </div>
+        
 
         {/* 공유 컨트롤 패널 바 */}
         <div className="p-4 rounded-2xl border mb-6 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white border-gray-100">
