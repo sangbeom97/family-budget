@@ -5,7 +5,16 @@ import ListView from "@/components/ListView";
 import CalendarView from "@/components/CalendarView";
 import CategoryChart from "@/components/CategoryChart";
 import TransactionForm from "@/components/TransactionForm";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
+import {
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+    Cell,
+    CartesianGrid,
+} from "recharts";
 
 type AccountViewProps = {
     categoryData: any[];
@@ -306,20 +315,61 @@ const inputClass =
 
                             <div className="rounded-2xl p-5 shadow-md mb-4 bg-white/95">
                                 <h3 className="font-extrabold mb-4 text-sm text-gray-800 dark:text-gray-100">예산 대비 사용 현황</h3>
-                                <div className="h-72">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <BarChart data={budgetCompareData}>
-                                            <XAxis dataKey="name" angle={-45} textAnchor="end" interval={0} height={90} />
-                                            <YAxis domain={["auto", "auto"]} />
-                                            <Tooltip formatter={(value) => [`₩${Number(value).toLocaleString()}`, " "]} />
-                                            <Bar dataKey="남은예산">
-                                                {budgetCompareData.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={entry.남은예산 >= 0 ? "#2563eb" : "#ef4444"} />
-                                                ))}
-                                            </Bar>
-                                        </BarChart>
-                                    </ResponsiveContainer>
-                                </div>
+                                <div className="h-64 w-full sm:h-80">
+    <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+            data={budgetCompareData}
+            margin={{ top: 8, right: 12, left: 0, bottom: 35 }}
+        >
+            <CartesianGrid
+                stroke="#eef0f3"
+                strokeDasharray="3 3"
+                vertical={false}
+            />
+            <XAxis
+                dataKey="name"
+                angle={-35}
+                textAnchor="end"
+                interval={0}
+                height={55}
+                tick={{ fontSize: 11, fill: "#8b95a1" }}
+                axisLine={false}
+                tickLine={false}
+            />
+            <YAxis
+                domain={["auto", "auto"]}
+                tick={{ fontSize: 11, fill: "#8b95a1" }}
+                axisLine={false}
+                tickLine={false}
+                width={55}
+                tickFormatter={(value) =>
+                    value >= 10000
+                        ? `${Math.round(value / 10000)}만`
+                        : value.toLocaleString()
+                }
+            />
+            <Tooltip
+                formatter={(value) => [
+                    `₩${Number(value).toLocaleString()}`,
+                    "남은예산",
+                ]}
+                contentStyle={{
+                    borderRadius: "12px",
+                    border: "1px solid #e9edf2",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+                }}
+            />
+            <Bar dataKey="남은예산" radius={[6, 6, 0, 0]} maxBarSize={42}>
+                {budgetCompareData.map((entry, index) => (
+                    <Cell
+                        key={`cell-${index}`}
+                        fill={entry.남은예산 >= 0 ? "#3182f6" : "#f04452"}
+                    />
+                ))}
+            </Bar>
+        </BarChart>
+    </ResponsiveContainer>
+</div>
                             </div>
                         </>
                     )}
@@ -380,20 +430,68 @@ const inputClass =
                     ].map((chart, idx) => (
                         <div key={idx} className="p-5 rounded-2xl shadow-md bg-white/95">
                             <h3 className="font-extrabold mb-4 text-sm">{chart.title}</h3>
-                            <div className="h-72">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={monthlyData}>
-                                        <XAxis dataKey="month" />
-                                        <YAxis />
-                                        <Tooltip formatter={(value) => [chart.isPercent ? `${value}%` : `₩${Number(value).toLocaleString()}`, " "]} />
-                                        {chart.isMulti ? (
-                                            chart.keys?.map((k, i) => <Bar key={k} dataKey={k} fill={chart.colors?.[i]} />)
-                                        ) : (
-                                            <Bar dataKey={chart.key} fill={chart.color} />
-                                        )}
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
+                            <div className="h-64 w-full sm:h-80">
+    <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+            data={monthlyData}
+            margin={{ top: 8, right: 8, left: 0, bottom: 5 }}
+        >
+            <CartesianGrid
+                stroke="#eef0f3"
+                strokeDasharray="3 3"
+                vertical={false}
+            />
+            <XAxis
+                dataKey="month"
+                tick={{ fontSize: 11, fill: "#8b95a1" }}
+                axisLine={false}
+                tickLine={false}
+            />
+            <YAxis
+                tick={{ fontSize: 11, fill: "#8b95a1" }}
+                axisLine={false}
+                tickLine={false}
+                width={55}
+                tickFormatter={(value) =>
+                    chart.isPercent
+                        ? `${value}%`
+                        : value >= 10000
+                            ? `${Math.round(value / 10000)}만`
+                            : value.toLocaleString()
+                }
+            />
+            <Tooltip
+                formatter={(value) => [
+                    chart.isPercent
+                        ? `${value}%`
+                        : `₩${Number(value).toLocaleString()}`,
+                    " ",
+                ]}
+                contentStyle={{
+                    borderRadius: "12px",
+                    border: "1px solid #e9edf2",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+                }}
+            />
+            {chart.isMulti ? (
+                chart.keys?.map((k, i) => (
+                    <Bar
+                        key={k}
+                        dataKey={k}
+                        fill={chart.colors?.[i]}
+                        radius={[4, 4, 0, 0]}
+                    />
+                ))
+            ) : (
+                <Bar
+                    dataKey={chart.key}
+                    fill={chart.color}
+                    radius={[4, 4, 0, 0]}
+                />
+            )}
+        </BarChart>
+    </ResponsiveContainer>
+</div>
                         </div>
                     ))}
 
