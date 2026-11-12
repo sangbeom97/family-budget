@@ -921,6 +921,7 @@ export default function Home() {
       </div>
 
       <DuplicateModal
+        darkMode={false}
         duplicateItem={duplicateItem}
         duplicateIndex={duplicateIndex}
         duplicateTotal={duplicateTotal}
