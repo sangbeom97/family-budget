@@ -1,3 +1,4 @@
+
 type Props = {
   darkMode: boolean;
   totalIncome: number;
@@ -17,104 +18,73 @@ export default function SummaryCards({
   monthlyVariableBudget,
   remainingVariableBudget,
 }: Props) {
+  const cardClass = darkMode
+    ? "bg-slate-800 border-slate-700 text-white"
+    : "bg-white border-[#eef0f3] text-[#191f28]";
+
+  const subTextClass = darkMode ? "text-slate-400" : "text-[#8b95a1]";
+
+  const cards = [
+    {
+      label: "총 수입",
+      amount: totalIncome,
+      color: "text-[#3182f6]",
+    },
+    {
+      label: "총 지출",
+      amount: totalExpense,
+      color: "text-[#f04452]",
+    },
+    {
+      label: "총 저축",
+      amount: totalSaving,
+      color: "text-[#12b886]",
+    },
+    {
+      label: "변동예산",
+      amount: monthlyVariableBudget,
+      color: "text-[#4e5968]",
+    },
+    {
+      label: "남은 변동예산",
+      amount: remainingVariableBudget,
+      color: remainingVariableBudget >= 0
+        ? "text-[#12b886]"
+        : "text-[#f04452]",
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-
+    <section className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+      {/* 핵심 잔액 */}
       <div
-        className={`p-6 min-h-[100px] rounded-2xl shadow-md ${darkMode
-            ? "bg-slate-800"
-            : "bg-white/95"
-          }`}
+        className={`col-span-2 rounded-2xl border p-5 shadow-sm sm:p-6 lg:col-span-3 ${cardClass}`}
       >
-        <p className="text-sm font-semibold">
-          총 수입
-        </p>
-
-        <h2 className="text-2xl font-extrabold text-blue-500">
-          ₩{totalIncome.toLocaleString()}
-        </h2>
-      </div>
-
-      <div
-        className={`p-6 min-h-[100px] rounded-2xl shadow-md ${darkMode
-            ? "bg-slate-800"
-            : "bg-white/95"
-          }`}
-      >
-        <p className="text-sm font-semibold">
-          총 지출
-        </p>
-
-        <h2 className="text-2xl font-extrabold text-red-500">
-          ₩{totalExpense.toLocaleString()}
-        </h2>
-      </div>
-
-      <div
-        className={`p-6 min-h-[100px] rounded-2xl shadow-md ${darkMode
-            ? "bg-slate-800"
-            : "bg-white/95"
-          }`}
-      >
-        <p className="text-sm font-semibold">
-          총 저축
-        </p>
-
-        <h2 className="text-2xl font-extrabold text-green-500">
-          ₩{totalSaving.toLocaleString()}
-        </h2>
-      </div>
-
-      <div
-        className={`p-6 min-h-[100px] rounded-2xl shadow-md ${darkMode
-            ? "bg-slate-800"
-            : "bg-white/95"
-          }`}
-      >
-        <p className="text-sm font-semibold">
+        <p className={`mb-2 text-sm font-semibold ${subTextClass}`}>
           실시간 잔액
         </p>
-
-        <h2 className="text-2xl font-extrabold">
+        <h2 className="break-all text-3xl font-extrabold tracking-tight sm:text-4xl">
           ₩{currentBalance.toLocaleString()}
         </h2>
+        <p className={`mt-2 text-xs ${subTextClass}`}>
+          선택한 기간 및 작성자 기준
+        </p>
       </div>
 
-      <div
-        className={`p-6 min-h-[100px] rounded-2xl shadow-md ${darkMode
-            ? "bg-slate-800"
-            : "bg-white/95"
-          }`}
-      >
-        <p className="text-sm font-semibold">
-          변동예산
-        </p>
-
-        <h2 className="text-2xl font-extrabold">
-          ₩{monthlyVariableBudget.toLocaleString()}
-        </h2>
-      </div>
-
-      <div
-        className={`p-6 min-h-[100px] rounded-2xl shadow-md ${darkMode
-            ? "bg-slate-800"
-            : "bg-white/95"
-          }`}
-      >
-        <p className="text-sm font-semibold">
-          남은 변동예산
-        </p>
-
-        <h2
-          className={`text-2xl font-extrabold ${remainingVariableBudget >= 0
-              ? "text-green-500"
-              : "text-red-500"
-            }`}
+      {/* 나머지 요약 카드 */}
+      {cards.map((card) => (
+        <div
+          key={card.label}
+          className={`min-w-0 rounded-2xl border p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5 ${cardClass}`}
         >
-          ₩{remainingVariableBudget.toLocaleString()}
-        </h2>
-      </div>
-
-    </div>
+          <p className={`mb-2 text-sm font-semibold ${subTextClass}`}>
+            {card.label}
+          </p>
+          <p className={`break-all text-lg font-extrabold tracking-tight sm:text-xl ${card.color}`}>
+            ₩{card.amount.toLocaleString()}
+          </p>
+        </div>
+      ))}
+    </section>
   );
 }
