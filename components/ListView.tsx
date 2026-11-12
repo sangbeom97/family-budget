@@ -66,17 +66,21 @@ export default function ListView({
                 </p>
               )}
 
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#8b95a1]">
-                <span>{item.type === "income" ? "수입" : item.category}</span>
-                <span>·</span>
-                <span>{item.date}</span>
-                <span>·</span>
-                <span>
-                  {item.user_id
-                    ? creatorNameById.get(item.user_id) || "이름 없음"
-                    : "기록 없음"}
-                </span>
-              </div>
+              <div className="flex flex-wrap items-center gap-2 text-xs">
+  <span className="rounded-md bg-[#eef5ff] px-2 py-1 font-semibold text-[#3182f6]">
+    {item.type === "income" ? "수입" : item.category}
+  </span>
+
+  <span className="text-[#8b95a1]">{item.date}</span>
+
+  <span className="text-[#d1d6dc]">·</span>
+
+  <span className="text-[#8b95a1]">
+    {item.user_id
+      ? creatorNameById.get(item.user_id) || "이름 없음"
+      : "기록 없음"}
+  </span>
+</div>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f2f4f6] pt-3 sm:flex-col sm:items-end sm:border-0 sm:pt-0">
