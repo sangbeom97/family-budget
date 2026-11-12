@@ -348,7 +348,7 @@ export default function AccountView(props: AccountViewProps) {
                         { title: "월별 저축률", key: "저축률", color: "#22c55e", isPercent: true },
                         { title: "월별 소비패턴", keys: ["수입", "지출", "저축"], colors: ["#2563eb", "#ef4444", "#22c55e"], isMulti: true }
                     ].map((chart, idx) => (
-                        <div key={idx} className={`p-5 rounded-2xl shadow-md ${bg-white/95}`}>
+                        <div key={idx} className="p-5 rounded-2xl shadow-md bg-white/95">
                             <h3 className="font-extrabold mb-4 text-sm">{chart.title}</h3>
                             <div className="h-72">
                                 <ResponsiveContainer width="100%" height="100%">
@@ -367,12 +367,12 @@ export default function AccountView(props: AccountViewProps) {
                         </div>
                     ))}
 
-                    <div className={`p-5 rounded-2xl shadow-md ${bg-white/95}`}>
+                    <div className="p-5 rounded-2xl shadow-md bg-white/95">
                         <h3 className="font-extrabold mb-4 text-sm">연간 카테고리 TOP5</h3>
                         <div className="space-y-3">
                             {topCategories.map((item, index) => (
                                 <div key={item.category} className="flex justify-between border-b border-gray-200 pb-2 text-sm">
-                                    <span className={text-gray-700}>{index + 1}. {item.category}</span>
+                                    <span className="text-gray-700">{index + 1}. {item.category}</span>
                                     <span className="font-extrabold text-red-500">₩ {item.total.toLocaleString()}</span>
                                 </div>
                             ))}
