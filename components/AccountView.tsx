@@ -274,7 +274,7 @@ export default function AccountView(props: AccountViewProps) {
                                 <CategoryChart view={view} categoryData={categoryData} yearlyCategoryData={yearlyCategoryData} />
                             </div>
 
-                            <div className={`rounded-2xl p-5 shadow-md mb-4 ${bg-white/95}`}>
+                            <div className="rounded-2xl p-5 shadow-md mb-4 bg-white/95">
                                 <h3 className="font-extrabold mb-4 text-sm text-gray-800 dark:text-gray-100">예산 대비 사용 현황</h3>
                                 <div className="h-72">
                                     <ResponsiveContainer width="100%" height="100%">
