@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 type Item = {
   id: number;
@@ -32,50 +32,18 @@ export default function ListView({
   startEdit,
   role,
 }: Props) {
-  const [selectedCreator, setSelectedCreator] = useState("all");
-
   const creatorNameById = useMemo(
-    () => new Map(groupMembers.map((member) => [member.id, member.nickname])),
-    [groupMembers]
-  );
-
-  const creatorTabs = useMemo(() => {
-    return [
-      { id: "all", label: "전체" },
-      ...groupMembers.map((member) => ({
-        id: member.id,
-        label: member.nickname,
-      })),
-    ];
-  }, [groupMembers]);
-
-  const visibleItems = items.filter(
-    (item) => selectedCreator === "all" || item.user_id === selectedCreator
-  );
+  () => new Map(groupMembers.map((member) => [member.id, member.nickname])),
+  [groupMembers]
+);
 
   return (
     <div className="rounded-2xl p-5 shadow-sm border bg-white border-gray-100 text-gray-900">
       <h3 className="font-extrabold mb-4 text-sm text-gray-800">내역 목록</h3>
 
-      {/* 작성자별 필터 탭 */}
-      <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
-        {creatorTabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setSelectedCreator(tab.id)}
-            className={`px-3 py-2 rounded-xl whitespace-nowrap text-sm font-semibold transition-colors ${
-              selectedCreator === tab.id
-                ? "bg-black text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
 
       <div className="space-y-3">
-        {visibleItems.map((item) => (
+        {items.map((item) => (
           <div
             key={item.id}
             className="border rounded-xl p-4 flex justify-between items-center transition-colors bg-gray-50/50 border-gray-100 hover:bg-gray-50"
@@ -123,7 +91,7 @@ export default function ListView({
           </div>
         ))}
 
-        {visibleItems.length === 0 && (
+        {items.length === 0 && (
           <div className="text-center py-12">
             <span className="text-3xl block mb-2">Empty</span>
             <p className="text-sm text-gray-400 font-medium">내역이 없습니다</p>
