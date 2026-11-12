@@ -94,13 +94,17 @@ export default function AccountView(props: AccountViewProps) {
     } = props;
 
     // 스타일 설정
-    const btnBaseClass = "px-4 py-2 rounded-xl whitespace-nowrap transition-all font-medium text-sm";
-    const activeClass = "bg-black text-white shadow-sm";
-    const inactiveClass =
-        "bg-white/95 border border-gray-300 shadow-sm text-gray-800 hover:bg-gray-50";
+    const btnBaseClass =
+    "min-h-10 px-4 py-2.5 rounded-full whitespace-nowrap transition-all font-semibold text-sm";
 
-    const inputClass =
-    "border-2 rounded-xl px-3 py-2 bg-white/95 text-black border-gray-300";
+const activeClass =
+    "bg-[#3182f6] text-white shadow-sm";
+
+const inactiveClass =
+    "bg-white border border-[#e9edf2] text-[#4e5968] hover:bg-[#f7f8fa]";
+
+const inputClass =
+    "min-h-11 rounded-xl px-3 py-2.5 bg-white text-[#191f28] border border-[#e5e8eb] focus:outline-none focus:ring-2 focus:ring-[#3182f6]/20 focus:border-[#3182f6]";
 
     const filterTabs = [
         { id: "all", label: "전체" },
@@ -149,7 +153,7 @@ export default function AccountView(props: AccountViewProps) {
     return (
         <>
             {/* 1. 상단 내역 필터 탭 */}
-            <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide">
+            <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
                 {filterTabs.map((tab) => (
                     <button
                         key={tab.id}
@@ -162,7 +166,7 @@ export default function AccountView(props: AccountViewProps) {
             </div>
 
             {/* 2. 보기 방식 탭 */}
-            <div className="flex gap-2 mb-4">
+            <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
                 {viewTabs.map((tab) => (
                     <button
                         key={tab.id}
@@ -177,7 +181,7 @@ export default function AccountView(props: AccountViewProps) {
             </div>
 
             {/* 3. 기간 이동 컨테이너 */}
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-4 flex-wrap">
                 <button onClick={() => handlePageSelect("prev")} className={`${inputClass} px-3 font-bold shadow-sm`}>
                     ◀
                 </button>
@@ -211,7 +215,7 @@ export default function AccountView(props: AccountViewProps) {
 
             {/* 4. 기간 조회 전용 달력 */}
             {(view === "list" || view === "year") && (
-                <div className="flex gap-2 mb-4 items-center">
+                <div className="flex flex-wrap gap-2 mb-4 items-center">
                     <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
                     <span className="text-gray-500">~</span>
                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
@@ -234,7 +238,7 @@ export default function AccountView(props: AccountViewProps) {
             )}
 
             {/* 5. 검색 및 카테고리 필터 바 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-1 gap-3 mb-4 sm:grid-cols-2 lg:grid-cols-3">
                 <input
                     type="text"
                     placeholder="검색어 입력"
@@ -250,14 +254,14 @@ export default function AccountView(props: AccountViewProps) {
                     ))}
                 </select>
 
-                <div className="border-2 rounded-xl px-4 py-2 flex items-center justify-between bg-white/95 border-gray-300">
+                <div className="min-h-11 rounded-xl border px-4 py-2.5 flex items-center justify-between bg-white border-[#e9edf2]">
                     <span className="text-sm font-semibold text-gray-700">현재 합계</span>
                     <span className="font-extrabold text-lg text-red-600">₩ {filteredTotal.toLocaleString()}</span>
                 </div>
             </div>
 
             {/* 작성자별 전체 통계 필터 */}
-<div className="flex gap-2 mb-4 overflow-x-auto pb-1">
+<div className="flex gap-2 mb-4 overflow-x-auto pb-2">
     {[
         { id: "all", label: "전체" },
         ...groupMembers.map((member) => ({
@@ -268,11 +272,11 @@ export default function AccountView(props: AccountViewProps) {
         <button
             key={member.id}
             onClick={() => setSelectedCreator(member.id)}
-            className={`px-3 py-2 rounded-xl whitespace-nowrap text-sm font-semibold transition-colors ${
-                selectedCreator === member.id
-                    ? "bg-black text-white"
-                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
-            }`}
+            className={`px-4 py-2.5 rounded-full whitespace-nowrap text-sm font-semibold transition-all ${
+    selectedCreator === member.id
+        ? "bg-[#3182f6] text-white shadow-sm"
+        : "bg-white text-[#4e5968] border border-[#e9edf2] hover:bg-[#f7f8fa]"
+}`}
         >
             {member.label}
         </button>
