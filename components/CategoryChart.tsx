@@ -60,7 +60,7 @@ export default function CategoryChart({
       <YAxis
         type="category"
         dataKey="name"
-        width={110}
+        width={85}
         interval={0}
         tick={{ fontSize: 11, fill: "#8b95a1" }}
         axisLine={false}
