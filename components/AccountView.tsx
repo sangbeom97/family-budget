@@ -337,7 +337,7 @@ export default function AccountView(props: AccountViewProps) {
 
             {/* 8. 달력 뷰 영역 */}
             {view === "calendar" && (
-                <CalendarView items={periodFilteredItems} selectedMonth={selectedMonth} />
+                <CalendarView items={periodFilteredItems} selectedMonth={selectedMonth} darkMode={false} />
             )}
 
             {/* 9. 연요약 통계 뷰 영역 */}
