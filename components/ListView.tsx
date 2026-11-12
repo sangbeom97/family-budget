@@ -39,7 +39,7 @@ export default function ListView({
   );
 
   return (
-    <div className="rounded-2xl border border-[#e9edf2] bg-white p-4 shadow-sm sm:p-5">
+    <div className="rounded-2xl border border-[#e9edf2] bg-white p-3 shadow-sm sm:p-5">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-base font-extrabold text-[#191f28]">
           내역 목록
@@ -53,7 +53,7 @@ export default function ListView({
         {items.map((item) => (
           <div
             key={item.id}
-            className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#e9edf2] bg-white p-4 shadow-sm transition-all hover:border-[#d5e3f7] hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
+            className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#e9edf2] bg-white p-3 shadow-sm transition-all hover:border-[#d5e3f7] hover:shadow-md sm:flex-row sm:items-center sm:justify-between sm:p-4"
           >
             <div className="min-w-0 flex-1 space-y-1.5">
               <p className="break-words text-sm font-bold text-[#191f28]">
