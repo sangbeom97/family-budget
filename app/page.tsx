@@ -471,7 +471,7 @@ export default function Home() {
 
       return filterMatch && searchMatch && categoryMatch && startMatch && endMatch;
     });
-  }, [items, yearlyItems, view, filter, search, categoryFilter, startDate, endDate]);
+  }, [creatorFilteredItems, creatorFilteredYearlyItems, view, filter, search, categoryFilter, startDate, endDate]);
 
   const yearlySourceItems = useMemo(() => {
     return (startDate || endDate) ? periodFilteredItems : creatorFilteredYearlyItems;
@@ -527,10 +527,10 @@ export default function Home() {
         const budget = Number(budgets[cat] || 0);
         return { name: cat, 사용금액: spent, 남은예산: budget - spent };
       });
-  }, [graphCategories, categorizedNames.saving, view, yearlyItems, items, budgets]);
+  }, [graphCategories, categorizedNames.saving, view, creatorFilteredYearlyItems, creatorFilteredItems, budgets]);
 
   const { variableBudgetTotal, remainVariableBudget } = useMemo(() => {
-    const sourceItems = view === "year" ? yearlyItems : items;
+    const sourceItems = view === "year" ? creatorFilteredYearlyItems : creatorFilteredItems;
     const targets = graphCategories.filter((cat) => !categorizedNames.saving.includes(cat));
 
     const vBudgetTot = targets.reduce((s, cat) => s + Number(budgets[cat] || 0), 0);
@@ -541,7 +541,7 @@ export default function Home() {
     }, 0);
 
     return { variableBudgetTotal: vBudgetTot, remainVariableBudget: rVariableBudget };
-  }, [graphCategories, categorizedNames.saving, view, yearlyItems, items, budgets]);
+  }, [graphCategories, categorizedNames.saving, view, creatorFilteredYearlyItems, creatorFilteredItems, budgets]);
 
   const monthlyData = useMemo(() => {
     return Array.from({ length: 12 }, (_, i) => {
@@ -846,6 +846,8 @@ export default function Home() {
                 exportToExcel={exportToExcel}
                 periodFilteredItems={periodFilteredItems}
                 groupMembers={groupMembers}
+                selectedCreator={selectedCreator}
+                setSelectedCreator={setSelectedCreator}
                 deleteItem={deleteItem}
                 startEdit={startEdit}
                 monthlyData={monthlyData}
