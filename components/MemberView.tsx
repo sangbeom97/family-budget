@@ -187,3 +187,4 @@ export default function MemberView({
             </div>
         </div>
     );
+}
