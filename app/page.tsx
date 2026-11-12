@@ -58,6 +58,7 @@ export default function Home() {
   const [yearlyItems, setYearlyItems] = useState<Item[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [groupMembers, setGroupMembers] = useState<{ id: string; nickname: string }[]>([]);
+  const [selectedCreator, setSelectedCreator] = useState("all");
   const [view, setView] = useState<"list" | "year" | "budget" | "calendar">("list");
 
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -436,8 +437,22 @@ export default function Home() {
 
   const isRealExpense = (item: Item) => item.type === "expense" && item.spend_type !== "saving";
 
+  const creatorFilteredItems = useMemo(() => {
+    return selectedCreator === "all"
+      ? items
+      : items.filter((item) => item.user_id === selectedCreator);
+  }, [items, selectedCreator]);
+
+  const creatorFilteredYearlyItems = useMemo(() => {
+    return selectedCreator === "all"
+      ? yearlyItems
+      : yearlyItems.filter((item) => item.user_id === selectedCreator);
+  }, [yearlyItems, selectedCreator]);
+
   const periodFilteredItems = useMemo(() => {
-    const baseItems = (startDate || endDate) ? yearlyItems : (view === "year" ? yearlyItems : items);
+    const baseItems = (startDate || endDate)
+      ? creatorFilteredYearlyItems
+      : (view === "year" ? creatorFilteredYearlyItems : creatorFilteredItems);
     const keyword = search.trim().toLowerCase();
 
     return baseItems.filter((item) => {
@@ -459,8 +474,8 @@ export default function Home() {
   }, [items, yearlyItems, view, filter, search, categoryFilter, startDate, endDate]);
 
   const yearlySourceItems = useMemo(() => {
-    return (startDate || endDate) ? periodFilteredItems : yearlyItems;
-  }, [startDate, endDate, periodFilteredItems, yearlyItems]);
+    return (startDate || endDate) ? periodFilteredItems : creatorFilteredYearlyItems;
+  }, [startDate, endDate, periodFilteredItems, creatorFilteredYearlyItems]);
 
   const getCategoryData = (sourceList: Item[]) => {
     return graphCategories
@@ -482,9 +497,9 @@ export default function Home() {
   const yearlyCategoryData = useMemo(() => getCategoryData(yearlySourceItems), [graphCategories, filter, categorizedNames.saving, yearlySourceItems]);
 
   const totals = useMemo(() => {
-    const inc = items.filter((i) => i.type === "income").reduce((s, i) => s + (Number(i.amount) || 0), 0);
-    const exp = items.filter(isRealExpense).reduce((s, i) => s + (Number(i.amount) || 0), 0);
-    const sav = items.filter((i) => i.spend_type === "saving").reduce((s, i) => s + (Number(i.amount) || 0), 0);
+    const inc = creatorFilteredItems.filter((i) => i.type === "income").reduce((s, i) => s + (Number(i.amount) || 0), 0);
+    const exp = creatorFilteredItems.filter(isRealExpense).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+    const sav = creatorFilteredItems.filter((i) => i.spend_type === "saving").reduce((s, i) => s + (Number(i.amount) || 0), 0);
 
     const yInc = yearlySourceItems.filter((i) => i.type === "income").reduce((s, i) => s + (Number(i.amount) || 0), 0);
     const yExp = yearlySourceItems.filter(isRealExpense).reduce((s, i) => s + (Number(i.amount) || 0), 0);
@@ -499,10 +514,10 @@ export default function Home() {
       yearlyIncome: yInc, yearlyExpense: yExp, yearlySaving: ySav, yearlyTotal: yInc - yExp,
       filteredTotal: filtTot
     };
-  }, [items, yearlySourceItems, periodFilteredItems, filter]);
+  }, [creatorFilteredItems, yearlySourceItems, periodFilteredItems, filter]);
 
   const budgetCompareData = useMemo(() => {
-    const sourceItems = view === "year" ? yearlyItems : items;
+    const sourceItems = view === "year" ? creatorFilteredYearlyItems : creatorFilteredItems;
     return graphCategories
       .filter((cat) => !categorizedNames.saving.includes(cat))
       .map((cat) => {
