@@ -749,7 +749,7 @@ export default function Home() {
 
   // --- 9. 메인 레이아웃 렌더링 ---
   return (
-    <main className="min-h-screen p-4 md:p-6 bg-zinc-200 text-black">
+    <main className="min-h-screen bg-[#f7f8fa] px-3 py-4 text-[#191f28] sm:px-4 md:px-6">
       <div className="max-w-6xl mx-auto">
         
 
@@ -865,15 +865,21 @@ export default function Home() {
 
         {/* 컨텐츠 조건부 뷰 출력 */}
         {loadingGroups ? (
-  <div className="text-center py-20">
-    <div>불러오는 중...</div>
+  <div className="flex min-h-64 items-center justify-center rounded-2xl border border-[#e9edf2] bg-white shadow-sm">
+    <div className="text-sm font-semibold text-[#8b95a1]">
+      불러오는 중...
+    </div>
   </div>
 ) : !currentGroupId && mainTab === "account" ? (
-          <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-gray-300">
-            <span className="text-5xl block mb-4">🏠</span>
-            <p className="font-bold text-lg">활성화된 가계부 방이 존재하지 않습니다.</p>
-            <p className="text-sm text-gray-400 mt-1">상단에서 새 가계부를 개설하거나 다른 가계부에 초대받아야 내역 관리가 가능합니다.</p>
-          </div>
+          <div className="rounded-2xl border border-dashed border-[#d9e0e8] bg-white px-4 py-20 text-center shadow-sm sm:py-24">
+  <span className="mb-4 block text-5xl">🏠</span>
+  <p className="text-lg font-bold text-[#191f28]">
+    활성화된 가계부 방이 존재하지 않습니다.
+  </p>
+  <p className="mt-2 text-sm leading-6 text-[#8b95a1]">
+    상단에서 새 가계부를 개설하거나 다른 가계부에 초대받아야 내역 관리가 가능합니다.
+  </p>
+</div>
         ) : (
           <>
             {mainTab === "account" && (
