@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -27,123 +28,182 @@ export default function CategoryManager({
   categoryType,
   setCategoryType,
   addCategory,
-
   fixedCategories,
   variableCategories,
   allowanceCategories,
   savingCategories,
   incomeCategories,
-
   deleteCategory,
 }: Props) {
   const sections = [
     {
       title: "고정지출",
-      color: "text-blue-500",
-      bg: "bg-blue-100",
+      description: "매월 정기적으로 발생하는 지출",
+      color: "#3182f6",
+      bg: darkMode ? "bg-blue-500/10" : "bg-blue-50",
       categories: fixedCategories,
     },
     {
       title: "변동지출",
-      color: "text-red-500",
-      bg: "bg-red-100",
+      description: "생활비 및 일상 소비",
+      color: "#f04452",
+      bg: darkMode ? "bg-red-500/10" : "bg-red-50",
       categories: variableCategories,
     },
     {
       title: "용돈",
-      color: "text-orange-500",
-      bg: "bg-orange-100",
+      description: "개인별 자유 지출",
+      color: "#f59f00",
+      bg: darkMode ? "bg-orange-500/10" : "bg-orange-50",
       categories: allowanceCategories,
     },
     {
       title: "저축",
-      color: "text-green-500",
-      bg: "bg-green-100",
+      description: "저축 및 자산 형성",
+      color: "#12b886",
+      bg: darkMode ? "bg-green-500/10" : "bg-green-50",
       categories: savingCategories,
     },
     {
       title: "수입",
-      color: "text-purple-500",
-      bg: "bg-purple-100",
+      description: "급여 및 기타 수입",
+      color: "#7950f2",
+      bg: darkMode ? "bg-purple-500/10" : "bg-purple-50",
       categories: incomeCategories,
     },
   ];
 
+  const cardClass = darkMode
+    ? "bg-slate-800 border-slate-700 text-white"
+    : "bg-white border-[#e9edf2] text-[#191f28]";
+
+  const inputClass = `min-h-12 w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[#3182f6] focus:ring-2 focus:ring-[#3182f6]/15 ${
+    darkMode
+      ? "bg-slate-700 border-slate-600 text-white"
+      : "bg-[#f7f8fa] border-[#e9edf2] text-[#191f28]"
+  }`;
+
   return (
-    <div
-      className={`p-6 rounded-2xl shadow-md ${
-        darkMode
-          ? "bg-slate-800 text-white"
-          : "bg-white/95 text-black"
-      }`}
-    >
-      <h2 className="text-3xl font-extrabold mb-6">
-        카테고리 관리
-      </h2>
-
-      {/* 추가 영역 */}
-      <div className="flex flex-wrap gap-3 mb-8">
-        <input
-          value={categoryName}
-          onChange={(e) =>
-            setCategoryName(e.target.value)
-          }
-          placeholder="카테고리명"
-          className="border px-4 py-2 rounded-xl text-black"
-        />
-
-        <select
-          value={categoryType}
-          onChange={(e) =>
-            setCategoryType(e.target.value)
-          }
-          className="border px-4 py-2 rounded-xl text-black"
+    <div className="space-y-5">
+      {/* 제목 */}
+      <div>
+        <h2
+          className={`text-xl font-extrabold sm:text-2xl ${
+            darkMode ? "text-white" : "text-[#191f28]"
+          }`}
         >
-          <option value="fixed">고정지출</option>
-          <option value="variable">변동지출</option>
-          <option value="allowance">용돈</option>
-          <option value="saving">저축</option>
-          <option value="income">수입</option>
-        </select>
-
-        <button
-          onClick={addCategory}
-          className="px-5 py-2 rounded-xl bg-blue-500 text-white font-bold hover:bg-blue-600"
-        >
-          추가
-        </button>
+          카테고리 관리
+        </h2>
+        <p className="mt-1 text-sm text-[#8b95a1]">
+          가계부에서 사용할 수입과 지출 항목을 관리합니다.
+        </p>
       </div>
 
-      {/* 카테고리 */}
-      <div className="space-y-10">
-        {sections.map((section) => (
-          <div key={section.title}>
-            <h3
-              className={`text-2xl font-extrabold mb-4 ${section.color}`}
-            >
-              {section.title}
-            </h3>
+      {/* 카테고리 추가 */}
+      <section className={`rounded-2xl border p-4 shadow-sm sm:p-5 ${cardClass}`}>
+        <h3 className="mb-4 text-base font-bold">
+          새 카테고리 추가
+        </h3>
 
-            <div className="flex flex-wrap gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]">
+          <div className="min-w-0">
+            <label className="mb-2 block text-xs font-semibold text-[#8b95a1]">
+              카테고리명
+            </label>
+            <input
+              value={categoryName}
+              onChange={(e) => setCategoryName(e.target.value)}
+              placeholder="예: 식비, 교통비"
+              className={inputClass}
+            />
+          </div>
+
+          <div className="min-w-0">
+            <label className="mb-2 block text-xs font-semibold text-[#8b95a1]">
+              카테고리 유형
+            </label>
+            <select
+              value={categoryType}
+              onChange={(e) => setCategoryType(e.target.value)}
+              className={inputClass}
+            >
+              <option value="fixed">고정지출</option>
+              <option value="variable">변동지출</option>
+              <option value="allowance">용돈</option>
+              <option value="saving">저축</option>
+              <option value="income">수입</option>
+            </select>
+          </div>
+
+          <div className="flex items-end">
+            <button
+              type="button"
+              onClick={addCategory}
+              className="min-h-12 w-full rounded-xl bg-[#3182f6] px-6 text-sm font-bold text-white transition-colors hover:bg-[#1b64da] lg:w-auto"
+            >
+              + 추가하기
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 카테고리 목록 */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        {sections.map((section) => (
+          <section
+            key={section.title}
+            className={`min-w-0 rounded-2xl border p-4 shadow-sm sm:p-5 ${cardClass}`}
+          >
+            <div className="mb-4 flex items-center justify-between gap-2">
+              <div>
+                <h3
+                  className="text-base font-extrabold"
+                  style={{ color: section.color }}
+                >
+                  {section.title}
+                </h3>
+                <p className="mt-1 text-xs text-[#8b95a1]">
+                  {section.description}
+                </p>
+              </div>
+
+              <span className="shrink-0 rounded-full bg-[#f7f8fa] px-3 py-1 text-xs font-bold text-[#8b95a1]">
+                {section.categories.length}개
+              </span>
+            </div>
+
+            <div className="flex min-h-12 flex-wrap content-start gap-2">
               {section.categories.map((category) => (
                 <div
                   key={category}
-                  className={`${section.bg} px-5 py-2 rounded-full font-bold flex items-center gap-2 text-black`}
+                  className={`flex min-h-10 max-w-full items-center gap-2 rounded-xl px-3 py-2 ${section.bg}`}
                 >
-                  <span>{category}</span>
+                  <span
+                    className={`break-all text-sm font-semibold ${
+                      darkMode ? "text-slate-200" : "text-[#4e5968]"
+                    }`}
+                  >
+                    {category}
+                  </span>
 
                   <button
-                    onClick={() =>
-                      deleteCategory(category)
-                    }
-                    className="text-red-500 text-xl leading-none hover:scale-110 transition"
+                    type="button"
+                    onClick={() => deleteCategory(category)}
+                    aria-label={`${category} 삭제`}
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-base font-bold text-[#8b95a1] transition-colors hover:bg-red-100 hover:text-red-500"
                   >
                     ×
                   </button>
                 </div>
               ))}
+
+              {section.categories.length === 0 && (
+                <p className="py-3 text-sm text-[#8b95a1]">
+                  등록된 카테고리가 없습니다.
+                </p>
+              )}
             </div>
-          </div>
+          </section>
         ))}
       </div>
     </div>
