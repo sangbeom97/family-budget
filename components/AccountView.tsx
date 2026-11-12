@@ -190,7 +190,7 @@ const inputClass =
             </div>
 
             {/* 3. 기간 이동 컨테이너 */}
-            <div className="flex items-center gap-2 mb-4 flex-wrap">
+            <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[#e9edf2] bg-white p-3 shadow-sm">
                 <button onClick={() => handlePageSelect("prev")} className={`${inputClass} px-3 font-bold shadow-sm`}>
                     ◀
                 </button>
@@ -224,7 +224,7 @@ const inputClass =
 
             {/* 4. 기간 조회 전용 달력 */}
             {(view === "list" || view === "year") && (
-                <div className="flex flex-wrap gap-2 mb-4 items-center">
+                <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[#e9edf2] bg-white p-3 shadow-sm">
                     <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
                     <span className="text-gray-500">~</span>
                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
@@ -270,7 +270,7 @@ const inputClass =
             </div>
 
             {/* 작성자별 전체 통계 필터 */}
-<div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+<div className="mb-5 flex gap-2 overflow-x-auto rounded-2xl border border-[#e9edf2] bg-white p-3 pb-3 shadow-sm">
     {[
         { id: "all", label: "전체" },
         ...groupMembers.map((member) => ({
