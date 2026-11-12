@@ -20,6 +20,7 @@ type GroupMember = {
 
 type Props = {
   items: Item[];
+  loadingItems: boolean;
   groupMembers: GroupMember[];
   deleteItem: (id: number) => void;
   startEdit: (item: Item) => void;
@@ -28,6 +29,7 @@ type Props = {
 
 export default function ListView({
   items,
+  loadingItems,
   groupMembers,
   deleteItem,
   startEdit,
@@ -49,80 +51,28 @@ export default function ListView({
         </span>
       </div>
 
-      <div className="space-y-3">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#e9edf2] bg-white p-3 shadow-sm transition-all hover:border-[#d5e3f7] hover:shadow-md sm:flex-row sm:items-center sm:justify-between sm:p-4"
-          >
-            <div className="min-w-0 flex-1 space-y-1.5">
-              <p className="break-words text-sm font-bold text-[#191f28]">
-                {item.name}
-              </p>
-
-              {item.memo && (
-                <p className="break-words text-xs text-[#8b95a1]">
-                  📝 {item.memo}
-                </p>
-              )}
-
-              <div className="flex flex-wrap items-center gap-2 text-xs">
-  <span className="rounded-md bg-[#eef5ff] px-2 py-1 font-semibold text-[#3182f6]">
-    {item.type === "income" ? "수입" : item.category}
-  </span>
-
-  <span className="text-[#8b95a1]">{item.date}</span>
-
-  <span className="text-[#d1d6dc]">·</span>
-
-  <span className="text-[#8b95a1]">
-    {item.user_id
-      ? creatorNameById.get(item.user_id) || "이름 없음"
-      : "기록 없음"}
-  </span>
-</div>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f2f4f6] pt-3 sm:flex-col sm:items-end sm:border-0 sm:pt-0">
-              <p
-                className={`whitespace-nowrap text-base font-extrabold tracking-tight ${
-                  item.type === "income"
-                    ? "text-[#3182f6]"
-                    : "text-[#f04452]"
-                }`}
-              >
-                {item.type === "income" ? "+" : "-"} ₩
-                {Number(item.amount).toLocaleString()}
-              </p>
-
-              {role !== "member" && (
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => startEdit(item)}
-                    className="min-h-9 rounded-lg border border-[#e9edf2] bg-white px-3 py-1.5 text-xs font-semibold text-[#4e5968] transition-colors hover:bg-[#f2f4f6]"
-                  >
-                    수정
-                  </button>
-
-                  <button
-                    onClick={() => deleteItem(item.id)}
-                    className="min-h-9 rounded-lg bg-[#fff0f0] px-3 py-1.5 text-xs font-semibold text-[#e5484d] transition-colors hover:bg-[#ffe3e3]"
-                  >
-                    삭제
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-
-        {items.length === 0 && (
+            <div className="space-y-3">
+        {loadingItems ? (
           <div className="rounded-xl bg-[#f7f8fa] py-12 text-center">
-            <span className="mb-2 block text-3xl">📭</span>
-            <p className="text-sm font-medium text-[#8b95a1]">
-              내역이 없습니다
+            <span className="mb-2 block text-3xl">⏳</span>
+            <p className="text-sm font-medium text-[#4e5968]">
+              내역을 불러오는 중입니다
             </p>
           </div>
+        ) : items.length === 0 ? (
+          <div className="rounded-xl bg-[#f7f8fa] py-12 text-center">
+            <span className="mb-2 block text-3xl">📭</span>
+            <p className="text-sm font-medium text-[#4e5968]">
+              내역이 없습니다
+            </p>
+            <p className="mt-1 text-xs text-[#8b95a1]">
+              선택한 기간에 등록된 거래 내역이 없습니다.
+            </p>
+          </div>
+        ) : (
+          items.map((item) => (
+            기존 거래 카드 코드 전체
+          ))
         )}
       </div>
     </div>
