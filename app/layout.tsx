@@ -29,15 +29,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
-        {/* 💡 2. body 최상단에 헤더를 배치합니다 */}
-        <Header /> 
-        
-        {/* 나머지 페이지 콘텐츠 */}
-        <div className="flex-1">
-          {children}
-        </div>
-      </body>
-    </html>
+  <body className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
+    <Header />
+
+    <div className="flex-1 w-full">
+      {children}
+    </div>
+  </body>
+</html>
   );
 }
