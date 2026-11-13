@@ -6,17 +6,30 @@ import { supabase } from "@/lib/supabase";
 type Props = {
     currentGroupId: string;
     role: string;
+    onLeave: () => Promise<void>;
 };
 
 export default function MemberView({
     currentGroupId,
     role,
+    onLeave,
 }: Props) {
     const [members, setMembers] = useState<any[]>([]);
+    const [currentUserId, setCurrentUserId] = useState("");
 
     useEffect(() => {
-        fetchMembers();
-    }, [currentGroupId]);
+    const fetchCurrentUser = async () => {
+        const {
+            data: { user },
+        } = await supabase.auth.getUser();
+
+        setCurrentUserId(user?.id || "");
+    };
+
+    fetchCurrentUser();
+    fetchMembers();
+}, [currentGroupId]);
+    
 
     const fetchMembers = async () => {
         if (!currentGroupId) return;
@@ -30,6 +43,57 @@ export default function MemberView({
             console.log(error);
             return;
         }
+
+        const currentUserRole =
+    members.find((member) => member.id === currentUserId)?.role || role;
+
+// 그룹 탈퇴
+const leaveGroup = async () => {
+    if (!currentUserId) return;
+
+    if (currentUserRole === "owner") {
+        alert("모임장 권한을 다른 멤버에게 넘긴 후 탈퇴할 수 있습니다.");
+        return;
+    }
+
+    if (!confirm("정말 이 그룹에서 탈퇴하시겠습니까?")) return;
+
+    const { error } = await supabase
+        .from("group_members")
+        .delete()
+        .eq("group_id", currentGroupId)
+        .eq("user_id", currentUserId);
+
+    if (error) {
+        alert(`그룹 탈퇴 실패: ${error.message}`);
+        return;
+    }
+
+    await onLeave();
+};
+
+// 다른 멤버 강제퇴장
+const removeMember = async (userId: string, nickname: string) => {
+    if (currentUserRole !== "owner") {
+        alert("모임장만 멤버를 강제퇴장할 수 있습니다.");
+        return;
+    }
+
+    if (!confirm(`${nickname}님을 그룹에서 내보내시겠습니까?`)) return;
+
+    const { error } = await supabase
+        .from("group_members")
+        .delete()
+        .eq("group_id", currentGroupId)
+        .eq("user_id", userId);
+
+    if (error) {
+        alert(`멤버 강제퇴장 실패: ${error.message}`);
+        return;
+    }
+
+    await fetchMembers();
+};
 
         const ids = memberRows.map((m) => m.user_id);
 
@@ -79,11 +143,25 @@ export default function MemberView({
             .eq("user_id", userId);
 
         if (error) {
-            alert(error.message);
-            return;
-        }
+    alert(error.message);
+    return;
+}
 
-        fetchMembers();
+// 다른 멤버에게 모임장 권한을 넘기면
+// 기존 모임장은 일반 모임원으로 변경
+if (newRole === "owner" && user?.id !== userId) {
+    const { error: transferError } = await supabase
+        .from("group_members")
+        .update({ role: "member" })
+        .eq("group_id", currentGroupId)
+        .eq("user_id", user.id);
+
+    if (transferError) {
+        alert(`새 모임장은 지정했지만 기존 모임장 권한 변경에 실패했습니다: ${transferError.message}`);
+    }
+}
+
+await fetchMembers();
     };
 
     
@@ -140,7 +218,7 @@ export default function MemberView({
                             </p>
                         </div>
 
-                        {role === "owner" && (
+                        {currentUserRole === "owner" && (
                             <div className="w-full shrink-0 sm:w-36">
                                 <label className="mb-1.5 block text-xs font-semibold text-[#8b95a1]">
                                     멤버 권한
