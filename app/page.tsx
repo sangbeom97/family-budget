@@ -514,13 +514,13 @@ const sumAmount = (list: Item[]) =>
     return graphCategories
       .filter((cat) => filter === "saving" ? categorizedNames.saving.includes(cat) : !categorizedNames.saving.includes(cat))
       .map((cat) => {
-        const totalAmount = sourceList
-          .filter((item) => {
-            if (item.category !== cat) return false;
-            if (filter === "saving") return item.spend_type === "saving";
-            return isRealExpense(item) && (filter === "all" ? true : item.spend_type === filter);
-          })
-          .reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+        const totalAmount = sumAmount(
+  sourceList.filter((item) => {
+    if (item.category !== cat) return false;
+    if (filter === "saving") return item.spend_type === "saving";
+    return isRealExpense(item) && (filter === "all" ? true : item.spend_type === filter);
+  })
+);
 
         return { name: cat, value: totalAmount };
       });
