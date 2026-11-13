@@ -605,15 +605,13 @@ setLoadingItems(false);
     setName("");
     setAmount("");
     setMemo("");
-    fetchItems();
-    fetchYearlyItems();
+    refreshTransactionData();
   };
 
   const deleteItem = async (id: number) => {
     if (!confirm("정말 이 내역을 삭제하시겠습니까?")) return;
     await supabase.from("transactions").delete().eq("id", id);
-    fetchItems();
-    fetchYearlyItems();
+    refreshTransactionData();
   };
 
   const startEdit = (item: Item) => {
@@ -700,8 +698,7 @@ setLoadingItems(false);
 
       if (parsedItems.length > 0) {
         await supabase.from("transactions").insert(parsedItems);
-        fetchItems();
-        fetchYearlyItems();
+        refreshTransactionData();
         alert(`${parsedItems.length}건의 내역을 업로드했습니다.`);
       }
     };
