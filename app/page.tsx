@@ -264,11 +264,21 @@ export default function Home() {
       .single();
 
     if (newGroup) {
-      await supabase.from("group_members").insert([{ group_id: newGroup.id, user_id: session?.user?.id }]);
-      setNewGroupName("");
-      await fetchUserGroups();
-      setCurrentGroupId(newGroup.id);
-    }
+  const { error } = await supabase.from("group_members").insert([{
+    group_id: newGroup.id,
+    user_id: session?.user?.id,
+    role: "owner",
+  }]);
+
+  if (error) {
+    alert(`모임장 등록 실패: ${error.message}`);
+    return;
+  }
+
+  setNewGroupName("");
+  await fetchUserGroups();
+  setCurrentGroupId(newGroup.id);
+}
   };
 
   // 🎯 원클릭 초대링크 생성 및 카카오톡 복사 핸들러 함수
