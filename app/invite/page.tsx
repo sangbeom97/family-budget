@@ -42,10 +42,11 @@ function InviteContent() {
       }
 
       const { data: group, error: groupError } = await supabase
-        .from("groups")
-        .select("id,name,invite_code")
-        .eq("invite_code", code)
-        .single();
+  .from("groups")
+  .select("id,name,invite_code")
+  .eq("invite_code", code)
+  .is("archived_at", null)
+  .single();
 
       console.log("GROUP =", group);
       console.log("GROUP ERROR =", groupError);
