@@ -325,6 +325,11 @@ setLoadingItems(false);
     setYearlyItems(data || []);
   };
 
+    const refreshTransactionData = () => {
+        fetchItems();
+        fetchYearlyItems();
+      };
+
   const fetchCategories = async () => {
     if (!currentGroupId) return;
     const { data } = await supabase
