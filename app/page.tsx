@@ -554,9 +554,9 @@ const sumAmount = (list: Item[]) =>
     return graphCategories
       .filter((cat) => !categorizedNames.saving.includes(cat))
       .map((cat) => {
-        const spent = sourceItems
-          .filter((i) => i.category === cat && isRealExpense(i))
-          .reduce((s, i) => s + (Number(i.amount) || 0), 0);
+        const spent = sumAmount(
+  sourceItems.filter((i) => i.category === cat && isRealExpense(i))
+);
         const budget = Number(budgets[cat] || 0);
         return { name: cat, 사용금액: spent, 남은예산: budget - spent };
       });
