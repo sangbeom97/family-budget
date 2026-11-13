@@ -704,43 +704,139 @@ const sumAmount = (list: Item[]) =>
   };
 
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !currentGroupId) return;
-    setSelectedFileName(file.name);
+  const file = e.target.files?.[0];
+  if (!file || !currentGroupId) return;
+  setSelectedFileName(file.name);
 
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const bstr = reader.result as string;
-      const wb = XLSX.read(bstr, { type: "binary" });
-      const wsname = wb.SheetNames[0];
-      const ws = wb.Sheets[wsname];
-      const data = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws);
+  const reader = new FileReader();
 
-      const parsedItems = data.map((row) => {
-        const rawAmount = String(row["금액"] || "").replace(/[^0-9-]/g, "");
-        const parsedAmount = Number(rawAmount);
+  reader.onload = async () => {
+    const bstr = reader.result as string;
+    const wb = XLSX.read(bstr, { type: "binary" });
+    const wsname = wb.SheetNames[0];
+    const ws = wb.Sheets[wsname];
+    const data = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws);
 
-        return {
-          name: (row["내역명"] || row["항목"] || "미지정") as string,
-          amount: isNaN(parsedAmount) ? 0 : parsedAmount,
-          type: row["타입"] === "수입" ? "income" : "expense",
-          category: (row["카테고리"] || "기타") as string,
-          date: (row["날짜"] || new Date().toISOString().split("T")[0]) as string,
-          spend_type: (row["지출분류"] || "variable") as string,
-          memo: (row["메모"] || "") as string,
-          group_id: currentGroupId,
-          user_id: session?.user?.id,
-        };
-      });
+    const parsedItems = data.map((row) => {
+      const rawAmount = String(row["금액"] || "").replace(/[^0-9-]/g, "");
+      const parsedAmount = Number(rawAmount);
 
-      if (parsedItems.length > 0) {
-        await supabase.from("transactions").insert(parsedItems);
-        refreshTransactionData();
-        alert(`${parsedItems.length}건의 내역을 업로드했습니다.`);
+      return {
+        name: (row["내역명"] || row["항목"] || "미지정") as string,
+        amount: isNaN(parsedAmount) ? 0 : parsedAmount,
+        type: row["타입"] === "수입" ? "income" : "expense",
+        category: (row["카테고리"] || "기타") as string,
+        date: (row["날짜"] || new Date().toISOString().split("T")[0]) as string,
+        spend_type: (row["지출분류"] || "variable") as string,
+        memo: (row["메모"] || "") as string,
+        group_id: currentGroupId,
+        user_id: session?.user?.id,
+      };
+    });
+
+    if (parsedItems.length === 0) {
+      alert("업로드할 데이터가 없습니다.");
+      return;
+    }
+
+    const { data: existingData, error: existingError } = await supabase
+      .from("transactions")
+      .select("id, name, amount, type, category, date, spend_type, memo")
+      .eq("group_id", currentGroupId);
+
+    if (existingError) {
+      alert("기존 거래내역을 불러오지 못했습니다.");
+      return;
+    }
+
+    const knownItems: {
+      id?: number;
+      name: string;
+      amount: number;
+      type: string;
+      category: string;
+      date: string;
+      spend_type: string;
+      memo: string;
+    }[] = (existingData || []).map((item) => ({
+      id: item.id,
+      name: item.name,
+      amount: item.amount,
+      type: item.type,
+      category: item.category,
+      date: item.date,
+      spend_type: item.spend_type,
+      memo: item.memo,
+    }));
+
+    const duplicateMatches: ({ oldItem: (typeof knownItems)[number] } | null)[] = [];
+
+    for (const item of parsedItems) {
+      const duplicate = knownItems.find(
+        (old) =>
+          old.date === item.date &&
+          old.name.trim() === item.name.trim() &&
+          Number(old.amount) === Number(item.amount) &&
+          old.type === item.type &&
+          old.category === item.category
+      );
+
+      duplicateMatches.push(duplicate ? { oldItem: duplicate } : null);
+      knownItems.push(item);
+    }
+
+    const duplicateTotal = duplicateMatches.filter(Boolean).length;
+    const itemsToInsert = [];
+    let duplicateIndex = 0;
+
+    for (let i = 0; i < parsedItems.length; i++) {
+      const match = duplicateMatches[i];
+
+      if (match) {
+        duplicateIndex++;
+
+        const shouldAdd = await new Promise<boolean>((resolve) => {
+          setDuplicateResolve(() => resolve);
+          setDuplicateItem({
+            newItem: parsedItems[i],
+            oldItem: match.oldItem,
+          });
+          setDuplicateIndex(duplicateIndex);
+          setDuplicateTotal(duplicateTotal);
+        });
+
+        setDuplicateResolve(null);
+
+        if (!shouldAdd) continue;
       }
-    };
-    reader.readAsBinaryString(file);
+
+      itemsToInsert.push(parsedItems[i]);
+    }
+
+    if (itemsToInsert.length === 0) {
+      alert("등록할 거래가 없습니다. 중복 거래를 모두 건너뛰었습니다.");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("transactions")
+      .insert(itemsToInsert);
+
+    if (error) {
+      alert("거래내역 업로드에 실패했습니다.");
+      console.error("Excel 업로드 실패:", error);
+      return;
+    }
+
+    refreshTransactionData();
+
+    alert(
+      `${itemsToInsert.length}건의 거래를 등록했습니다.\n중복 의심 거래 ${duplicateTotal}건`
+    );
   };
+
+  reader.readAsBinaryString(file);
+};
 
   const exportToExcel = () => {
     if (items.length === 0) return alert("내보낼 데이터가 없습니다.");
