@@ -90,7 +90,7 @@ type AccountViewProps = {
 
 export default function AccountView(props: AccountViewProps) {
     const {
-        mainTab, filter, setFilter, view, setView, selectedYear, setSelectedYear,
+        mainTab, filter, view, selectedYear, setSelectedYear,
         selectedMonth, setSelectedMonth, startDate, setStartDate, endDate, setEndDate,
         search, setSearch, categoryFilter, setCategoryFilter, graphCategories,
         savingCategories, categories, filteredTotal, SummaryCards, yearlyIncome, incomeTotal,
@@ -117,26 +117,9 @@ const activeClass =
 const inactiveClass =
     "bg-white border border-[#e9edf2] text-[#4e5968] hover:bg-[#f7f8fa]";
 
-const inputClass =
-    "min-h-11 rounded-xl px-3 py-2.5 bg-white text-[#191f28] border border-[#e5e8eb] focus:outline-none focus:ring-2 focus:ring-[#3182f6]/20 focus:border-[#3182f6]";
-
-    const filterTabs = [
-        { id: "all", label: "전체" },
-        { id: "income", label: "수입" },
-        { id: "fixed", label: "고정지출" },
-        { id: "variable", label: "변동지출" },
-        { id: "allowance", label: "용돈" },
-        { id: "saving", label: "저축" },
-    ];
-
-    const viewTabs = [
-        { id: "year", label: "연요약" },
-        ...(role !== "member"
-            ? [{ id: "budget", label: "예산" }]
-            : []),
-        { id: "list", label: "리스트" },
-        { id: "calendar", label: "달력" },
-    ] as const;
+    // 스타일 설정
+    const inputClass =
+        "min-h-11 rounded-xl px-3 py-2.5 bg-white text-[#191f28] border border-[#e5e8eb] focus:outline-none focus:ring-2 focus:ring-[#3182f6]/20 focus:border-[#3182f6]";
 
     // 카테고리 필터 옵션 메모이제이션
     const filteredOptions = useMemo(() => {
