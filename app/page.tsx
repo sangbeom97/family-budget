@@ -362,35 +362,44 @@ export default function Home() {
     }
   };
 
-  // 현재 그룹 멤버의 표시 이름 조회
+    // 현재 그룹 멤버의 표시 이름 조회
   const fetchGroupMembers = async () => {
     if (!currentGroupId) {
       setGroupMembers([]);
       return;
     }
 
-    const { data: memberRows, error } = await supabase
-      .from("group_members")
-      .select("user_id")
-      .eq("group_id", currentGroupId);
+    try {
+      const { data: memberRows, error } = await supabase
+        .from("group_members")
+        .select("user_id")
+        .eq("group_id", currentGroupId);
 
-    if (error || !memberRows?.length) {
+      if (error) throw error;
+
+      if (!memberRows?.length) {
+        setGroupMembers([]);
+        return;
+      }
+
+      const userIds = memberRows.map((member) => member.user_id);
+      const { data: profiles, error: profileError } = await supabase
+        .from("profiles")
+        .select("id, nickname")
+        .in("id", userIds);
+
+      if (profileError) throw profileError;
+
+      setGroupMembers(
+        (profiles || []).map((profile) => ({
+          id: profile.id,
+          nickname: profile.nickname || "이름 없음",
+        }))
+      );
+    } catch (error) {
+      console.error("그룹 멤버 조회 실패:", error);
       setGroupMembers([]);
-      return;
     }
-
-    const userIds = memberRows.map((member) => member.user_id);
-    const { data: profiles } = await supabase
-      .from("profiles")
-      .select("id, nickname")
-      .in("id", userIds);
-
-    setGroupMembers(
-      (profiles || []).map((profile) => ({
-        id: profile.id,
-        nickname: profile.nickname || "이름 없음",
-      }))
-    );
   };
 
   const fetchBudgets = async () => {
