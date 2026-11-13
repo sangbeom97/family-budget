@@ -20,7 +20,7 @@ type AccountViewProps = {
     categoryData: any[];
     yearlyCategoryData: any[];
     budgetCompareData: any[];
-    handleFileUpload: (e: any) => void;
+    handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
     selectedFileName: string;
     exportToExcel: () => void;
     periodFilteredItems: any[];
