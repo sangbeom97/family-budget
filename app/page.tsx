@@ -291,26 +291,34 @@ export default function Home() {
   };
 
   // --- 5. 가계부 데이터 Fetch 로직 ---
-  const fetchItems = async () => {
-  if (!currentGroupId) return;
+    const fetchItems = async () => {
+    if (!currentGroupId) return;
 
-  setLoadingItems(true);
-    const startDateObj = new Date(`${selectedMonth}-01`);
-    const endDateObj = new Date(startDateObj.getFullYear(), startDateObj.getMonth() + 1, 0);
+    setLoadingItems(true);
 
-    const start = `${selectedMonth}-01`;
-    const end = `${selectedMonth}-${String(endDateObj.getDate()).padStart(2, "0")}`;
+    try {
+      const startDateObj = new Date(`${selectedMonth}-01`);
+      const endDateObj = new Date(startDateObj.getFullYear(), startDateObj.getMonth() + 1, 0);
 
-    const { data } = await supabase
-      .from("transactions")
-      .select("*")
-      .eq("group_id", currentGroupId)
-      .gte("date", start)
-      .lte("date", end)
-      .order("date", { ascending: false });
+      const start = `${selectedMonth}-01`;
+      const end = `${selectedMonth}-${String(endDateObj.getDate()).padStart(2, "0")}`;
 
-    setItems(data || []);
-setLoadingItems(false);
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("group_id", currentGroupId)
+        .gte("date", start)
+        .lte("date", end)
+        .order("date", { ascending: false });
+
+      if (error) throw error;
+
+      setItems(data || []);
+    } catch (error) {
+      console.error("거래내역 조회 실패:", error);
+    } finally {
+      setLoadingItems(false);
+    }
   };
 
   const fetchYearlyItems = async () => {
