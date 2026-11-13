@@ -166,33 +166,9 @@ const inputClass =
 
     return (
         <>
-            {/* 1. 상단 내역 필터 탭 */}
-            <div className="mb-4 flex gap-2 overflow-x-auto overscroll-x-contain rounded-2xl border border-[#e9edf2] bg-white p-3 pb-3 shadow-sm">
-                {filterTabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setFilter(tab.id)}
-                        className={`${btnBaseClass} ${filter === tab.id ? activeClass : inactiveClass}`}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
+            
 
-            {/* 2. 보기 방식 탭 */}
-            <div className="mb-4 flex gap-2 overflow-x-auto overscroll-x-contain rounded-2xl border border-[#e9edf2] bg-white p-3 pb-3 shadow-sm">
-                {viewTabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() =>
-                            setView(tab.id as "year" | "list" | "calendar" | "budget")
-                        }
-                        className={`${btnBaseClass} ${view === tab.id ? activeClass : inactiveClass}`}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
+           
 
             {/* 3. 기간 이동 컨테이너 */}
             <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[#e9edf2] bg-white p-3 shadow-sm">
