@@ -526,18 +526,21 @@ export default function Home() {
   const categoryData = useMemo(() => getCategoryData(periodFilteredItems), [graphCategories, filter, categorizedNames.saving, periodFilteredItems]);
   const yearlyCategoryData = useMemo(() => getCategoryData(yearlySourceItems), [graphCategories, filter, categorizedNames.saving, yearlySourceItems]);
 
-  const totals = useMemo(() => {
-    const inc = creatorFilteredItems.filter((i) => i.type === "income").reduce((s, i) => s + (Number(i.amount) || 0), 0);
-    const exp = creatorFilteredItems.filter(isRealExpense).reduce((s, i) => s + (Number(i.amount) || 0), 0);
-    const sav = creatorFilteredItems.filter((i) => i.spend_type === "saving").reduce((s, i) => s + (Number(i.amount) || 0), 0);
+   const totals = useMemo(() => {
+    const sumAmount = (list: Item[]) =>
+      list.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
 
-    const yInc = yearlySourceItems.filter((i) => i.type === "income").reduce((s, i) => s + (Number(i.amount) || 0), 0);
-    const yExp = yearlySourceItems.filter(isRealExpense).reduce((s, i) => s + (Number(i.amount) || 0), 0);
-    const ySav = yearlySourceItems.filter((i) => i.spend_type === "saving").reduce((s, i) => s + (Number(i.amount) || 0), 0);
+    const inc = sumAmount(creatorFilteredItems.filter((i) => i.type === "income"));
+    const exp = sumAmount(creatorFilteredItems.filter(isRealExpense));
+    const sav = sumAmount(creatorFilteredItems.filter((i) => i.spend_type === "saving"));
+
+    const yInc = sumAmount(yearlySourceItems.filter((i) => i.type === "income"));
+    const yExp = sumAmount(yearlySourceItems.filter(isRealExpense));
+    const ySav = sumAmount(yearlySourceItems.filter((i) => i.spend_type === "saving"));
 
     const filtTot = filter === "income"
-      ? periodFilteredItems.filter((i) => i.type === "income").reduce((s, i) => s + (Number(i.amount) || 0), 0)
-      : periodFilteredItems.filter(isRealExpense).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+      ? sumAmount(periodFilteredItems.filter((i) => i.type === "income"))
+      : sumAmount(periodFilteredItems.filter(isRealExpense));
 
     return {
       incomeTotal: inc, expenseTotal: exp, savingTotal: sav, total: inc - exp,
