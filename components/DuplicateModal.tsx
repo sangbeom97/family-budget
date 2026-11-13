@@ -52,12 +52,18 @@ export default function DuplicateModal({
     중복 가능 거래 발견
   </h2>
 
-  <p className={`text-sm mb-4 ${
+  <p className={`text-sm mb-2 ${
     darkMode
       ? "text-gray-300"
       : "text-gray-500"
   }`}>
     {duplicateIndex} / {duplicateTotal}
+  </p>
+
+  <p className="text-sm mb-4 leading-relaxed">
+    기존 거래내역과 동일한 거래로 의심됩니다.
+    <br />
+    그래도 새 거래로 추가하시겠습니까?
   </p>
 
   <div className="border rounded-xl p-3 mb-3">
@@ -112,7 +118,7 @@ export default function DuplicateModal({
   }}
   className="flex-1 bg-blue-500 text-white rounded-xl py-2"
 >
-  예
+  중복이어도 추가
 </button>
 
   <button
@@ -133,7 +139,7 @@ export default function DuplicateModal({
       : "bg-gray-300 text-black"
   }`}
 >
-  아니요
+    건너뛰기
 </button>
 
 </div>
