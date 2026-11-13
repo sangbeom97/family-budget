@@ -409,7 +409,7 @@ export default function Home() {
       .eq("group_id", currentGroupId)
       .eq("month", selectedMonth);
     const budgetMap: Record<string, string> = {};
-    data?.forEach((item: any) => {
+    data?.forEach((item) => {
       budgetMap[item.category] = item.amount.toString();
     });
     setBudgets(budgetMap);
@@ -709,8 +709,8 @@ const sumAmount = (list: Item[]) =>
     setSelectedFileName(file.name);
 
     const reader = new FileReader();
-    reader.onload = async (evt: any) => {
-      const bstr = evt.target.result;
+    reader.onload = async () => {
+      const bstr = reader.result as string;
       const wb = XLSX.read(bstr, { type: "binary" });
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
