@@ -49,9 +49,10 @@ export default function Home() {
   const [currentInviteCode, setCurrentInviteCode] = useState<string>("");
 
   // --- 2. 일반 가계부 상태 정의 ---
-  const [mainTab, setMainTab] = useState<
+    const [mainTab, setMainTab] = useState<
     "account" | "category" | "members"
   >("account");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
   const [loadingItems, setLoadingItems] = useState(false);
   const [yearlyItems, setYearlyItems] = useState<Item[]>([]);
@@ -885,7 +886,7 @@ const sumAmount = (list: Item[]) =>
 
   // --- 9. 메인 레이아웃 렌더링 ---
   return (
-    <main className="min-h-screen bg-[#f7f8fa] px-3 py-4 text-[#191f28] sm:px-5 sm:py-6 md:px-6">
+    <main className="min-h-screen bg-[#f7f8fa] px-3 pt-16 pb-4 text-[#191f28] sm:px-5 sm:py-6 md:px-6 md:pl-20">
       <div className="mx-auto w-full max-w-6xl">
         
 
@@ -975,29 +976,67 @@ const sumAmount = (list: Item[]) =>
         </div>
 
 
-        {/* 메인 메뉴 탭 링크 */}
-        
-        {/* 메인 메뉴 탭 */}
-        <div className="mb-6 flex w-full gap-2 rounded-2xl border border-[#e9edf2] bg-white p-1.5 shadow-sm">
-          {(["category", "account", "members"] as const).map((tab) => (
+        {/* 모바일 메뉴 버튼 */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="fixed left-3 top-16 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-[#e9edf2] bg-white text-xl shadow-sm md:hidden"
+          aria-label="메뉴 열기"
+        >
+          ☰
+        </button>
+
+        {/* 모바일 사이드바 배경 */}
+        {isSidebarOpen && (
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="fixed inset-0 z-40 bg-black/30 md:hidden"
+            aria-label="메뉴 닫기"
+          />
+        )}
+
+        {/* 사이드바 */}
+        <aside
+          className={`group fixed left-0 top-14 z-50 flex h-[calc(100vh-3.5rem)] w-64 flex-col border-r border-[#e9edf2] bg-white p-3 shadow-lg transition-all duration-200 md:top-16 md:h-[calc(100vh-4rem)] md:w-16 md:overflow-hidden md:shadow-sm md:hover:w-56 ${
+            isSidebarOpen
+              ? "translate-x-0"
+              : "-translate-x-full md:translate-x-0"
+          }`}
+        >
+          <div className="mb-4 px-3 py-2 text-xs font-bold text-[#8b95a1] md:opacity-0 md:group-hover:opacity-100">
+            MAIN MENU
+          </div>
+
+          {(["account", "category", "members"] as const).map((tab) => (
             <button
               key={tab}
-              onClick={() => setMainTab(tab)}
-              className={`min-h-11 min-w-0 flex-1 rounded-xl px-2 py-2.5 text-sm font-bold transition-all sm:px-4 ${
+              onClick={() => {
+                setMainTab(tab);
+                setIsSidebarOpen(false);
+              }}
+              className={`mb-2 flex min-h-12 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
                 mainTab === tab
-                  ? "bg-[#3182f6] text-white shadow-sm"
-                  : "bg-white text-[#8b95a1] hover:bg-[#f7f8fa] hover:text-[#191f28]"
+                  ? "bg-[#e8f2ff] text-[#3182f6]"
+                  : "text-[#4e5968] hover:bg-[#f7f8fa]"
               }`}
             >
-              {tab === "category"
-                ? "카테고리 관리"
-                : tab === "account"
+              <span className="flex w-7 shrink-0 items-center justify-center text-lg">
+                {tab === "account"
+                  ? "📊"
+                  : tab === "category"
+                    ? "📁"
+                    : "👥"}
+              </span>
+
+              <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
+                {tab === "account"
                   ? "가계부"
-                  : "그룹 멤버"}
+                  : tab === "category"
+                    ? "카테고리 관리"
+                    : "그룹 멤버"}
+              </span>
             </button>
           ))}
-        </div>
-
+        </aside>
 
         {/* 컨텐츠 조건부 뷰 출력 */}
         {loadingGroups ? (
