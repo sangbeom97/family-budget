@@ -599,9 +599,11 @@ const sumAmount = (list: Item[]) =>
     return graphCategories
       .filter((cat) => filter === "saving" ? categorizedNames.saving.includes(cat) : !categorizedNames.saving.includes(cat))
       .map((cat) => {
-        const total = yearlySourceItems
-          .filter((i) => i.category === cat && (filter === "saving" ? i.spend_type === "saving" : isRealExpense(i)))
-          .reduce((s, i) => s + (Number(i.amount) || 0), 0);
+        const total = sumAmount(
+  yearlySourceItems.filter(
+    (i) => i.category === cat && (filter === "saving" ? i.spend_type === "saving" : isRealExpense(i))
+  )
+);
         return { category: cat, total };
       })
       .sort((a, b) => b.total - a.total)
