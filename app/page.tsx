@@ -321,16 +321,23 @@ export default function Home() {
     }
   };
 
-  const fetchYearlyItems = async () => {
+    const fetchYearlyItems = async () => {
     if (!currentGroupId) return;
-    const { data } = await supabase
-      .from("transactions")
-      .select("*")
-      .eq("group_id", currentGroupId)
-      .gte("date", `${selectedYear}-01-01`)
-      .lte("date", `${selectedYear}-12-31`);
 
-    setYearlyItems(data || []);
+    try {
+      const { data, error } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("group_id", currentGroupId)
+        .gte("date", `${selectedYear}-01-01`)
+        .lte("date", `${selectedYear}-12-31`);
+
+      if (error) throw error;
+
+      setYearlyItems(data || []);
+    } catch (error) {
+      console.error("연간 거래내역 조회 실패:", error);
+    }
   };
 
     const refreshTransactionData = () => {
