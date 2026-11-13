@@ -130,6 +130,13 @@ export default function TransactionForm({
   lang="ko"
   placeholder="금액 입력"
   value={amount}
+  onPointerDown={(e) => {
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      e.currentTarget.setAttribute("inputmode", "numeric");
+    } else {
+      e.currentTarget.removeAttribute("inputmode");
+    }
+  }}
   onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ""))}
   className={inputClass}
 />
