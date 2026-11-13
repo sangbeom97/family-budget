@@ -576,14 +576,17 @@ export default function Home() {
     return { variableBudgetTotal: vBudgetTot, remainVariableBudget: rVariableBudget };
   }, [graphCategories, categorizedNames.saving, view, creatorFilteredYearlyItems, creatorFilteredItems, budgets]);
 
-  const monthlyData = useMemo(() => {
+    const monthlyData = useMemo(() => {
+    const sumAmount = (list: Item[]) =>
+      list.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+
     return Array.from({ length: 12 }, (_, i) => {
       const month = `${selectedYear}-${String(i + 1).padStart(2, "0")}`;
       const monthItems = yearlySourceItems.filter((item) => item.date && item.date.startsWith(month));
 
-      const income = monthItems.filter((i) => i.type === "income").reduce((s, i) => s + (Number(i.amount) || 0), 0);
-      const expense = monthItems.filter(isRealExpense).reduce((s, i) => s + (Number(i.amount) || 0), 0);
-      const saving = monthItems.filter((i) => i.spend_type === "saving").reduce((s, i) => s + (Number(i.amount) || 0), 0);
+      const income = sumAmount(monthItems.filter((item) => item.type === "income"));
+      const expense = sumAmount(monthItems.filter(isRealExpense));
+      const saving = sumAmount(monthItems.filter((item) => item.spend_type === "saving"));
 
       return {
         month: `${i + 1}월`,
