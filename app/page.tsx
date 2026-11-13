@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import * as XLSX from "xlsx";
 import MemberView from "@/components/MemberView";
@@ -35,7 +36,7 @@ type Group = {
 
 export default function Home() {
   // --- 1. 인증 및 공유 그룹 관련 상태 ---
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [groups, setGroups] = useState<Group[]>([]);
   const [loadingGroups, setLoadingGroups] =
@@ -882,10 +883,10 @@ const sumAmount = (list: Item[]) =>
         
         {/* 메인 메뉴 탭 */}
         <div className="mb-6 flex w-full gap-2 rounded-2xl border border-[#e9edf2] bg-white p-1.5 shadow-sm">
-          {["category", "account", "members"].map((tab) => (
+          {(["category", "account", "members"] as const).map((tab) => (
             <button
               key={tab}
-              onClick={() => setMainTab(tab as any)}
+              onClick={() => setMainTab(tab)}
               className={`min-h-11 min-w-0 flex-1 rounded-xl px-2 py-2.5 text-sm font-bold transition-all sm:px-4 ${
                 mainTab === tab
                   ? "bg-[#3182f6] text-white shadow-sm"
