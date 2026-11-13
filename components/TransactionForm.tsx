@@ -126,12 +126,14 @@ export default function TransactionForm({
             금액
           </label>
           <input
-            type="number"
-            placeholder="금액 입력"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className={inputClass}
-          />
+  type="text"
+  inputMode="numeric"
+  lang="ko"
+  placeholder="금액 입력"
+  value={amount}
+  onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ""))}
+  className={inputClass}
+/>
         </div>
 
         <div className="min-w-0">
