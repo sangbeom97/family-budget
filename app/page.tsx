@@ -278,7 +278,7 @@ export default function Home() {
       return;
     }
 
-    const domain = typeof window !== "undefined" ? window.location.origin : "";
+    const domain = window.location.origin;
     const inviteUrl = `${domain}/invite?code=${currentInviteCode}`;
 
     if (navigator.clipboard) {
