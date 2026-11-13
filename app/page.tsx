@@ -164,7 +164,7 @@ export default function Home() {
   try {
     const { data: memberRows, error: memberError } = await supabase
       .from("group_members")
-      .select("group_id, role")
+      .select("group_id")
       .eq("user_id", user.id);
 
     if (memberError) throw memberError;
