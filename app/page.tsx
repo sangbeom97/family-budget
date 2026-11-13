@@ -170,7 +170,7 @@ export default function Home() {
     if (memberError) throw memberError;
 
     const groupIds =
-      memberRows?.map((row: any) => row.group_id).filter(Boolean) || [];
+      memberRows?.map((row) => row.group_id).filter(Boolean) || [];
 
     if (groupIds.length === 0) {
       setGroups([]);
@@ -194,7 +194,7 @@ export default function Home() {
 
     if (
       savedGroupId &&
-      mappedGroups.some((g: any) => g.id === savedGroupId)
+      mappedGroups.some((g) => g.id === savedGroupId)
     ) {
       setCurrentGroupId(savedGroupId);
     } else {
@@ -417,13 +417,12 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (currentGroupId) {
-      fetchItems();
-      fetchYearlyItems();
-      fetchBudgets();
-      fetchCategories();
-      fetchGroupMembers();
-    } else {
+  if (currentGroupId) {
+    refreshTransactionData();
+    fetchBudgets();
+    fetchCategories();
+    fetchGroupMembers();
+  } else {
       setItems([]);
       setYearlyItems([]);
       setBudgets({});
