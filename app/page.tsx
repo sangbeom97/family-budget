@@ -345,13 +345,21 @@ export default function Home() {
         fetchYearlyItems();
       };
 
-  const fetchCategories = async () => {
+    const fetchCategories = async () => {
     if (!currentGroupId) return;
-    const { data } = await supabase
-      .from("categories")
-      .select("*")
-      .eq("group_id", currentGroupId);
-    setCategories(data || []);
+
+    try {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("group_id", currentGroupId);
+
+      if (error) throw error;
+
+      setCategories(data || []);
+    } catch (error) {
+      console.error("카테고리 조회 실패:", error);
+    }
   };
 
   // 현재 그룹 멤버의 표시 이름 조회
