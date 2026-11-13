@@ -127,7 +127,6 @@ export default function TransactionForm({
           </label>
           <input
   type="text"
-  inputMode="numeric"
   lang="ko"
   placeholder="금액 입력"
   value={amount}
