@@ -704,7 +704,7 @@ const sumAmount = (list: Item[]) =>
   };
 
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file || !currentGroupId) return;
     setSelectedFileName(file.name);
 
