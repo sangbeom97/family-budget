@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, type ChangeEvent } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import * as XLSX from "xlsx";
@@ -703,7 +703,7 @@ const sumAmount = (list: Item[]) =>
     fetchBudgets();
   };
 
-  const handleFileUpload = (e: any) => {
+  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files[0];
     if (!file || !currentGroupId) return;
     setSelectedFileName(file.name);
