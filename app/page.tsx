@@ -180,10 +180,10 @@ export default function Home() {
     }
 
     const { data: groupRows, error: groupError } = await supabase
-      .from("groups")
-      .select("id, name")
-      .in("id", groupIds);
-
+  .from("groups")
+  .select("id, name")
+  .in("id", groupIds)
+  .is("archived_at", null);
     if (groupError) throw groupError;
 
     const mappedGroups = groupRows || [];
