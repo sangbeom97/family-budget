@@ -130,9 +130,7 @@ export default function Home() {
   const handleGoogleSignIn = async () => {
     const pendingInvite = localStorage.getItem("pendingInvite");
 
-    const redirectUrl = pendingInvite
-      ? pendingInvite
-      : window.location.origin;
+    const redirectUrl = pendingInvite || window.location.origin;
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -704,7 +702,7 @@ const sumAmount = (list: Item[]) =>
     fetchBudgets();
   };
 
-  const handleFileUpload = async (e: any) => {
+  const handleFileUpload = (e: any) => {
     const file = e.target.files[0];
     if (!file || !currentGroupId) return;
     setSelectedFileName(file.name);
