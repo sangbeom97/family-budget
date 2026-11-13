@@ -1210,11 +1210,15 @@ const sumAmount = (list: Item[]) =>
             )}
 
             {mainTab === "members" && (
-              <MemberView
-                currentGroupId={currentGroupId}
-                role={role}
-              />
-            )}
+  <MemberView
+    currentGroupId={currentGroupId}
+    role={role}
+    onLeave={async () => {
+      await fetchUserGroups();
+      setMainTab("account");
+    }}
+  />
+)}
           </>
         )}
       </div>
