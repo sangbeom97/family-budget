@@ -467,6 +467,9 @@ export default function Home() {
 
   const isRealExpense = (item: Item) => item.type === "expense" && item.spend_type !== "saving";
 
+const sumAmount = (list: Item[]) =>
+  list.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+
   const creatorFilteredItems = useMemo(() => {
     return selectedCreator === "all"
       ? items
@@ -527,10 +530,7 @@ export default function Home() {
   const yearlyCategoryData = useMemo(() => getCategoryData(yearlySourceItems), [graphCategories, filter, categorizedNames.saving, yearlySourceItems]);
 
    const totals = useMemo(() => {
-    const sumAmount = (list: Item[]) =>
-      list.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
-
-    const inc = sumAmount(creatorFilteredItems.filter((i) => i.type === "income"));
+  const inc = sumAmount(creatorFilteredItems.filter((i) => i.type === "income"));
     const exp = sumAmount(creatorFilteredItems.filter(isRealExpense));
     const sav = sumAmount(creatorFilteredItems.filter((i) => i.spend_type === "saving"));
 
@@ -577,10 +577,7 @@ export default function Home() {
   }, [graphCategories, categorizedNames.saving, view, creatorFilteredYearlyItems, creatorFilteredItems, budgets]);
 
     const monthlyData = useMemo(() => {
-    const sumAmount = (list: Item[]) =>
-      list.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
-
-    return Array.from({ length: 12 }, (_, i) => {
+  return Array.from({ length: 12 }, (_, i) => {
       const month = `${selectedYear}-${String(i + 1).padStart(2, "0")}`;
       const monthItems = yearlySourceItems.filter((item) => item.date && item.date.startsWith(month));
 
