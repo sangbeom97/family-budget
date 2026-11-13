@@ -96,7 +96,35 @@ export default function MemberView({
         }
 
         await onLeave();
-    };
+};
+
+// 모임 해체
+const archiveGroup = async () => {
+    if (currentUserRole !== "owner") {
+        alert("모임장만 모임을 해체할 수 있습니다.");
+        return;
+    }
+
+    if (
+        !confirm(
+            "정말 모임을 해체하시겠습니까?\n\n모든 멤버의 가입 정보가 해제되며, 기존 거래내역·예산·카테고리는 보존됩니다."
+        )
+    ) {
+        return;
+    }
+
+    const { error } = await supabase.rpc("archive_group", {
+        p_group_id: currentGroupId,
+    });
+
+    if (error) {
+        alert(`모임 해체 실패: ${error.message}`);
+        return;
+    }
+
+    alert("모임이 해체되었습니다. 기존 가계부 데이터는 보존되었습니다.");
+    await onLeave();
+};
 
     // 다른 멤버 강제퇴장
     const removeMember = async (userId: string, nickname: string) => {
@@ -185,9 +213,20 @@ export default function MemberView({
                     </p>
                 </div>
 
-                <span className="rounded-full bg-[#f2f4f6] px-3 py-1.5 text-xs font-bold text-[#4e5968]">
-                    {members.length}명
-                </span>
+                <div className="flex flex-wrap items-center justify-end gap-2">
+    <span className="rounded-full bg-[#f2f4f6] px-3 py-1.5 text-xs font-bold text-[#4e5968]">
+        {members.length}명
+    </span>
+
+    {currentUserRole === "owner" && (
+        <button
+            onClick={archiveGroup}
+            className="min-h-9 rounded-lg border border-[#f3c5c5] px-3 py-1.5 text-xs font-bold text-[#d64545] transition hover:bg-[#fff1f1]"
+        >
+            모임 해체
+        </button>
+    )}
+</div>
             </div>
 
             <div className="space-y-3">
