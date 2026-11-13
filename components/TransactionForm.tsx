@@ -56,8 +56,9 @@ export default function TransactionForm({
   }`;
 
   return (
-    <div
-      className={`mb-4 rounded-2xl border p-4 shadow-sm sm:p-5 ${
+        <div
+      id="transaction-form"
+      className={`mb-4 scroll-mt-20 rounded-2xl border p-4 shadow-sm sm:p-5 ${
         darkMode
           ? "bg-slate-800 border-slate-700"
           : "bg-white border-[#e9edf2]"
