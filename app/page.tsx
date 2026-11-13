@@ -3,9 +3,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabase";
 import * as XLSX from "xlsx";
-import ListView from "@/components/ListView";
-import CalendarView from "@/components/CalendarView";
-import CategoryChart from "@/components/CategoryChart";
 import MemberView from "@/components/MemberView";
 import SummaryCards from "@/components/SummaryCards";
 import DuplicateModal from "@/components/DuplicateModal";
