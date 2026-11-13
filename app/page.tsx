@@ -652,7 +652,7 @@ const sumAmount = (list: Item[]) =>
     refreshTransactionData();
   };
 
-  const startEdit = (item: Item) => {
+    const startEdit = (item: Item) => {
     setEditingId(item.id);
     setName(item.name);
     setAmount(item.amount.toString());
@@ -661,6 +661,11 @@ const sumAmount = (list: Item[]) =>
     setSpendType(item.type === "income" ? "variable" : item.spend_type);
     setDate(item.date);
     setMemo(item.memo);
+
+    document.getElementById("transaction-form")?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
   };
 
   const addCategory = async () => {
