@@ -1001,7 +1001,7 @@ const sumAmount = (list: Item[]) =>
 
         {/* 사이드바 */}
         <aside
-          className={`group fixed left-0 top-14 z-50 flex h-[calc(100vh-3.5rem)] w-64 flex-col border-r border-[#e9edf2] bg-white p-3 shadow-lg transition-all duration-200 md:top-16 md:h-[calc(100vh-4rem)] md:w-16 md:overflow-hidden md:shadow-sm md:hover:w-56 ${
+          className={`group fixed left-0 top-14 z-50 flex h-[calc(100vh-3.5rem)] w-64 flex-col border-r border-[#e9edf2] bg-white p-3 shadow-lg transition-all duration-200 md:top-16 md:h-[calc(100vh-4rem)] md:w-16 md:overflow-x-hidden md:overflow-y-auto md:shadow-sm md:hover:w-56 ${
             isSidebarOpen
               ? "translate-x-0"
               : "-translate-x-full md:translate-x-0"
@@ -1011,33 +1011,78 @@ const sumAmount = (list: Item[]) =>
             MAIN MENU
           </div>
 
-          {(["account", "category", "members"] as const).map((tab) => (
+                    <div className="mb-2 px-3 text-xs font-bold text-[#8b95a1] md:opacity-0 md:group-hover:opacity-100">
+            가계부
+          </div>
+
+          {[
+            { id: "all", label: "전체", icon: "📊", filter: "all", view: "list" },
+            { id: "income", label: "수입", icon: "💰", filter: "income", view: "list" },
+            { id: "fixed", label: "고정지출", icon: "🏠", filter: "fixed", view: "list" },
+            { id: "variable", label: "변동지출", icon: "🛒", filter: "variable", view: "list" },
+            { id: "allowance", label: "용돈", icon: "💳", filter: "allowance", view: "list" },
+            { id: "saving", label: "저축", icon: "🐷", filter: "saving", view: "list" },
+            { id: "year", label: "연요약", icon: "📈", view: "year" },
+            { id: "budget", label: "예산", icon: "🎯", view: "budget" },
+            { id: "list", label: "리스트", icon: "📋", view: "list" },
+            { id: "calendar", label: "달력", icon: "📅", view: "calendar" },
+          ]
+            .filter((item) => item.id !== "budget" || role !== "member")
+            .map((item) => {
+              const active =
+                mainTab === "account" &&
+                (item.filter
+                  ? filter === item.filter && view === "list"
+                  : view === item.view);
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setMainTab("account");
+                    if (item.filter) setFilter(item.filter);
+                    if (item.view) setView(item.view as "year" | "list" | "calendar" | "budget");
+                    setIsSidebarOpen(false);
+                  }}
+                  className={`mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
+                    active
+                      ? "bg-[#e8f2ff] text-[#3182f6]"
+                      : "text-[#4e5968] hover:bg-[#f7f8fa]"
+                  }`}
+                >
+                  <span className="flex w-7 shrink-0 items-center justify-center text-lg">
+                    {item.icon}
+                  </span>
+                  <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
+
+          <div className="my-3 border-t border-[#e9edf2]" />
+
+          {[
+            { id: "category", label: "카테고리 관리", icon: "📁" },
+            { id: "members", label: "그룹 멤버", icon: "👥" },
+          ].map((item) => (
             <button
-              key={tab}
+              key={item.id}
               onClick={() => {
-                setMainTab(tab);
+                setMainTab(item.id as "category" | "members");
                 setIsSidebarOpen(false);
               }}
-              className={`mb-2 flex min-h-12 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
-                mainTab === tab
+              className={`mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
+                mainTab === item.id
                   ? "bg-[#e8f2ff] text-[#3182f6]"
                   : "text-[#4e5968] hover:bg-[#f7f8fa]"
               }`}
             >
               <span className="flex w-7 shrink-0 items-center justify-center text-lg">
-                {tab === "account"
-                  ? "📊"
-                  : tab === "category"
-                    ? "📁"
-                    : "👥"}
+                {item.icon}
               </span>
-
               <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
-                {tab === "account"
-                  ? "가계부"
-                  : tab === "category"
-                    ? "카테고리 관리"
-                    : "그룹 멤버"}
+                {item.label}
               </span>
             </button>
           ))}
