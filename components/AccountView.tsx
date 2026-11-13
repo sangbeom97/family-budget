@@ -108,16 +108,6 @@ export default function AccountView(props: AccountViewProps) {
 );
 
     // 스타일 설정
-    const btnBaseClass =
-        "min-h-10 shrink-0 px-4 py-2.5 rounded-full whitespace-nowrap transition-all font-semibold text-sm";
-
-const activeClass =
-    "bg-[#3182f6] text-white shadow-sm";
-
-const inactiveClass =
-    "bg-white border border-[#e9edf2] text-[#4e5968] hover:bg-[#f7f8fa]";
-
-    // 스타일 설정
     const inputClass =
         "min-h-11 rounded-xl px-3 py-2.5 bg-white text-[#191f28] border border-[#e5e8eb] focus:outline-none focus:ring-2 focus:ring-[#3182f6]/20 focus:border-[#3182f6]";
 
