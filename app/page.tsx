@@ -714,14 +714,14 @@ const sumAmount = (list: Item[]) =>
       const wb = XLSX.read(bstr, { type: "binary" });
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
-      const data: any[] = XLSX.utils.sheet_to_json(ws);
+      const data = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws);
 
-      const parsedItems = data.map((row: any) => {
+      const parsedItems = data.map((row) => {
         const rawAmount = String(row["금액"] || "").replace(/[^0-9-]/g, "");
         const parsedAmount = Number(rawAmount);
 
         return {
-          name: row["내역명"] || row["항목"] || "미지정",
+          name: (row["내역명"] || row["항목"] || "미지정") as string,
           amount: isNaN(parsedAmount) ? 0 : parsedAmount,
           type: row["타입"] === "수입" ? "income" : "expense",
           category: row["카테고리"] || "기타",
