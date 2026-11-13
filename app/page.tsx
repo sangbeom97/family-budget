@@ -257,11 +257,20 @@ export default function Home() {
 
   const createGroup = async () => {
     if (!newGroupName.trim()) return;
-    const { data: newGroup } = await supabase
-      .from("groups")
-      .insert([{ name: newGroupName, created_by: session?.user?.id }])
-      .select()
-      .single();
+    const { data: newGroup, error: groupError } = await supabase
+  .from("groups")
+  .insert([{
+    name: newGroupName,
+    created_by: session?.user?.id,
+    invite_code: crypto.randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase(),
+  }])
+  .select()
+  .single();
+
+if (groupError) {
+  alert(`가계부 생성 실패: ${groupError.message}`);
+  return;
+}
 
     if (newGroup) {
   const { error } = await supabase.from("group_members").insert([{
