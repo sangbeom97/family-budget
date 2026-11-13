@@ -568,7 +568,9 @@ const sumAmount = (list: Item[]) =>
 
     const vBudgetTot = targets.reduce((s, cat) => s + Number(budgets[cat] || 0), 0);
     const rVariableBudget = targets.reduce((sum, cat) => {
-      const spent = sourceItems.filter((i) => i.category === cat && isRealExpense(i)).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+      const spent = sumAmount(
+        sourceItems.filter((i) => i.category === cat && isRealExpense(i))
+      );
       const budget = Number(budgets[cat] || 0);
       return sum + (budget - spent);
     }, 0);
