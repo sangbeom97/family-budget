@@ -39,14 +39,14 @@ export default function CategoryManager({
     {
       title: "고정지출",
       description: "매월 정기적으로 발생하는 지출",
-      color: "#3182f6",
-      bg: darkMode ? "bg-blue-500/10" : "bg-blue-50",
+      color: "#9145c9",
+      bg: darkMode ? "bg-[#9145c9]/10" : "bg-blue-50",
       categories: fixedCategories,
     },
     {
       title: "변동지출",
       description: "생활비 및 일상 소비",
-      color: "#f04452",
+      color: "#e45d94",
       bg: darkMode ? "bg-red-500/10" : "bg-red-50",
       categories: variableCategories,
     },
@@ -75,12 +75,12 @@ export default function CategoryManager({
 
   const cardClass = darkMode
     ? "bg-slate-800 border-slate-700 text-white"
-    : "bg-white border-[#e9edf2] text-[#191f28]";
+    : "bg-white border-[#f0e8f5] text-[#292238]";
 
-  const inputClass = `min-h-12 w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[#3182f6] focus:ring-2 focus:ring-[#3182f6]/15 ${
+  const inputClass = `min-h-12 w-full rounded-xl border px-4 py-3 text-sm outline-none transition-colors focus:border-[#9145c9] focus:ring-2 focus:ring-[#9145c9]/15 ${
     darkMode
       ? "bg-slate-700 border-slate-600 text-white"
-      : "bg-[#f7f8fa] border-[#e9edf2] text-[#191f28]"
+      : "bg-[#fffaff] border-[#f0e8f5] text-[#292238]"
   }`;
 
   return (
@@ -89,12 +89,12 @@ export default function CategoryManager({
       <div>
         <h2
           className={`text-xl font-extrabold sm:text-2xl ${
-            darkMode ? "text-white" : "text-[#191f28]"
+            darkMode ? "text-white" : "text-[#292238]"
           }`}
         >
           카테고리 관리
         </h2>
-        <p className="mt-1 text-sm text-[#8b95a1]">
+        <p className="mt-1 text-sm text-[#81768c]">
           가계부에서 사용할 수입과 지출 항목을 관리합니다.
         </p>
       </div>
@@ -107,7 +107,7 @@ export default function CategoryManager({
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]">
           <div className="min-w-0">
-            <label className="mb-2 block text-xs font-semibold text-[#8b95a1]">
+            <label className="mb-2 block text-xs font-semibold text-[#81768c]">
               카테고리명
             </label>
             <input
@@ -119,7 +119,7 @@ export default function CategoryManager({
           </div>
 
           <div className="min-w-0">
-            <label className="mb-2 block text-xs font-semibold text-[#8b95a1]">
+            <label className="mb-2 block text-xs font-semibold text-[#81768c]">
               카테고리 유형
             </label>
             <select
@@ -139,7 +139,7 @@ export default function CategoryManager({
             <button
               type="button"
               onClick={addCategory}
-              className="min-h-12 w-full rounded-xl bg-[#3182f6] px-6 text-sm font-bold text-white transition-colors hover:bg-[#1b64da] lg:w-auto"
+              className="min-h-12 w-full rounded-xl bg-[#9145c9] px-6 text-sm font-bold text-white transition-colors hover:bg-[#7828c8] lg:w-auto"
             >
               + 추가하기
             </button>
@@ -162,12 +162,12 @@ export default function CategoryManager({
                 >
                   {section.title}
                 </h3>
-                <p className="mt-1 text-xs text-[#8b95a1]">
+                <p className="mt-1 text-xs text-[#81768c]">
                   {section.description}
                 </p>
               </div>
 
-              <span className="shrink-0 rounded-full bg-[#f7f8fa] px-3 py-1 text-xs font-bold text-[#8b95a1]">
+              <span className="shrink-0 rounded-full bg-[#fffaff] px-3 py-1 text-xs font-bold text-[#81768c]">
                 {section.categories.length}개
               </span>
             </div>
@@ -180,7 +180,7 @@ export default function CategoryManager({
                 >
                   <span
                     className={`break-all text-sm font-semibold ${
-                      darkMode ? "text-slate-200" : "text-[#4e5968]"
+                      darkMode ? "text-slate-200" : "text-[#665675]"
                     }`}
                   >
                     {category}
@@ -190,7 +190,7 @@ export default function CategoryManager({
                     type="button"
                     onClick={() => deleteCategory(category)}
                     aria-label={`${category} 삭제`}
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-base font-bold text-[#8b95a1] transition-colors hover:bg-red-100 hover:text-red-500"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-base font-bold text-[#81768c] transition-colors hover:bg-red-100 hover:text-red-500"
                   >
                     ×
                   </button>
@@ -198,7 +198,7 @@ export default function CategoryManager({
               ))}
 
               {section.categories.length === 0 && (
-                <p className="py-3 text-sm text-[#8b95a1]">
+                <p className="py-3 text-sm text-[#81768c]">
                   등록된 카테고리가 없습니다.
                 </p>
               )}
