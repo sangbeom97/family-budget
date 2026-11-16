@@ -109,7 +109,7 @@ export default function AccountView(props: AccountViewProps) {
 
     // 스타일 설정
     const inputClass =
-        "min-h-11 rounded-xl px-3 py-2.5 bg-white text-[#191f28] border border-[#e5e8eb] focus:outline-none focus:ring-2 focus:ring-[#3182f6]/20 focus:border-[#3182f6]";
+        "min-h-11 rounded-xl px-3 py-2.5 bg-white text-[#292238] border border-[#f0e8f5] focus:outline-none focus:ring-2 focus:ring-[#9145c9]/20 focus:border-[#9145c9]";
 
     // 카테고리 필터 옵션 메모이제이션
     const filteredOptions = useMemo(() => {
@@ -144,7 +144,7 @@ export default function AccountView(props: AccountViewProps) {
            
 
             {/* 3. 기간 이동 컨테이너 */}
-            <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[#e9edf2] bg-white p-3 shadow-sm">
+            <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[#f0e8f5] bg-white p-3 shadow-sm">
                 <button onClick={() => handlePageSelect("prev")} className={`${inputClass} px-3 font-bold shadow-sm`}>
                     ◀
                 </button>
@@ -178,7 +178,7 @@ export default function AccountView(props: AccountViewProps) {
 
             {/* 4. 기간 조회 전용 달력 */}
             {(view === "list" || view === "year") && (
-                <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[#e9edf2] bg-white p-3 shadow-sm">
+                <div className="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-[#f0e8f5] bg-white p-3 shadow-sm">
                     <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
                     <span className="text-gray-500">~</span>
                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
@@ -201,7 +201,7 @@ export default function AccountView(props: AccountViewProps) {
             )}
 
             {/* 5. 검색 및 카테고리 필터 바 */}
-            <div className="mb-5 grid grid-cols-1 gap-3 rounded-2xl border border-[#e9edf2] bg-white p-4 shadow-sm sm:grid-cols-2 sm:p-5 lg:grid-cols-3">
+            <div className="mb-5 grid grid-cols-1 gap-3 rounded-2xl border border-[#f0e8f5] bg-white p-4 shadow-sm sm:grid-cols-2 sm:p-5 lg:grid-cols-3">
                 <input
                     type="text"
                     placeholder="검색어 입력"
@@ -217,14 +217,14 @@ export default function AccountView(props: AccountViewProps) {
                     ))}
                 </select>
 
-                <div className="min-h-11 rounded-xl border border-[#e9edf2] bg-[#f7f8fa] px-4 py-2.5 flex items-center justify-between">
+                <div className="min-h-11 rounded-xl border border-[#f0e8f5] bg-[#fffaff] px-4 py-2.5 flex items-center justify-between">
                     <span className="text-sm font-semibold text-gray-700">현재 합계</span>
                     <span className="font-extrabold text-lg text-red-600">₩ {filteredTotal.toLocaleString()}</span>
                 </div>
             </div>
 
             {/* 작성자별 전체 통계 필터 */}
-<div className="mb-5 flex gap-2 overflow-x-auto rounded-2xl border border-[#e9edf2] bg-white p-3 pb-3 shadow-sm">
+<div className="mb-5 flex gap-2 overflow-x-auto rounded-2xl border border-[#f0e8f5] bg-white p-3 pb-3 shadow-sm">
     {[
         { id: "all", label: "전체" },
         ...groupMembers.map((member) => ({
@@ -237,8 +237,8 @@ export default function AccountView(props: AccountViewProps) {
             onClick={() => setSelectedCreator(member.id)}
             className={`shrink-0 px-4 py-2.5 rounded-full whitespace-nowrap text-sm font-semibold transition-all ${
     selectedCreator === member.id
-        ? "bg-[#3182f6] text-white shadow-sm"
-        : "bg-white text-[#4e5968] border border-[#e9edf2] hover:bg-[#f7f8fa]"
+        ? "bg-[#9145c9] text-white shadow-sm"
+        : "bg-white text-[#665675] border border-[#f0e8f5] hover:bg-[#fffaff]"
 }`}
         >
             {member.label}
@@ -263,12 +263,12 @@ export default function AccountView(props: AccountViewProps) {
                 <div className="mt-4">
                     {filter !== "income" && (
                         <>
-                            <div className="mb-4 rounded-2xl border border-[#e9edf2] bg-white p-5 shadow-sm">
+                            <div className="mb-4 rounded-2xl border border-[#f0e8f5] bg-white p-5 shadow-sm">
                                 <CategoryChart view={view} categoryData={categoryData} yearlyCategoryData={yearlyCategoryData} />
                             </div>
 
-                            <div className="mb-4 rounded-2xl border border-[#e9edf2] bg-white p-5 shadow-sm">
-                                <h3 className="mb-4 text-base font-extrabold text-[#191f28]">
+                            <div className="mb-4 rounded-2xl border border-[#f0e8f5] bg-white p-5 shadow-sm">
+                                <h3 className="mb-4 text-base font-extrabold text-[#292238]">
     예산 대비 사용 현황
 </h3>
                                 {/* 모바일: 0원 제외 가로 막대그래프 */}
@@ -291,7 +291,7 @@ export default function AccountView(props: AccountViewProps) {
                 <XAxis
                     type="number"
                     domain={["auto", "auto"]}
-                    tick={{ fontSize: 10, fill: "#8b95a1" }}
+                    tick={{ fontSize: 10, fill: "#81768c" }}
                     axisLine={false}
                     tickLine={false}
                     tickFormatter={(value) =>
@@ -305,7 +305,7 @@ export default function AccountView(props: AccountViewProps) {
                     dataKey="name"
                     width={85}
                     interval={0}
-                    tick={{ fontSize: 11, fill: "#8b95a1" }}
+                    tick={{ fontSize: 11, fill: "#81768c" }}
                     axisLine={false}
                     tickLine={false}
                 />
@@ -316,7 +316,7 @@ export default function AccountView(props: AccountViewProps) {
                     ]}
                     contentStyle={{
                         borderRadius: "12px",
-                        border: "1px solid #e9edf2",
+                        border: "1px solid #f0e8f5",
                         boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
                     }}
                 />
@@ -328,14 +328,14 @@ export default function AccountView(props: AccountViewProps) {
                     {mobileBudgetCompareData.map((entry, index) => (
                         <Cell
                             key={`cell-${index}`}
-                            fill={entry.남은예산 >= 0 ? "#3182f6" : "#f04452"}
+                            fill={entry.남은예산 >= 0 ? "#9145c9" : "#e45d94"}
                         />
                     ))}
                 </Bar>
             </BarChart>
         </ResponsiveContainer>
     ) : (
-        <div className="flex h-full items-center justify-center text-sm text-[#8b95a1]">
+        <div className="flex h-full items-center justify-center text-sm text-[#81768c]">
             표시할 예산 항목이 없습니다.
         </div>
     )}
@@ -358,13 +358,13 @@ export default function AccountView(props: AccountViewProps) {
                 textAnchor="end"
                 interval={0}
                 height={55}
-                tick={{ fontSize: 11, fill: "#8b95a1" }}
+                tick={{ fontSize: 11, fill: "#81768c" }}
                 axisLine={false}
                 tickLine={false}
             />
             <YAxis
                 domain={["auto", "auto"]}
-                tick={{ fontSize: 11, fill: "#8b95a1" }}
+                tick={{ fontSize: 11, fill: "#81768c" }}
                 axisLine={false}
                 tickLine={false}
                 width={55}
@@ -381,7 +381,7 @@ export default function AccountView(props: AccountViewProps) {
                 ]}
                 contentStyle={{
                     borderRadius: "12px",
-                    border: "1px solid #e9edf2",
+                    border: "1px solid #f0e8f5",
                     boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
                 }}
             />
@@ -389,7 +389,7 @@ export default function AccountView(props: AccountViewProps) {
                 {budgetCompareData.map((entry, index) => (
                     <Cell
                         key={`cell-${index}`}
-                        fill={entry.남은예산 >= 0 ? "#3182f6" : "#f04452"}
+                        fill={entry.남은예산 >= 0 ? "#9145c9" : "#e45d94"}
                     />
                 ))}
             </Bar>
@@ -412,12 +412,12 @@ export default function AccountView(props: AccountViewProps) {
                             />
                         )}
 
-                        <div className="mb-5 mt-4 rounded-2xl border border-[#e9edf2] bg-white p-5 text-center shadow-sm sm:p-6">
+                        <div className="mb-5 mt-4 rounded-2xl border border-[#f0e8f5] bg-white p-5 text-center shadow-sm sm:p-6">
                             <div className="text-3xl mb-2">📊</div>
                             <h3 className="font-bold text-base mb-1">Excel 가져오기 / 내보내기</h3>
                             <p className="text-xs mb-4 text-gray-500">파일을 선택하거나 기존 데이터를 내보낼 수 있습니다.</p>
                             <div className="flex flex-col justify-center gap-3 sm:flex-row">
-                                <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-500 text-white text-sm font-medium cursor-pointer hover:bg-blue-600 transition">
+                                <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#9145c9] text-white text-sm font-medium cursor-pointer hover:bg-[#7828c8] transition">
                                     📁 파일 선택
                                     <input type="file" accept=".xlsx,.xls" onChange={handleFileUpload} className="hidden" />
                                 </label>
@@ -451,11 +451,11 @@ export default function AccountView(props: AccountViewProps) {
             {view === "year" && (
                 <div className="space-y-4 mt-4">
                     {[
-                        { title: "월별 지출", key: "지출", color: "#ef4444", isPercent: false },
-                        { title: "월별 저축률", key: "저축률", color: "#22c55e", isPercent: true },
-                        { title: "월별 소비패턴", keys: ["수입", "지출", "저축"], colors: ["#2563eb", "#ef4444", "#22c55e"], isMulti: true }
+                        { title: "월별 지출", key: "지출", color: "#e45d94", isPercent: false },
+                        { title: "월별 저축률", key: "저축률", color: "#d77eaa", isPercent: true },
+                        { title: "월별 소비패턴", keys: ["수입", "지출", "저축"], colors: ["#9b63e8", "#e45d94", "#d77eaa"], isMulti: true }
                     ].map((chart, idx) => (
-                        <div key={idx} className="rounded-2xl border border-[#e9edf2] bg-white p-4 shadow-sm sm:p-5">
+                        <div key={idx} className="rounded-2xl border border-[#f0e8f5] bg-white p-4 shadow-sm sm:p-5">
                             <h3 className="font-extrabold mb-4 text-sm">{chart.title}</h3>
                             <div className="h-64 w-full sm:h-80">
     <ResponsiveContainer width="100%" height="100%">
@@ -470,12 +470,12 @@ export default function AccountView(props: AccountViewProps) {
             />
             <XAxis
                 dataKey="month"
-                tick={{ fontSize: 11, fill: "#8b95a1" }}
+                tick={{ fontSize: 11, fill: "#81768c" }}
                 axisLine={false}
                 tickLine={false}
             />
             <YAxis
-                tick={{ fontSize: 11, fill: "#8b95a1" }}
+                tick={{ fontSize: 11, fill: "#81768c" }}
                 axisLine={false}
                 tickLine={false}
                 width={55}
@@ -496,7 +496,7 @@ export default function AccountView(props: AccountViewProps) {
                 ]}
                 contentStyle={{
                     borderRadius: "12px",
-                    border: "1px solid #e9edf2",
+                    border: "1px solid #f0e8f5",
                     boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
                 }}
             />
@@ -522,7 +522,7 @@ export default function AccountView(props: AccountViewProps) {
                         </div>
                     ))}
 
-                    <div className="rounded-2xl border border-[#e9edf2] bg-white p-4 shadow-sm sm:p-5">
+                    <div className="rounded-2xl border border-[#f0e8f5] bg-white p-4 shadow-sm sm:p-5">
                         <h3 className="font-extrabold mb-4 text-sm">연간 카테고리 TOP5</h3>
                         <div className="space-y-3">
                             {topCategories.map((item, index) => (
@@ -550,7 +550,7 @@ export default function AccountView(props: AccountViewProps) {
                             const percent = budget > 0 ? (spent / budget) * 100 : 0;
 
                             return (
-                                <div key={cat} className="rounded-xl border border-[#e9edf2] bg-[#f7f8fa] p-4">
+                                <div key={cat} className="rounded-xl border border-[#f0e8f5] bg-[#fffaff] p-4">
                                     <div className="flex justify-between mb-2 text-sm">
                                         <span className="font-semibold text-gray-800">{cat}</span>
                                         <span className="font-extrabold">
@@ -568,7 +568,7 @@ export default function AccountView(props: AccountViewProps) {
                                             onChange={(e) => saveBudget(cat, e.target.value)}
                                             className={`${inputClass} w-32 py-1 text-sm`}
                                         />
-                                        <span className={`text-sm font-bold ${percent > 100 ? "text-red-500" : "text-blue-500"}`}>
+                                        <span className={`text-sm font-bold ${percent > 100 ? "text-red-500" : "text-[#9145c9]"}`}>
                                             {Math.round(percent)}%
                                         </span>
                                     </div>
