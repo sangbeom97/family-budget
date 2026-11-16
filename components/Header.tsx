@@ -51,7 +51,13 @@ export default function Header() {
           />
         </Link>
 
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-1 sm:gap-2">
+          <Link
+            href="/intro"
+            className="rounded-full px-3 py-2 text-sm font-semibold text-[#8e42c8] transition-colors hover:bg-[#fbf2ff]"
+          >
+            서비스 소개
+          </Link>
           <Link
             href="/blog"
             className="rounded-full px-3 py-2 text-sm font-semibold text-[#4e5968] transition-colors hover:bg-[#f2f4f6] hover:text-[#191f28]"
