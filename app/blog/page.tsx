@@ -119,16 +119,16 @@ const sections = [
 
 export default function BlogPage() {
   return (
-    <main className="min-h-screen bg-[#f7f8fa] px-4 py-8 text-[#191f28] sm:px-6 sm:py-12">
+    <main className="relative min-h-screen overflow-hidden bg-[#fffaff] px-4 py-8 text-[#292238] sm:px-6 sm:py-12"><div className="pointer-events-none fixed inset-0 -z-0 bg-[radial-gradient(circle_at_12%_8%,rgba(210,160,255,0.18),transparent_30%),radial-gradient(circle_at_88%_18%,rgba(255,170,198,0.18),transparent_28%)]" /><div className="relative z-10">
       <div className="mx-auto max-w-5xl">
-        <div className="mb-8 rounded-3xl bg-white p-6 shadow-sm sm:p-10">
-          <span className="mb-3 inline-flex rounded-full bg-[#eef5ff] px-3 py-1.5 text-xs font-bold text-[#3182f6]">
+        <div className="mb-8 rounded-[2rem] border border-white bg-white/90 p-6 shadow-[0_20px_60px_rgba(114,65,145,0.10)] sm:p-10">
+          <span className="mb-3 inline-flex rounded-full border border-[#f0dafa] bg-white/80 px-3 py-1.5 text-xs font-bold text-[#9145c9] shadow-sm">
             JELLIAN GUIDE
           </span>
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-4xl">
             Jellian 사용 가이드
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-[#6b7684] sm:text-base">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-[#71677d] sm:text-base">
             부부·가족부터 동아리·소모임, 여행·프로젝트까지.
             목적에 맞는 공유 가계부를 만들고 함께 관리하는 방법을 안내합니다.
           </p>
@@ -140,7 +140,7 @@ export default function BlogPage() {
               ["📊", "통계 및 예산"],
               ["📁", "Excel 연동"],
             ].map(([icon, label]) => (
-              <div key={label} className="rounded-2xl bg-[#f7f8fa] p-4">
+              <div key={label} className="rounded-2xl bg-[#fffaff] p-4">
                 <div className="text-2xl">{icon}</div>
                 <p className="mt-2 text-sm font-bold">{label}</p>
               </div>
@@ -148,20 +148,20 @@ export default function BlogPage() {
           </div>
         </div>
 
-        <div className="mb-6 rounded-2xl border border-[#e9edf2] bg-white p-5 shadow-sm">
+        <div className="mb-6 rounded-3xl border border-[#f0e8f5] bg-white p-5 shadow-[0_8px_30px_rgba(100,60,120,0.05)]">
           <h2 className="mb-4 text-base font-extrabold">가이드 목차</h2>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {sections.map((section) => (
               <a
                 key={section.id}
                 href={`#${section.id}`}
-                className="flex items-center gap-3 rounded-xl bg-[#f7f8fa] px-4 py-3 text-sm font-semibold transition hover:bg-[#eef5ff]"
+                className="flex items-center gap-3 rounded-xl bg-[#fffaff] px-4 py-3 text-sm font-semibold transition hover:bg-[#f4eaff]"
               >
-                <span className="font-extrabold text-[#3182f6]">
+                <span className="font-extrabold text-[#9145c9]">
                   {section.number}
                 </span>
                 {section.title}
-                <span className="ml-auto text-[#aab2bd]">↗</span>
+                <span className="ml-auto text-[#b0a6b8]">↗</span>
               </a>
             ))}
           </div>
@@ -172,29 +172,29 @@ export default function BlogPage() {
             <section
               key={section.id}
               id={section.id}
-              className="scroll-mt-24 rounded-2xl border border-[#e9edf2] bg-white p-5 shadow-sm sm:p-7"
+              className="scroll-mt-24 rounded-3xl border border-[#f0e8f5] bg-white p-5 shadow-[0_8px_30px_rgba(100,60,120,0.05)] sm:p-7"
             >
               <div className="flex items-start gap-4">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#eef5ff] text-sm font-extrabold text-[#3182f6]">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#8d35e8] to-[#f05b9c] text-sm font-extrabold text-white">
                   {section.number}
                 </span>
                 <div className="min-w-0">
                   <h2 className="text-lg font-extrabold sm:text-xl">
                     {section.title}
                   </h2>
-                  <p className="mt-1 text-sm leading-6 text-[#8b95a1]">
+                  <p className="mt-1 text-sm leading-6 text-[#81768c]">
                     {section.description}
                   </p>
                 </div>
               </div>
 
-              <ol className="mt-5 space-y-3 border-t border-[#f0f2f4] pt-5">
+              <ol className="mt-5 space-y-3 border-t border-[#f1eaf5] pt-5">
                 {section.steps.map((step, index) => (
                   <li key={index} className="flex gap-3 text-sm leading-6">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f2f4f6] text-xs font-bold text-[#4e5968]">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#f4eaff] text-xs font-bold text-[#665675]">
                       {index + 1}
                     </span>
-                    <span className="text-[#4e5968]">{step}</span>
+                    <span className="text-[#665675]">{step}</span>
                   </li>
                 ))}
               </ol>
@@ -202,11 +202,11 @@ export default function BlogPage() {
           ))}
         </div>
 
-        <div className="mt-5 rounded-2xl border border-[#f5d778] bg-[#fffaf0] p-5">
-          <h2 className="font-extrabold text-[#805b10]">
+        <div className="mt-5 rounded-2xl border border-[#f0dafa] bg-[#fff7fb] p-5">
+          <h2 className="font-extrabold text-[#984bd0]">
             📌 이용 시 참고사항
           </h2>
-          <ul className="mt-3 space-y-2 text-sm leading-6 text-[#806b43]">
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-[#81768c]">
             <li>• Excel 업로드는 첫 번째 시트의 데이터를 등록합니다.</li>
             <li>• 업로드 과정에서 중복 거래가 감지되면 중복 여부를 확인한 뒤 추가하거나 건너뛸 수 있습니다.</li>
             <li>• 업로드 파일은 날짜, 내역명, 금액, 타입, 카테고리, 지출분류, 메모 항목을 기준으로 작성하는 것을 권장합니다.</li>
@@ -217,16 +217,17 @@ export default function BlogPage() {
         </div>
 
         <div className="mt-8 pb-6 text-center">
-          <p className="text-sm font-semibold text-[#4e5968]">
+          <p className="text-sm font-semibold text-[#665675]">
             커플부터 동아리까지, Jellian으로 함께 쓰는 돈을 편리하게 관리해 보세요.
           </p>
           <a
             href="/"
-            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-[#3182f6] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#1b64da]"
+            className="mt-4 inline-flex min-h-11 items-center justify-center rounded-xl bg-gradient-to-r from-[#8528e8] to-[#f04e9a] px-6 py-3 text-sm font-bold text-white transition hover:opacity-90"
           >
             가계부로 돌아가기
           </a>
         </div>
+      </div>
       </div>
     </main>
   );
