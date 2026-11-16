@@ -208,6 +208,57 @@ export default function IntroPage() {
         </div>
       </section>
 
+
+      <section className="bg-[#fbf8ff] px-5 py-16 sm:px-8 sm:py-20">
+        <div className="mx-auto max-w-6xl">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-extrabold tracking-[0.2em] text-[#a14bd3]">MEMBER PERMISSIONS</p>
+            <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">역할에 따라 권한을 나눠 관리해요</h2>
+            <p className="mt-4 text-sm leading-7 text-[#81768c] sm:text-base">
+              모임의 운영 방식에 맞게 모임장, 운영진, 모임원 권한을 구분할 수 있어요.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            <article className="rounded-3xl border border-[#f0dfb5] bg-white p-6 shadow-sm">
+              <div className="inline-flex rounded-full bg-[#fff5d6] px-3 py-1.5 text-xs font-extrabold text-[#a16b16]">👑 모임장</div>
+              <h3 className="mt-4 text-xl font-black">모임 전체 관리</h3>
+              <ul className="mt-4 space-y-2 text-sm leading-6 text-[#665d70]">
+                <li>✓ 거래 내역 등록·수정·삭제</li>
+                <li>✓ 예산 설정 및 관리</li>
+                <li>✓ 멤버 역할 변경 및 모임장 이전</li>
+                <li>✓ 멤버 강제 퇴장</li>
+                <li>✓ 모임 해체</li>
+              </ul>
+            </article>
+            <article className="rounded-3xl border border-[#dce8ff] bg-white p-6 shadow-sm">
+              <div className="inline-flex rounded-full bg-[#eaf2ff] px-3 py-1.5 text-xs font-extrabold text-[#3972c8]">🛠 운영진</div>
+              <h3 className="mt-4 text-xl font-black">가계부 운영 참여</h3>
+              <ul className="mt-4 space-y-2 text-sm leading-6 text-[#665d70]">
+                <li>✓ 거래 내역 등록·수정·삭제</li>
+                <li>✓ 예산 설정 및 관리</li>
+                <li>✓ 거래 내역과 통계 확인</li>
+                <li>✓ 모임 멤버 목록 확인</li>
+                <li>— 멤버 권한 변경·강제 퇴장 불가</li>
+              </ul>
+            </article>
+            <article className="rounded-3xl border border-[#e9e4ef] bg-white p-6 shadow-sm">
+              <div className="inline-flex rounded-full bg-[#f2f4f6] px-3 py-1.5 text-xs font-extrabold text-[#667080]">👤 모임원</div>
+              <h3 className="mt-4 text-xl font-black">내역 확인 중심</h3>
+              <ul className="mt-4 space-y-2 text-sm leading-6 text-[#665d70]">
+                <li>✓ 거래 내역 및 통계 조회</li>
+                <li>✓ 기간·카테고리별 내역 확인</li>
+                <li>✓ 달력 및 연간 요약 확인</li>
+                <li>✓ 본인 그룹 탈퇴</li>
+                <li>— 거래 등록·수정·삭제 및 예산 관리 불가</li>
+              </ul>
+            </article>
+          </div>
+          <p className="mx-auto mt-5 max-w-3xl text-center text-xs leading-6 text-[#91879b]">
+            권한은 현재 서비스 화면에 적용된 기능 기준입니다. 카테고리 관리 및 엑셀 기능의 세부 권한은 별도 정책 확인이 필요합니다.
+          </p>
+        </div>
+      </section>
+
       <section className="bg-gradient-to-br from-[#f3e8ff] via-[#fff1f7] to-[#fff8fc] px-5 py-16 sm:px-8 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
