@@ -393,16 +393,30 @@ export default function Home() {
     if (!currentGroupId) return;
 
     try {
-      const { data, error } = await supabase
-        .from("transactions")
-        .select("*")
-        .eq("group_id", currentGroupId)
-        .gte("date", `${selectedYear}-01-01`)
-        .lte("date", `${selectedYear}-12-31`);
+      // Supabase 기본 조회 제한(최대 1,000행)으로 연간 거래가 누락되지 않도록 페이지 단위로 전체 조회
+      const allYearItems: Item[] = [];
+      const pageSize = 1000;
+      let from = 0;
 
-      if (error) throw error;
+      while (true) {
+        const { data, error } = await supabase
+          .from("transactions")
+          .select("*")
+          .eq("group_id", currentGroupId)
+          .gte("date", `${selectedYear}-01-01`)
+          .lte("date", `${selectedYear}-12-31`)
+          .order("date", { ascending: true })
+          .order("id", { ascending: true })
+          .range(from, from + pageSize - 1);
 
-      setYearlyItems(data || []);
+        if (error) throw error;
+        const page = data || [];
+        allYearItems.push(...page);
+        if (page.length < pageSize) break;
+        from += pageSize;
+      }
+
+      setYearlyItems(allYearItems);
     } catch (error) {
       console.error("연간 거래내역 조회 실패:", error);
     }
@@ -573,9 +587,8 @@ const sumAmount = (list: Item[]) =>
     });
   }, [creatorFilteredItems, creatorFilteredYearlyItems, view, filter, search, categoryFilter, startDate, endDate]);
 
-  const yearlySourceItems = useMemo(() => {
-    return (startDate || endDate) ? periodFilteredItems : creatorFilteredYearlyItems;
-  }, [startDate, endDate, periodFilteredItems, creatorFilteredYearlyItems]);
+  // 연요약은 기간 검색/리스트 필터와 분리해 선택 연도의 전체 거래를 기준으로 계산
+  const yearlySourceItems = creatorFilteredYearlyItems;
 
   const getCategoryData = (sourceList: Item[]) => {
     return graphCategories
