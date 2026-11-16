@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Jellian | 우리 둘의 돈 관리, 함께 시작해요",
@@ -110,7 +111,7 @@ export default function IntroPage() {
             <div className="relative rounded-[2rem] border border-white bg-white/90 p-4 shadow-[0_24px_80px_rgba(114,65,145,0.14)] sm:p-6">
               <div className="flex items-center justify-between border-b border-[#f1eaf5] pb-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-black tracking-tight text-[#8b2ee6]">Jellian</span>
+                  <Image src="/images/logo.png" alt="Jellian 로고" width={130} height={48} className="h-9 w-auto object-contain" priority />
                   <span className="rounded-full bg-[#f8edff] px-2 py-1 text-[10px] font-bold text-[#984bd0]">우리 둘의 가계부</span>
                 </div>
                 <span className="text-xs text-[#9b91a5]">이번 달</span>
@@ -207,7 +208,7 @@ export default function IntroPage() {
 
       <section className="px-5 py-16 sm:px-8 sm:py-20">
         <div className="mx-auto max-w-4xl rounded-[2rem] bg-gradient-to-r from-[#8528e8] to-[#f04e9a] px-6 py-12 text-center text-white shadow-xl shadow-[#d18be7]/20 sm:px-12">
-          <p className="text-sm font-bold text-white/80">JELLIAN</p>
+          <div className="flex justify-center"><Image src="/images/logo.png" alt="Jellian 로고" width={150} height={56} className="h-10 w-auto rounded-lg bg-white px-3 py-1 object-contain" /></div>
           <h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">우리 둘의 돈 관리,<br />이제 함께 시작해요.</h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-white/85">
             가계부를 만들고 상대방을 초대해 보세요. 둘이 함께 기록하는 작은 습관부터 시작할 수 있어요.
@@ -223,7 +224,7 @@ export default function IntroPage() {
       </section>
 
       <footer className="border-t border-[#f0e8f5] bg-white px-5 py-8 text-center text-xs text-[#a096ad]">
-        <p className="font-bold text-[#8e42c8]">Jellian</p>
+        <div className="flex justify-center"><Image src="/images/logo.png" alt="Jellian 로고" width={110} height={42} className="h-8 w-auto object-contain" /></div>
         <p className="mt-2">우리 둘의 돈 관리, 함께 시작해요.</p>
         <Link href="/blog" className="mt-3 inline-block font-semibold text-[#8e42c8] hover:underline">
           사용 가이드 보기
