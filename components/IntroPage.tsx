@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 
@@ -57,8 +59,6 @@ const steps = [
   ["함께 초대하기", "초대 링크를 카카오톡 등으로 공유해 상대방을 초대하세요."],
   ["같이 기록하기", "수입과 지출을 기록하고 예산과 소비 내역을 함께 확인하세요."],
 ];
-
-"use client";
 
 export default function IntroPage() {
   return (
