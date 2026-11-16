@@ -65,6 +65,15 @@ export default function Header() {
             사용 가이드
           </Link>
 
+          {!isLoggedIn && (
+            <Link
+              href="/login"
+              className="rounded-full bg-gradient-to-r from-[#8528e8] to-[#f04e9a] px-4 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90"
+            >
+              로그인
+            </Link>
+          )}
+
           {isLoggedIn && (
             <button
               onClick={handleSignOut}
