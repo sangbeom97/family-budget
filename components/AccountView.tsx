@@ -109,7 +109,7 @@ export default function AccountView(props: AccountViewProps) {
 
     // 스타일 설정
     const inputClass =
-        "min-h-11 rounded-xl px-3 py-2.5 bg-white text-[#292238] border border-[#f0e8f5] focus:outline-none focus:ring-2 focus:ring-[#9145c9]/20 focus:border-[#9145c9]";
+        "min-h-11 rounded-xl px-3 py-2.5 bg-white text-[#292238] border border-[#f0e8f5] focus:outline-none focus:ring-2 focus:ring-[#796982]/20 focus:border-[#796982]";
 
     // 카테고리 필터 옵션 메모이제이션
     const filteredOptions = useMemo(() => {
@@ -237,7 +237,7 @@ export default function AccountView(props: AccountViewProps) {
             onClick={() => setSelectedCreator(member.id)}
             className={`shrink-0 px-4 py-2.5 rounded-full whitespace-nowrap text-sm font-semibold transition-all ${
     selectedCreator === member.id
-        ? "bg-[#9145c9] text-white shadow-sm"
+        ? "bg-[#796982] text-white shadow-sm"
         : "bg-white text-[#665675] border border-[#f0e8f5] hover:bg-[#fffaff]"
 }`}
         >
@@ -328,7 +328,7 @@ export default function AccountView(props: AccountViewProps) {
                     {mobileBudgetCompareData.map((entry, index) => (
                         <Cell
                             key={`cell-${index}`}
-                            fill={entry.남은예산 >= 0 ? "#9145c9" : "#e45d94"}
+                            fill={entry.남은예산 >= 0 ? "#796982" : "#b77b87"}
                         />
                     ))}
                 </Bar>
@@ -389,7 +389,7 @@ export default function AccountView(props: AccountViewProps) {
                 {budgetCompareData.map((entry, index) => (
                     <Cell
                         key={`cell-${index}`}
-                        fill={entry.남은예산 >= 0 ? "#9145c9" : "#e45d94"}
+                        fill={entry.남은예산 >= 0 ? "#796982" : "#b77b87"}
                     />
                 ))}
             </Bar>
@@ -417,7 +417,7 @@ export default function AccountView(props: AccountViewProps) {
                             <h3 className="font-bold text-base mb-1">Excel 가져오기 / 내보내기</h3>
                             <p className="text-xs mb-4 text-gray-500">파일을 선택하거나 기존 데이터를 내보낼 수 있습니다.</p>
                             <div className="flex flex-col justify-center gap-3 sm:flex-row">
-                                <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#9145c9] text-white text-sm font-medium cursor-pointer hover:bg-[#7828c8] transition">
+                                <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#796982] text-white text-sm font-medium cursor-pointer hover:bg-[#66576f] transition">
                                     📁 파일 선택
                                     <input type="file" accept=".xlsx,.xls" onChange={handleFileUpload} className="hidden" />
                                 </label>
@@ -451,9 +451,9 @@ export default function AccountView(props: AccountViewProps) {
             {view === "year" && (
                 <div className="space-y-4 mt-4">
                     {[
-                        { title: "월별 지출", key: "지출", color: "#e45d94", isPercent: false },
-                        { title: "월별 저축률", key: "저축률", color: "#d77eaa", isPercent: true },
-                        { title: "월별 소비패턴", keys: ["수입", "지출", "저축"], colors: ["#9b63e8", "#e45d94", "#d77eaa"], isMulti: true }
+                        { title: "월별 지출", key: "지출", color: "#b77b87", isPercent: false },
+                        { title: "월별 저축률", key: "저축률", color: "#b38d9c", isPercent: true },
+                        { title: "월별 소비패턴", keys: ["수입", "지출", "저축"], colors: ["#8c7a9b", "#b77b87", "#b38d9c"], isMulti: true }
                     ].map((chart, idx) => (
                         <div key={idx} className="rounded-2xl border border-[#f0e8f5] bg-white p-4 shadow-sm sm:p-5">
                             <h3 className="font-extrabold mb-4 text-sm">{chart.title}</h3>
@@ -568,7 +568,7 @@ export default function AccountView(props: AccountViewProps) {
                                             onChange={(e) => saveBudget(cat, e.target.value)}
                                             className={`${inputClass} w-32 py-1 text-sm`}
                                         />
-                                        <span className={`text-sm font-bold ${percent > 100 ? "text-red-500" : "text-[#9145c9]"}`}>
+                                        <span className={`text-sm font-bold ${percent > 100 ? "text-red-500" : "text-[#796982]"}`}>
                                             {Math.round(percent)}%
                                         </span>
                                     </div>
