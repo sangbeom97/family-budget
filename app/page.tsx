@@ -56,7 +56,7 @@ export default function Home() {
 
   // --- 2. 일반 가계부 상태 정의 ---
     const [mainTab, setMainTab] = useState<
-    "account" | "category" | "members"
+    "account" | "category" | "members" | "archived"
   >("account");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
@@ -1083,66 +1083,6 @@ const sumAmount = (list: Item[]) =>
           </div>
         </div>
 
-        <section className="mb-6 overflow-hidden rounded-2xl border border-[#f0e8f5] bg-white shadow-sm">
-          <button
-            type="button"
-            onClick={() => setShowArchivedGroups((value) => !value)}
-            className="flex min-h-12 w-full items-center justify-between px-4 py-3 text-left transition hover:bg-[#fffaff] sm:px-5"
-          >
-            <span className="flex items-center gap-2 text-sm font-bold text-[#665675]">
-              <span aria-hidden="true">🗄️</span>
-              해체된 모임 관리
-              <span className="rounded-full bg-[#f3e8ff] px-2 py-0.5 text-xs text-[#9145c9]">
-                {archivedGroups.length}
-              </span>
-            </span>
-            <span className="text-xs font-semibold text-[#81768c]">
-              {showArchivedGroups ? "접기 ▲" : "목록 보기 ▼"}
-            </span>
-          </button>
-
-          {showArchivedGroups && (
-            <div className="border-t border-[#f0e8f5] p-4 sm:p-5">
-              {archivedGroups.length === 0 ? (
-                <p className="py-5 text-center text-sm text-[#81768c]">
-                  보관 중인 모임이 없습니다.
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {archivedGroups.map((group) => (
-                    <div
-                      key={group.id}
-                      className="flex flex-col gap-3 rounded-xl border border-[#f0e8f5] bg-[#fffaff] p-3 sm:flex-row sm:items-center sm:justify-between"
-                    >
-                      <div className="min-w-0">
-                        <p className="break-words text-sm font-bold text-[#292238]">
-                          {group.name}
-                        </p>
-                        <p className="mt-1 text-xs text-[#81768c]">
-                          해체일: {group.archived_at ? new Date(group.archived_at).toLocaleDateString("ko-KR") : "날짜 정보 없음"}
-                          {" · "}기존 데이터 보관 중
-                        </p>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          type="button"
-                          onClick={() => restoreArchivedGroup(group)}
-                          className="min-h-10 rounded-lg bg-[#9145c9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#7828c8]"
-                        >
-                          다시 불러오기
-                        </button>
-                        <span className="flex items-center text-xs text-[#a06b6b]">
-                          영구 삭제는 연결 데이터 확인 후 추가됩니다.
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </section>
-
         {/* 모바일 메뉴 버튼 */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -1227,11 +1167,12 @@ const sumAmount = (list: Item[]) =>
           {[
             { id: "category", label: "카테고리 관리", icon: "📁" },
             { id: "members", label: "그룹 멤버", icon: "👥" },
-          ].map((item) => (
+            { id: "archived", label: "해체된 모임 관리", icon: "🗑️" },
+          ]}.map((item) => (
             <button
               key={item.id}
               onClick={() => {
-                setMainTab(item.id as "category" | "members");
+                setMainTab(item.id as "category" | "members" | "archived");
                 setIsSidebarOpen(false);
               }}
               className={`mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
@@ -1359,6 +1300,68 @@ const sumAmount = (list: Item[]) =>
                 fetchCategories={fetchCategories}
                 deleteCategory={deleteCategory}
               />
+            )}
+
+            {mainTab === "archived" && (
+              <section className="overflow-hidden rounded-2xl border border-[#f0e8f5] bg-white shadow-sm">
+                        <button
+                          type="button"
+                          onClick={() => setShowArchivedGroups((value) => !value)}
+                          className="flex min-h-12 w-full items-center justify-between px-4 py-3 text-left transition hover:bg-[#fffaff] sm:px-5"
+                        >
+                          <span className="flex items-center gap-2 text-sm font-bold text-[#665675]">
+                            <span aria-hidden="true">🗄️</span>
+                            해체된 모임 관리
+                            <span className="rounded-full bg-[#f3e8ff] px-2 py-0.5 text-xs text-[#9145c9]">
+                              {archivedGroups.length}
+                            </span>
+                          </span>
+                          <span className="text-xs font-semibold text-[#81768c]">
+                            {showArchivedGroups ? "접기 ▲" : "목록 보기 ▼"}
+                          </span>
+                        </button>
+              
+                        {showArchivedGroups && (
+                          <div className="border-t border-[#f0e8f5] p-4 sm:p-5">
+                            {archivedGroups.length === 0 ? (
+                              <p className="py-5 text-center text-sm text-[#81768c]">
+                                보관 중인 모임이 없습니다.
+                              </p>
+                            ) : (
+                              <div className="space-y-3">
+                                {archivedGroups.map((group) => (
+                                  <div
+                                    key={group.id}
+                                    className="flex flex-col gap-3 rounded-xl border border-[#f0e8f5] bg-[#fffaff] p-3 sm:flex-row sm:items-center sm:justify-between"
+                                  >
+                                    <div className="min-w-0">
+                                      <p className="break-words text-sm font-bold text-[#292238]">
+                                        {group.name}
+                                      </p>
+                                      <p className="mt-1 text-xs text-[#81768c]">
+                                        해체일: {group.archived_at ? new Date(group.archived_at).toLocaleDateString("ko-KR") : "날짜 정보 없음"}
+                                        {" · "}기존 데이터 보관 중
+                                      </p>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                      <button
+                                        type="button"
+                                        onClick={() => restoreArchivedGroup(group)}
+                                        className="min-h-10 rounded-lg bg-[#9145c9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#7828c8]"
+                                      >
+                                        다시 불러오기
+                                      </button>
+                                      <span className="flex items-center text-xs text-[#a06b6b]">
+                                        영구 삭제는 연결 데이터 확인 후 추가됩니다.
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </section>
             )}
 
             {mainTab === "members" && (
