@@ -20,20 +20,20 @@ export default function SummaryCards({
 }: Props) {
   const cardClass = darkMode
     ? "bg-slate-800 border-slate-700 text-white"
-    : "bg-white border-[#eef0f3] text-[#191f28]";
+    : "bg-white border-[#eef0f3] text-[#292238]";
 
-  const subTextClass = darkMode ? "text-slate-400" : "text-[#8b95a1]";
+  const subTextClass = darkMode ? "text-slate-400" : "text-[#81768c]";
 
   const cards = [
     {
       label: "총 수입",
       amount: totalIncome,
-      color: "text-[#3182f6]",
+      color: "text-[#9145c9]",
     },
     {
       label: "총 지출",
       amount: totalExpense,
-      color: "text-[#f04452]",
+      color: "text-[#e45d94]",
     },
     {
       label: "총 저축",
@@ -43,14 +43,14 @@ export default function SummaryCards({
     {
       label: "변동예산",
       amount: monthlyVariableBudget,
-      color: "text-[#4e5968]",
+      color: "text-[#665675]",
     },
     {
       label: "남은 변동예산",
       amount: remainingVariableBudget,
       color: remainingVariableBudget >= 0
         ? "text-[#12b886]"
-        : "text-[#f04452]",
+        : "text-[#e45d94]",
     },
   ];
 
