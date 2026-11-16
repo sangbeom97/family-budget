@@ -34,6 +34,7 @@ type Group = {
   id: string;
   name: string;
   group_type?: string;
+  archived_at?: string;
 };
 
 export default function Home() {
@@ -41,6 +42,8 @@ export default function Home() {
   const [session, setSession] = useState<Session | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [groups, setGroups] = useState<Group[]>([]);
+  const [archivedGroups, setArchivedGroups] = useState<Group[]>([]);
+  const [showArchivedGroups, setShowArchivedGroups] = useState(false);
   const [loadingGroups, setLoadingGroups] =
     useState(true);
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
@@ -157,6 +160,7 @@ export default function Home() {
 
   if (!user) {
     setGroups([]);
+    setArchivedGroups([]);
     setCurrentGroupId("");
     setLoadingGroups(false);
     return;
@@ -165,6 +169,17 @@ export default function Home() {
   setLoadingGroups(true);
 
   try {
+    const { data: archivedRows, error: archivedError } = await supabase.rpc(
+      "get_my_archived_groups"
+    );
+
+    if (archivedError) {
+      console.error("보관된 모임 조회 실패:", archivedError);
+      setArchivedGroups([]);
+    } else {
+      setArchivedGroups((archivedRows || []) as Group[]);
+    }
+
     const { data: memberRows, error: memberError } = await supabase
       .from("group_members")
       .select("group_id")
@@ -175,48 +190,38 @@ export default function Home() {
     const groupIds =
       memberRows?.map((row) => row.group_id).filter(Boolean) || [];
 
-    if (groupIds.length === 0) {
-      setGroups([]);
-      setCurrentGroupId("");
-      localStorage.removeItem("currentGroupId");
-      return;
-    }
-
-    let groupRows: any[] | null = null;
-    const typedGroups = await supabase
-      .from("groups")
-      .select("id, name, group_type")
-      .in("id", groupIds)
-      .is("archived_at", null);
-
-    if (typedGroups.error) {
-      const legacyGroups = await supabase
+    let groupRows: any[] = [];
+    if (groupIds.length > 0) {
+      const typedGroups = await supabase
         .from("groups")
-        .select("id, name")
+        .select("id, name, group_type")
         .in("id", groupIds)
         .is("archived_at", null);
-      if (legacyGroups.error) throw legacyGroups.error;
-      groupRows = (legacyGroups.data || []).map((group) => ({ ...group, group_type: "custom" }));
-    } else {
-      groupRows = typedGroups.data || [];
+
+      if (typedGroups.error) {
+        const legacyGroups = await supabase
+          .from("groups")
+          .select("id, name")
+          .in("id", groupIds)
+          .is("archived_at", null);
+        if (legacyGroups.error) throw legacyGroups.error;
+        groupRows = (legacyGroups.data || []).map((group) => ({
+          ...group,
+          group_type: "custom",
+        }));
+      } else {
+        groupRows = typedGroups.data || [];
+      }
     }
 
-    const mappedGroups = groupRows || [];
-
-    setGroups(mappedGroups);
+    setGroups(groupRows);
 
     const savedGroupId = localStorage.getItem("currentGroupId");
-
-    if (
-      savedGroupId &&
-      mappedGroups.some((g) => g.id === savedGroupId)
-    ) {
+    if (savedGroupId && groupRows.some((g) => g.id === savedGroupId)) {
       setCurrentGroupId(savedGroupId);
     } else {
-      const firstGroupId = mappedGroups[0]?.id || "";
-
+      const firstGroupId = groupRows[0]?.id || "";
       setCurrentGroupId(firstGroupId);
-
       if (firstGroupId) {
         localStorage.setItem("currentGroupId", firstGroupId);
       } else {
@@ -230,6 +235,27 @@ export default function Home() {
   } finally {
     setLoadingGroups(false);
   }
+};
+
+const restoreArchivedGroup = async (group: Group) => {
+  if (!confirm(`"${group.name}" 모임을 다시 불러올까요?\\n\\n기존 거래내역·예산·카테고리가 그대로 복구됩니다.`)) {
+    return;
+  }
+
+  const { error } = await supabase.rpc("restore_group", {
+    p_group_id: group.id,
+  });
+
+  if (error) {
+    alert(`모임 복구 실패: ${error.message}\\n\\nSupabase SQL Editor에서 supabase/restore_archived_groups.sql을 먼저 실행했는지 확인해주세요.`);
+    return;
+  }
+
+  await fetchUserGroups();
+  setCurrentGroupId(group.id);
+  localStorage.setItem("currentGroupId", group.id);
+  setShowArchivedGroups(false);
+  alert(`"${group.name}" 모임이 복구되었습니다.`);
 };
 
   useEffect(() => {
@@ -1057,6 +1083,65 @@ const sumAmount = (list: Item[]) =>
           </div>
         </div>
 
+        <section className="mb-6 overflow-hidden rounded-2xl border border-[#f0e8f5] bg-white shadow-sm">
+          <button
+            type="button"
+            onClick={() => setShowArchivedGroups((value) => !value)}
+            className="flex min-h-12 w-full items-center justify-between px-4 py-3 text-left transition hover:bg-[#fffaff] sm:px-5"
+          >
+            <span className="flex items-center gap-2 text-sm font-bold text-[#665675]">
+              <span aria-hidden="true">🗄️</span>
+              해체된 모임 관리
+              <span className="rounded-full bg-[#f3e8ff] px-2 py-0.5 text-xs text-[#9145c9]">
+                {archivedGroups.length}
+              </span>
+            </span>
+            <span className="text-xs font-semibold text-[#81768c]">
+              {showArchivedGroups ? "접기 ▲" : "목록 보기 ▼"}
+            </span>
+          </button>
+
+          {showArchivedGroups && (
+            <div className="border-t border-[#f0e8f5] p-4 sm:p-5">
+              {archivedGroups.length === 0 ? (
+                <p className="py-5 text-center text-sm text-[#81768c]">
+                  보관 중인 모임이 없습니다.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {archivedGroups.map((group) => (
+                    <div
+                      key={group.id}
+                      className="flex flex-col gap-3 rounded-xl border border-[#f0e8f5] bg-[#fffaff] p-3 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <div className="min-w-0">
+                        <p className="break-words text-sm font-bold text-[#292238]">
+                          {group.name}
+                        </p>
+                        <p className="mt-1 text-xs text-[#81768c]">
+                          해체일: {group.archived_at ? new Date(group.archived_at).toLocaleDateString("ko-KR") : "날짜 정보 없음"}
+                          {" · "}기존 데이터 보관 중
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => restoreArchivedGroup(group)}
+                          className="min-h-10 rounded-lg bg-[#9145c9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#7828c8]"
+                        >
+                          다시 불러오기
+                        </button>
+                        <span className="flex items-center text-xs text-[#a06b6b]">
+                          영구 삭제는 연결 데이터 확인 후 추가됩니다.
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </section>
 
         {/* 모바일 메뉴 버튼 */}
         <button
