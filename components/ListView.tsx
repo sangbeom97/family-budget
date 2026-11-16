@@ -41,31 +41,31 @@ export default function ListView({
   );
 
   return (
-    <div className="rounded-2xl border border-[#e9edf2] bg-white p-3 shadow-sm sm:p-5">
+    <div className="rounded-2xl border border-[#f0e8f5] bg-white p-3 shadow-sm sm:p-5">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-base font-extrabold text-[#191f28]">
+        <h3 className="text-base font-extrabold text-[#292238]">
           내역 목록
         </h3>
-        <span className="text-xs font-medium text-[#8b95a1]">
+        <span className="text-xs font-medium text-[#81768c]">
           총 {items.length}건
         </span>
       </div>
 
             <div className="space-y-3">
         {loadingItems ? (
-          <div className="rounded-xl bg-[#f7f8fa] py-12 text-center">
+          <div className="rounded-xl bg-[#fffaff] py-12 text-center">
             <span className="mb-2 block text-3xl">⏳</span>
-            <p className="text-sm font-medium text-[#4e5968]">
+            <p className="text-sm font-medium text-[#665675]">
               내역을 불러오는 중입니다
             </p>
           </div>
         ) : items.length === 0 ? (
-          <div className="rounded-xl bg-[#f7f8fa] py-12 text-center">
+          <div className="rounded-xl bg-[#fffaff] py-12 text-center">
             <span className="mb-2 block text-3xl">📭</span>
-            <p className="text-sm font-medium text-[#4e5968]">
+            <p className="text-sm font-medium text-[#665675]">
               내역이 없습니다
             </p>
-            <p className="mt-1 text-xs text-[#8b95a1]">
+            <p className="mt-1 text-xs text-[#81768c]">
               선택한 기간에 등록된 거래 내역이 없습니다.
             </p>
           </div>
@@ -73,29 +73,29 @@ export default function ListView({
           items.map((item) => (
             <div
               key={item.id}
-              className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#e9edf2] bg-white p-3 shadow-sm transition-all hover:border-[#d5e3f7] hover:shadow-md sm:flex-row sm:items-center sm:justify-between sm:p-4"
+              className="flex min-w-0 flex-col gap-3 rounded-xl border border-[#f0e8f5] bg-white p-3 shadow-sm transition-all hover:border-[#d5e3f7] hover:shadow-md sm:flex-row sm:items-center sm:justify-between sm:p-4"
             >
               <div className="min-w-0 flex-1 space-y-1.5">
-                <p className="break-words text-sm font-bold text-[#191f28]">
+                <p className="break-words text-sm font-bold text-[#292238]">
                   {item.name}
                 </p>
 
                 {item.memo && (
-                  <p className="break-words text-xs text-[#8b95a1]">
+                  <p className="break-words text-xs text-[#81768c]">
                     📝 {item.memo}
                   </p>
                 )}
 
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="rounded-md bg-[#eef5ff] px-2 py-1 font-semibold text-[#3182f6]">
+                  <span className="rounded-md bg-[#eef5ff] px-2 py-1 font-semibold text-[#9145c9]">
                     {item.type === "income" ? "수입" : item.category}
                   </span>
 
-                  <span className="text-[#8b95a1]">{item.date}</span>
+                  <span className="text-[#81768c]">{item.date}</span>
 
                   <span className="text-[#d1d6dc]">·</span>
 
-                  <span className="text-[#8b95a1]">
+                  <span className="text-[#81768c]">
                     {item.user_id
                       ? creatorNameById.get(item.user_id) || "이름 없음"
                       : "기록 없음"}
@@ -103,12 +103,12 @@ export default function ListView({
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f2f4f6] pt-3 sm:flex-col sm:items-end sm:border-0 sm:pt-0">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#f7f0fa] pt-3 sm:flex-col sm:items-end sm:border-0 sm:pt-0">
                 <p
                   className={`whitespace-nowrap text-base font-extrabold tracking-tight ${
                     item.type === "income"
-                      ? "text-[#3182f6]"
-                      : "text-[#f04452]"
+                      ? "text-[#9145c9]"
+                      : "text-[#e45d94]"
                   }`}
                 >
                   {item.type === "income" ? "+" : "-"} ₩
@@ -119,7 +119,7 @@ export default function ListView({
                   <div className="flex gap-2">
                     <button
                       onClick={() => startEdit(item)}
-                      className="min-h-9 rounded-lg border border-[#e9edf2] bg-white px-3 py-1.5 text-xs font-semibold text-[#4e5968] transition-colors hover:bg-[#f2f4f6]"
+                      className="min-h-9 rounded-lg border border-[#f0e8f5] bg-white px-3 py-1.5 text-xs font-semibold text-[#665675] transition-colors hover:bg-[#f7f0fa]"
                     >
                       수정
                     </button>
