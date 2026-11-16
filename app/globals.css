@@ -24,3 +24,46 @@ body {
   font-family: var(--font-geist-sans), "Pretendard",
     "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
 }
+
+
+/* Jellian low-stimulation palette */
+main.min-h-screen {
+  background-color: #f5f5f3 !important;
+  color: #34323a !important;
+}
+[class*="bg-[#fffaff]"] {
+  background-color: #f5f5f3 !important;
+}
+[class*="bg-[#f3e8ff]"] {
+  background-color: #eeebf0 !important;
+}
+[class*="bg-[#f7f0fa]"] {
+  background-color: #f1eef2 !important;
+}
+[class*="border-[#f0e8f5]"] {
+  border-color: #e6e3e7 !important;
+}
+[class*="text-[#292238]"] {
+  color: #34323a !important;
+}
+[class*="text-[#81768c]"] {
+  color: #85818a !important;
+}
+[class*="text-[#665675]"] {
+  color: #625c67 !important;
+}
+[class*="text-[#9145c9]"] {
+  color: #75647f !important;
+}
+[class*="bg-[#9145c9]"] {
+  background-color: #796982 !important;
+}
+[class*="hover:bg-[#7828c8]"]:hover {
+  background-color: #66576f !important;
+}
+[class*="focus:border-[#9145c9]"]:focus {
+  border-color: #8a7a93 !important;
+}
+[class*="focus:ring-[#9145c9]"]:focus {
+  --tw-ring-color: rgb(138 122 147 / 0.18) !important;
+}
