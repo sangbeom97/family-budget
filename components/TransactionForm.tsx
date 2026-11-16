@@ -49,10 +49,10 @@ export default function TransactionForm({
   addItem,
   editingId,
 }: Props) {
-  const inputClass = `w-full min-w-0 min-h-12 rounded-xl border px-4 py-3 text-sm font-medium outline-none transition-colors focus:border-[#3182f6] focus:ring-2 focus:ring-[#3182f6]/15 ${
+  const inputClass = `w-full min-w-0 min-h-12 rounded-xl border px-4 py-3 text-sm font-medium outline-none transition-colors focus:border-[#9145c9] focus:ring-2 focus:ring-[#9145c9]/15 ${
     darkMode
       ? "bg-slate-700 text-white border-slate-600 placeholder:text-slate-400"
-      : "bg-[#f7f8fa] text-[#191f28] border-[#e9edf2] placeholder:text-[#8b95a1]"
+      : "bg-[#fffaff] text-[#292238] border-[#f0e8f5] placeholder:text-[#81768c]"
   }`;
 
   return (
@@ -61,18 +61,18 @@ export default function TransactionForm({
       className={`mb-4 scroll-mt-20 rounded-2xl border p-4 shadow-sm sm:p-5 ${
         darkMode
           ? "bg-slate-800 border-slate-700"
-          : "bg-white border-[#e9edf2]"
+          : "bg-white border-[#f0e8f5]"
       }`}
     >
       <div className="mb-5 flex items-center justify-between">
         <h3
           className={`text-base font-extrabold ${
-            darkMode ? "text-white" : "text-[#191f28]"
+            darkMode ? "text-white" : "text-[#292238]"
           }`}
         >
           {editingId ? "내역 수정" : "새 내역 추가"}
         </h3>
-        <span className="text-xs font-medium text-[#8b95a1]">
+        <span className="text-xs font-medium text-[#81768c]">
           거래 정보 입력
         </span>
       </div>
@@ -84,10 +84,10 @@ export default function TransactionForm({
           onClick={() => setType("expense")}
           className={`min-h-12 rounded-xl text-sm font-bold transition-all ${
             type === "expense"
-              ? "bg-[#f04452] text-white shadow-sm"
+              ? "bg-[#e45d94] text-white shadow-sm"
               : darkMode
               ? "bg-slate-700 text-slate-300"
-              : "bg-[#f7f8fa] text-[#8b95a1]"
+              : "bg-[#fffaff] text-[#81768c]"
           }`}
         >
           지출
@@ -97,10 +97,10 @@ export default function TransactionForm({
           onClick={() => setType("income")}
           className={`min-h-12 rounded-xl text-sm font-bold transition-all ${
             type === "income"
-              ? "bg-[#3182f6] text-white shadow-sm"
+              ? "bg-[#9145c9] text-white shadow-sm"
               : darkMode
               ? "bg-slate-700 text-slate-300"
-              : "bg-[#f7f8fa] text-[#8b95a1]"
+              : "bg-[#fffaff] text-[#81768c]"
           }`}
         >
           수입
@@ -109,7 +109,7 @@ export default function TransactionForm({
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <div className="min-w-0">
-          <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
+          <label className="mb-2 block text-xs font-semibold text-[#665675]">
             항목명
           </label>
           <input
@@ -122,7 +122,7 @@ export default function TransactionForm({
         </div>
 
         <div className="min-w-0">
-          <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
+          <label className="mb-2 block text-xs font-semibold text-[#665675]">
             금액
           </label>
           <input
@@ -143,7 +143,7 @@ export default function TransactionForm({
         </div>
 
         <div className="min-w-0">
-          <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
+          <label className="mb-2 block text-xs font-semibold text-[#665675]">
             날짜
           </label>
           <input
@@ -155,7 +155,7 @@ export default function TransactionForm({
         </div>
 
         <div className="min-w-0">
-          <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
+          <label className="mb-2 block text-xs font-semibold text-[#665675]">
             카테고리
           </label>
           <select
@@ -173,7 +173,7 @@ export default function TransactionForm({
 
         {type === "expense" && (
           <div className="min-w-0">
-            <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
+            <label className="mb-2 block text-xs font-semibold text-[#665675]">
               지출 유형
             </label>
             <select
@@ -190,7 +190,7 @@ export default function TransactionForm({
         )}
 
         <div className="min-w-0">
-          <label className="mb-2 block text-xs font-semibold text-[#4e5968]">
+          <label className="mb-2 block text-xs font-semibold text-[#665675]">
             메모
           </label>
           <input
@@ -208,7 +208,7 @@ export default function TransactionForm({
         className={`mt-5 min-h-12 w-full rounded-xl text-sm font-bold shadow-sm transition-all ${
           editingId
             ? "bg-[#f59f00] text-white hover:bg-[#e67700]"
-            : "bg-[#3182f6] text-white hover:bg-[#1b64da]"
+            : "bg-[#9145c9] text-white hover:bg-[#7828c8]"
         }`}
       >
         {editingId ? "✏️ 수정완료" : "＋ 내역 추가하기"}
