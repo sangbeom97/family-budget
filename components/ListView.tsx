@@ -18,6 +18,41 @@ type GroupMember = {
   nickname: string;
 };
 
+const CATEGORY_STYLES = [
+  { keywords: ["식비", "음식", "외식", "카페", "간식"], icon: "🍽️", color: "#E9A36F" },
+  { keywords: ["교통", "차량", "주유", "주차", "택시"], icon: "🚗", color: "#6397D2" },
+  { keywords: ["쇼핑", "생활용품", "의류", "패션"], icon: "🛍️", color: "#A78BCE" },
+  { keywords: ["문화", "여가", "여행", "취미", "운동"], icon: "🎟️", color: "#5BAE91" },
+  { keywords: ["의료", "건강", "병원", "약국"], icon: "💊", color: "#D9788B" },
+  { keywords: ["주거", "월세", "관리비", "공과금"], icon: "🏠", color: "#8D9BCB" },
+  { keywords: ["통신", "인터넷"], icon: "📱", color: "#5CAAB5" },
+  { keywords: ["보험"], icon: "🛡️", color: "#8C9A70" },
+  { keywords: ["교육", "육아", "학원"], icon: "📚", color: "#D39B59" },
+  { keywords: ["저축", "적금", "투자"], icon: "🐷", color: "#D78AAE" },
+  { keywords: ["급여", "월급", "수입", "이자"], icon: "💰", color: "#8D78C8" },
+];
+
+const FALLBACK_COLORS = ["#7E91B8", "#9A83B8", "#6D9E91", "#C28B70", "#729FB5"];
+
+function getCategoryStyle(category: string, type: string) {
+  if (type === "income") {
+    return { icon: "💰", color: "#8D78C8" };
+  }
+
+  const normalized = category.replace(/\\s/g, "").toLowerCase();
+  const matched = CATEGORY_STYLES.find((style) =>
+    style.keywords.some((keyword) => normalized.includes(keyword.replace(/\\s/g, "").toLowerCase()))
+  );
+
+  if (matched) return { icon: matched.icon, color: matched.color };
+
+  const hash = Array.from(category).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return {
+    icon: "📁",
+    color: FALLBACK_COLORS[hash % FALLBACK_COLORS.length],
+  };
+}
+
 type Props = {
   items: Item[];
   loadingItems: boolean;
@@ -87,9 +122,26 @@ export default function ListView({
                 )}
 
                 <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="rounded-md bg-[#eef5ff] px-2 py-1 font-semibold text-[#9145c9]">
-                    {item.type === "income" ? "수입" : item.category}
-                  </span>
+                  {(() => {
+                    const categoryStyle = getCategoryStyle(item.category, item.type);
+                    return (
+                      <span className="inline-flex items-center gap-2">
+                        <span
+                          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-base"
+                          style={{
+                            backgroundColor: `${categoryStyle.color}1A`,
+                            color: categoryStyle.color,
+                          }}
+                          aria-hidden="true"
+                        >
+                          {categoryStyle.icon}
+                        </span>
+                        <span className="font-semibold" style={{ color: categoryStyle.color }}>
+                          {item.type === "income" ? "수입" : item.category}
+                        </span>
+                      </span>
+                    );
+                  })()}
 
                   <span className="text-[#81768c]">{item.date}</span>
 
