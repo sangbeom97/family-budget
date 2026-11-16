@@ -29,7 +29,7 @@ const mobileChartData = chartData.filter(
 
   return (
     <>
-      <h3 className="mb-4 text-base font-bold text-[#191f28]">
+      <h3 className="mb-4 text-base font-bold text-[#292238]">
         카테고리별 지출
       </h3>
 
@@ -52,7 +52,7 @@ const mobileChartData = chartData.filter(
         />
         <XAxis
           type="number"
-          tick={{ fontSize: 10, fill: "#8b95a1" }}
+          tick={{ fontSize: 10, fill: "#81768c" }}
           axisLine={false}
           tickLine={false}
           tickFormatter={(value) =>
@@ -66,7 +66,7 @@ const mobileChartData = chartData.filter(
           dataKey="name"
           width={85}
           interval={0}
-          tick={{ fontSize: 11, fill: "#8b95a1" }}
+          tick={{ fontSize: 11, fill: "#81768c" }}
           axisLine={false}
           tickLine={false}
         />
@@ -77,20 +77,20 @@ const mobileChartData = chartData.filter(
           ]}
           contentStyle={{
             borderRadius: "12px",
-            border: "1px solid #e9edf2",
+            border: "1px solid #f0e8f5",
             boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
           }}
         />
         <Bar
           dataKey="value"
-          fill="#3182f6"
+          fill="#9145c9"
           radius={[0, 6, 6, 0]}
           maxBarSize={24}
         />
       </BarChart>
     </ResponsiveContainer>
   ) : (
-    <div className="flex h-full items-center justify-center text-sm text-[#8b95a1]">
+    <div className="flex h-full items-center justify-center text-sm text-[#81768c]">
       표시할 지출 항목이 없습니다.
     </div>
   )}
@@ -114,12 +114,12 @@ const mobileChartData = chartData.filter(
         textAnchor="end"
         interval={0}
         height={55}
-        tick={{ fontSize: 11, fill: "#8b95a1" }}
+        tick={{ fontSize: 11, fill: "#81768c" }}
         axisLine={false}
         tickLine={false}
       />
       <YAxis
-        tick={{ fontSize: 11, fill: "#8b95a1" }}
+        tick={{ fontSize: 11, fill: "#81768c" }}
         axisLine={false}
         tickLine={false}
         width={55}
@@ -136,13 +136,13 @@ const mobileChartData = chartData.filter(
         ]}
         contentStyle={{
           borderRadius: "12px",
-          border: "1px solid #e9edf2",
+          border: "1px solid #f0e8f5",
           boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
         }}
       />
       <Bar
         dataKey="value"
-        fill="#3182f6"
+        fill="#9145c9"
         radius={[6, 6, 0, 0]}
         maxBarSize={42}
       />
