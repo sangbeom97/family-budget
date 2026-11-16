@@ -7,9 +7,9 @@ const features = [
   {
     number: "01",
     emoji: "👫",
-    title: "둘이 함께 기록해요",
+    title: "여러 사람이 함께 기록해요",
     description:
-      "공동 가계부를 만들고 초대 링크를 공유해 보세요. 각자 기록한 거래를 하나의 가계부에서 함께 확인할 수 있어요.",
+      "가계부를 만들고 멤버를 초대해 보세요. 각자 기록한 거래를 하나의 공간에서 함께 확인할 수 있어요.",
     tone: "from-violet-100 to-pink-100",
   },
   {
@@ -47,17 +47,17 @@ const features = [
   {
     number: "06",
     emoji: "🏡",
-    title: "우리 방식대로 관리해요",
+    title: "목적에 맞게 관리해요",
     description:
-      "가계부 모임과 멤버를 관리하고, 우리 생활에 맞는 카테고리를 구성해 보세요.",
+      "부부 생활비부터 동아리 공금까지, 사용 목적에 맞는 가계부를 만들고 카테고리를 구성해 보세요.",
     tone: "from-indigo-100 to-violet-100",
   },
 ];
 
 const steps = [
-  ["가계부 만들기", "구글 계정으로 로그인하고 우리 둘의 가계부를 만드세요."],
-  ["함께 초대하기", "초대 링크를 카카오톡 등으로 공유해 상대방을 초대하세요."],
-  ["같이 기록하기", "수입과 지출을 기록하고 예산과 소비 내역을 함께 확인하세요."],
+  ["가계부 만들기", "부부·가족, 모임·동아리, 여행·프로젝트 등 사용 목적에 맞는 가계부를 만드세요."],
+  ["멤버 초대하기", "초대 링크를 공유해 함께 관리할 멤버를 초대하세요."],
+  ["함께 관리하기", "수입과 지출을 기록하고 예산과 내역을 함께 확인하세요."],
 ];
 
 export default function IntroPage() {
@@ -69,17 +69,17 @@ export default function IntroPage() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-[#f0dafa] bg-white/80 px-4 py-2 text-xs font-bold text-[#9145c9] shadow-sm">
               <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[#9229e8] to-[#ff5b9c]" />
-              신혼부부와 커플을 위한 공동 가계부
+              커플부터 동아리까지, 함께 쓰는 공유 가계부
             </div>
             <h1 className="mt-6 text-4xl font-black leading-[1.18] tracking-tight sm:text-5xl lg:text-[3.65rem]">
-              우리 둘의 돈 관리,
+              함께 쓰는 돈 관리,
               <span className="mt-2 block bg-gradient-to-r from-[#8528e8] to-[#f34d9a] bg-clip-text text-transparent">
-                함께 시작해요.
+                함께 관리해요.
               </span>
             </h1>
             <p className="mt-6 max-w-xl text-base leading-8 text-[#71677d] sm:text-lg">
-              생활비부터 데이트 비용, 저축까지.
-              따로 적고 맞춰보던 돈 관리를 이제 하나의 가계부에서 함께 기록하고 확인해 보세요.
+              생활비와 공동경비부터 회비, 행사비까지.
+              여러 사람이 함께 쓰는 돈을 하나의 가계부에서 기록하고 투명하게 관리해 보세요.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -107,7 +107,7 @@ export default function IntroPage() {
               <div className="flex items-center justify-between border-b border-[#f1eaf5] pb-4">
                 <div className="flex items-center gap-2">
                   <Image src="/images/logo.png" alt="Jellian 로고" width={130} height={48} className="h-9 w-auto object-contain" priority />
-                  <span className="rounded-full bg-[#f8edff] px-2 py-1 text-[10px] font-bold text-[#984bd0]">우리 둘의 가계부</span>
+                  <span className="rounded-full bg-[#f8edff] px-2 py-1 text-[10px] font-bold text-[#984bd0]">함께 쓰는 가계부</span>
                 </div>
                 <span className="text-xs text-[#9b91a5]">이번 달</span>
               </div>
@@ -143,8 +143,8 @@ export default function IntroPage() {
               </div>
               <div className="mt-4 flex items-center justify-between rounded-2xl bg-[#fff7fb] p-4">
                 <div>
-                  <p className="text-sm font-extrabold">우리 둘이 함께</p>
-                  <p className="mt-1 text-xs text-[#93869e]">기록하고, 확인하고, 계획해요.</p>
+                  <p className="text-sm font-extrabold">우리 모두 함께</p>
+                  <p className="mt-1 text-xs text-[#93869e]">함께 기록하고, 확인하고, 계획해요.</p>
                 </div>
                 <div className="flex -space-x-2">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#e7d5ff]">🙂</span>
@@ -153,8 +153,35 @@ export default function IntroPage() {
               </div>
               <p className="mt-3 text-center text-[10px] text-[#b0a6b8]">서비스 소개용 예시 UI · 실제 데이터가 아닙니다</p>
             </div>
-            <span className="absolute -right-4 -top-5 rotate-12 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-[#a14bd3] shadow-lg">둘이 함께 💜</span>
-            <span className="absolute -bottom-5 -left-4 -rotate-6 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-[#e15c91] shadow-lg">우리답게 관리해요 :)</span>
+            <span className="absolute -right-4 -top-5 rotate-12 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-[#a14bd3] shadow-lg">함께 관리 💜</span>
+            <span className="absolute -bottom-5 -left-4 -rotate-6 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-[#e15c91] shadow-lg">모임답게 관리해요 :)</span>
+          </div>
+        </div>
+      </section>
+
+
+      <section className="bg-white px-5 py-14 sm:px-8 sm:py-18">
+        <div className="mx-auto max-w-6xl">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-xs font-extrabold tracking-[0.2em] text-[#a14bd3]">MADE FOR YOUR GROUP</p>
+            <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">어떤 모임이든, 함께 관리하세요</h2>
+            <p className="mt-4 text-sm leading-7 text-[#81768c] sm:text-base">
+              Jellian은 한 가지 형태에 한정되지 않아요. 돈을 함께 관리하는 곳이라면 어디서든 활용할 수 있어요.
+            </p>
+          </div>
+          <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              ["🏡", "부부·가족", "생활비, 공과금, 공동 저축과 가족 지출"],
+              ["🎓", "동아리·소모임", "정기 회비, 공금, 모임과 행사 운영비"],
+              ["🧳", "친구·여행", "여행 경비, 공동 구매, 함께 쓴 비용"],
+              ["🛠️", "팀·프로젝트", "프로젝트 운영비와 공동 지출 기록"],
+            ].map(([emoji, title, description]) => (
+              <article key={title} className="rounded-3xl border border-[#f0e8f5] bg-gradient-to-br from-[#fffaff] to-[#fff5fa] p-6">
+                <span className="text-3xl">{emoji}</span>
+                <h3 className="mt-4 text-lg font-extrabold">{title}</h3>
+                <p className="mt-2 text-sm leading-7 text-[#81768c]">{description}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -162,7 +189,7 @@ export default function IntroPage() {
       <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-extrabold tracking-[0.2em] text-[#a14bd3]">WHAT YOU CAN DO</p>
-          <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">우리 둘의 가계부에 필요한 것들</h2>
+          <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">함께 쓰는 가계부에 필요한 기능</h2>
           <p className="mt-4 text-sm leading-7 text-[#81768c] sm:text-base">
             복잡하게 꾸미기보다, 매일 쓰는 데 필요한 기능을 한곳에 모았습니다.
           </p>
@@ -204,9 +231,9 @@ export default function IntroPage() {
       <section className="px-5 py-16 sm:px-8 sm:py-20">
         <div className="mx-auto max-w-4xl rounded-[2rem] bg-gradient-to-r from-[#8528e8] to-[#f04e9a] px-6 py-12 text-center text-white shadow-xl shadow-[#d18be7]/20 sm:px-12">
           <div className="flex justify-center"><Image src="/images/logo.png" alt="Jellian 로고" width={150} height={56} className="h-10 w-auto rounded-lg bg-white px-3 py-1 object-contain" /></div>
-          <h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">우리 둘의 돈 관리,<br />이제 함께 시작해요.</h2>
+          <h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">함께 쓰는 돈,<br />이제 한곳에서 관리해요.</h2>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-white/85">
-            가계부를 만들고 상대방을 초대해 보세요. 둘이 함께 기록하는 작은 습관부터 시작할 수 있어요.
+            부부·가족부터 동아리와 소모임까지. 가계부를 만들고 멤버를 초대해 함께 기록해 보세요.
           </p>
           <Link
             href="/login"
@@ -220,7 +247,7 @@ export default function IntroPage() {
 
       <footer className="border-t border-[#f0e8f5] bg-white px-5 py-8 text-center text-xs text-[#a096ad]">
         <div className="flex justify-center"><Image src="/images/logo.png" alt="Jellian 로고" width={110} height={42} className="h-8 w-auto object-contain" /></div>
-        <p className="mt-2">우리 둘의 돈 관리, 함께 시작해요.</p>
+        <p className="mt-2">함께 쓰는 돈, 함께 관리하는 가계부.</p>
         <Link href="/blog" className="mt-3 inline-block font-semibold text-[#8e42c8] hover:underline">
           사용 가이드 보기
         </Link>
