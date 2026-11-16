@@ -943,19 +943,19 @@ const sumAmount = (list: Item[]) =>
 
   // --- 9. 메인 레이아웃 렌더링 ---
   return (
-    <main className="min-h-screen bg-[#f7f8fa] px-3 pt-16 pb-4 text-[#191f28] sm:px-5 sm:py-6 md:px-6 md:pl-20">
+    <main className="min-h-screen bg-[#fffaff] px-3 pt-16 pb-4 text-[#292238] sm:px-5 sm:py-6 md:px-6 md:pl-20">
       <div className="mx-auto w-full max-w-6xl">
         
 
         
         {/* 공유 가계부 관리 패널 */}
-        <div className="mb-6 grid grid-cols-1 gap-4 rounded-2xl border border-[#e9edf2] bg-white p-4 shadow-sm sm:p-5 md:grid-cols-3">
+        <div className="mb-6 grid grid-cols-1 gap-4 rounded-2xl border border-[#f0e8f5] bg-white p-4 shadow-sm sm:p-5 md:grid-cols-3">
 
           {/* 현재 가계부 선택 */}
-          <div className="min-w-0 rounded-xl bg-[#f7f8fa] p-4">
+          <div className="min-w-0 rounded-xl bg-[#fffaff] p-4">
             <div className="mb-3 flex items-center gap-2">
               <span className="text-lg">🏠</span>
-              <label className="text-sm font-bold text-[#191f28]">
+              <label className="text-sm font-bold text-[#292238]">
                 현재 가계부
               </label>
             </div>
@@ -966,7 +966,7 @@ const sumAmount = (list: Item[]) =>
                 setCurrentGroupId(e.target.value);
                 localStorage.setItem("currentGroupId", e.target.value);
               }}
-              className="min-h-11 w-full rounded-xl border border-[#e9edf2] bg-white px-3 py-2 text-sm font-semibold text-[#191f28] outline-none transition focus:border-[#3182f6]"
+              className="min-h-11 w-full rounded-xl border border-[#f0e8f5] bg-white px-3 py-2 text-sm font-semibold text-[#292238] outline-none transition focus:border-[#9145c9]"
             >
               {groups.length === 0 && (
                 <option value="">소속된 방이 없습니다</option>
@@ -977,16 +977,16 @@ const sumAmount = (list: Item[]) =>
                 </option>
               ))}
             </select>
-            <p className="mt-2 text-xs text-[#8b95a1]">
+            <p className="mt-2 text-xs text-[#81768c]">
               관리할 공유 가계부를 선택하세요.
             </p>
           </div>
 
           {/* 새 가계부 만들기 */}
-          <div className="min-w-0 rounded-xl bg-[#f7f8fa] p-4">
+          <div className="min-w-0 rounded-xl bg-[#fffaff] p-4">
             <div className="mb-3 flex items-center gap-2">
               <span className="text-lg">➕</span>
-              <label className="text-sm font-bold text-[#191f28]">
+              <label className="text-sm font-bold text-[#292238]">
                 새 가계부 만들기
               </label>
             </div>
@@ -995,7 +995,7 @@ const sumAmount = (list: Item[]) =>
               <select
                 value={newGroupType}
                 onChange={(e) => setNewGroupType(e.target.value)}
-                className="min-h-10 w-full rounded-xl border border-[#e9edf2] bg-white px-3 py-2 text-sm text-[#191f28] outline-none focus:border-[#3182f6]"
+                className="min-h-10 w-full rounded-xl border border-[#f0e8f5] bg-white px-3 py-2 text-sm text-[#292238] outline-none focus:border-[#9145c9]"
               >
                 <option value="household">부부·가족용</option>
                 <option value="club">모임·동아리용</option>
@@ -1008,26 +1008,26 @@ const sumAmount = (list: Item[]) =>
                   placeholder="예: 우리 가족 가계부"
                   value={newGroupName}
                   onChange={(e) => setNewGroupName(e.target.value)}
-                  className="min-w-0 flex-1 rounded-xl border border-[#e9edf2] bg-white px-3 py-2 text-sm text-[#191f28] outline-none transition placeholder:text-[#b0b8c1] focus:border-[#3182f6]"
+                  className="min-w-0 flex-1 rounded-xl border border-[#f0e8f5] bg-white px-3 py-2 text-sm text-[#292238] outline-none transition placeholder:text-[#b0b8c1] focus:border-[#9145c9]"
                 />
                 <button
                   onClick={createGroup}
-                  className="shrink-0 rounded-xl bg-[#3182f6] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#1b64da]"
+                  className="shrink-0 rounded-xl bg-[#9145c9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#7828c8]"
                 >
                   개설
                 </button>
               </div>
             </div>
-            <p className="mt-2 text-xs text-[#8b95a1]">
+            <p className="mt-2 text-xs text-[#81768c]">
               유형에 맞는 기본 카테고리가 자동 생성되며, 이후 자유롭게 수정할 수 있습니다.
             </p>
           </div>
 
           {/* 멤버 초대 */}
-          <div className="min-w-0 rounded-xl bg-[#f7f8fa] p-4">
+          <div className="min-w-0 rounded-xl bg-[#fffaff] p-4">
             <div className="mb-3 flex items-center gap-2">
               <span className="text-lg">👥</span>
-              <label className="text-sm font-bold text-[#191f28]">
+              <label className="text-sm font-bold text-[#292238]">
                 멤버 초대
               </label>
             </div>
@@ -1038,7 +1038,7 @@ const sumAmount = (list: Item[]) =>
             >
               💬 카카오톡 초대 링크 복사
             </button>
-            <p className="mt-2 text-xs text-[#8b95a1]">
+            <p className="mt-2 text-xs text-[#81768c]">
               링크를 공유해 멤버를 초대하세요.
             </p>
           </div>
@@ -1048,7 +1048,7 @@ const sumAmount = (list: Item[]) =>
         {/* 모바일 메뉴 버튼 */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="fixed left-3 top-16 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-[#e9edf2] bg-white text-xl shadow-sm md:hidden"
+          className="fixed left-3 top-16 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-[#f0e8f5] bg-white text-xl shadow-sm md:hidden"
           aria-label="메뉴 열기"
         >
           ☰
@@ -1065,17 +1065,17 @@ const sumAmount = (list: Item[]) =>
 
         {/* 사이드바 */}
         <aside
-          className={`group fixed left-0 top-14 z-50 flex h-[calc(100vh-3.5rem)] w-64 flex-col border-r border-[#e9edf2] bg-white p-3 shadow-lg transition-all duration-200 md:top-16 md:h-[calc(100vh-4rem)] md:w-16 md:overflow-x-hidden md:overflow-y-auto md:shadow-sm md:hover:w-56 ${
+          className={`group fixed left-0 top-14 z-50 flex h-[calc(100vh-3.5rem)] w-64 flex-col border-r border-[#f0e8f5] bg-white p-3 shadow-lg transition-all duration-200 md:top-16 md:h-[calc(100vh-4rem)] md:w-16 md:overflow-x-hidden md:overflow-y-auto md:shadow-sm md:hover:w-56 ${
             isSidebarOpen
               ? "translate-x-0"
               : "-translate-x-full md:translate-x-0"
           }`}
         >
-          <div className="mb-4 px-3 py-2 text-xs font-bold text-[#8b95a1] md:opacity-0 md:group-hover:opacity-100">
+          <div className="mb-4 px-3 py-2 text-xs font-bold text-[#81768c] md:opacity-0 md:group-hover:opacity-100">
             MAIN MENU
           </div>
 
-                    <div className="mb-2 px-3 text-xs font-bold text-[#8b95a1] md:opacity-0 md:group-hover:opacity-100">
+                    <div className="mb-2 px-3 text-xs font-bold text-[#81768c] md:opacity-0 md:group-hover:opacity-100">
             가계부
           </div>
 
@@ -1110,8 +1110,8 @@ const sumAmount = (list: Item[]) =>
                   }}
                   className={`mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
                     active
-                      ? "bg-[#e8f2ff] text-[#3182f6]"
-                      : "text-[#4e5968] hover:bg-[#f7f8fa]"
+                      ? "bg-[#f3e8ff] text-[#9145c9]"
+                      : "text-[#665675] hover:bg-[#fffaff]"
                   }`}
                 >
                   <span className="flex w-7 shrink-0 items-center justify-center text-lg">
@@ -1124,7 +1124,7 @@ const sumAmount = (list: Item[]) =>
               );
             })}
 
-          <div className="my-3 border-t border-[#e9edf2]" />
+          <div className="my-3 border-t border-[#f0e8f5]" />
 
           {[
             { id: "category", label: "카테고리 관리", icon: "📁" },
@@ -1138,8 +1138,8 @@ const sumAmount = (list: Item[]) =>
               }}
               className={`mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
                 mainTab === item.id
-                  ? "bg-[#e8f2ff] text-[#3182f6]"
-                  : "text-[#4e5968] hover:bg-[#f7f8fa]"
+                  ? "bg-[#f3e8ff] text-[#9145c9]"
+                  : "text-[#665675] hover:bg-[#fffaff]"
               }`}
             >
               <span className="flex w-7 shrink-0 items-center justify-center text-lg">
@@ -1154,18 +1154,18 @@ const sumAmount = (list: Item[]) =>
 
         {/* 컨텐츠 조건부 뷰 출력 */}
         {loadingGroups ? (
-  <div className="flex min-h-64 items-center justify-center rounded-2xl border border-[#e9edf2] bg-white shadow-sm">
-    <div className="text-sm font-semibold text-[#8b95a1]">
+  <div className="flex min-h-64 items-center justify-center rounded-2xl border border-[#f0e8f5] bg-white shadow-sm">
+    <div className="text-sm font-semibold text-[#81768c]">
       불러오는 중...
     </div>
   </div>
 ) : !currentGroupId && mainTab === "account" ? (
           <div className="rounded-2xl border border-dashed border-[#d9e0e8] bg-white px-4 py-20 text-center shadow-sm sm:py-24">
   <span className="mb-4 block text-5xl">🏠</span>
-  <p className="text-lg font-bold text-[#191f28]">
+  <p className="text-lg font-bold text-[#292238]">
     활성화된 가계부 방이 존재하지 않습니다.
   </p>
-  <p className="mt-2 text-sm leading-6 text-[#8b95a1]">
+  <p className="mt-2 text-sm leading-6 text-[#81768c]">
     상단에서 새 가계부를 개설하거나 다른 가계부에 초대받아야 내역 관리가 가능합니다.
   </p>
 </div>
