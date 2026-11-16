@@ -33,6 +33,7 @@ type Category = {
 type Group = {
   id: string;
   name: string;
+  group_type?: string;
 };
 
 export default function Home() {
@@ -45,6 +46,7 @@ export default function Home() {
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
   const [role, setRole] = useState("member");
   const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupType, setNewGroupType] = useState("household");
 
   // 🎯 진짜 초대 코드(invite_code)를 저장할 상태 추가
   const [currentInviteCode, setCurrentInviteCode] = useState<string>("");
@@ -180,12 +182,24 @@ export default function Home() {
       return;
     }
 
-    const { data: groupRows, error: groupError } = await supabase
-  .from("groups")
-  .select("id, name")
-  .in("id", groupIds)
-  .is("archived_at", null);
-    if (groupError) throw groupError;
+    let groupRows: any[] | null = null;
+    const typedGroups = await supabase
+      .from("groups")
+      .select("id, name, group_type")
+      .in("id", groupIds)
+      .is("archived_at", null);
+
+    if (typedGroups.error) {
+      const legacyGroups = await supabase
+        .from("groups")
+        .select("id, name")
+        .in("id", groupIds)
+        .is("archived_at", null);
+      if (legacyGroups.error) throw legacyGroups.error;
+      groupRows = (legacyGroups.data || []).map((group) => ({ ...group, group_type: "custom" }));
+    } else {
+      groupRows = typedGroups.data || [];
+    }
 
     const mappedGroups = groupRows || [];
 
@@ -258,37 +272,71 @@ export default function Home() {
 
   const createGroup = async () => {
     if (!newGroupName.trim()) return;
+
+    const categoryTemplates: Record<string, { name: string; type: string }[]> = {
+      household: [
+        { name: "주거비", type: "fixed" }, { name: "통신비", type: "fixed" },
+        { name: "보험료", type: "fixed" }, { name: "구독료", type: "fixed" },
+        { name: "식비", type: "variable" }, { name: "생활용품", type: "variable" },
+        { name: "교통·차량", type: "variable" }, { name: "의료·건강", type: "variable" },
+        { name: "여가·문화", type: "variable" }, { name: "육아·교육", type: "variable" },
+        { name: "개인용돈", type: "allowance" }, { name: "저축", type: "saving" },
+        { name: "투자", type: "saving" }, { name: "급여", type: "income" },
+        { name: "부수입", type: "income" }, { name: "기타수입", type: "income" },
+      ],
+      club: [
+        { name: "정기회비", type: "income" }, { name: "추가회비", type: "income" },
+        { name: "후원금", type: "income" }, { name: "기타수입", type: "income" },
+        { name: "식비·회식", type: "variable" }, { name: "행사비", type: "variable" },
+        { name: "운영비", type: "fixed" }, { name: "교통비", type: "variable" },
+        { name: "물품구입", type: "variable" }, { name: "기타지출", type: "variable" },
+        { name: "예비비", type: "saving" },
+      ],
+      trip: [
+        { name: "공동경비 입금", type: "income" }, { name: "추가분담금", type: "income" },
+        { name: "숙박", type: "variable" }, { name: "교통", type: "variable" },
+        { name: "식비", type: "variable" }, { name: "관광·활동", type: "variable" },
+        { name: "준비물", type: "variable" }, { name: "기타비용", type: "variable" },
+      ],
+      custom: [],
+    };
+
     const { data: newGroup, error: groupError } = await supabase
-  .from("groups")
-  .insert([{
-    name: newGroupName,
-    created_by: session?.user?.id,
-    invite_code: crypto.randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase(),
-  }])
-  .select()
-  .single();
+      .from("groups")
+      .insert([{
+        name: newGroupName.trim(), group_type: newGroupType,
+        created_by: session?.user?.id,
+        invite_code: crypto.randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase(),
+      }])
+      .select()
+      .single();
 
-if (groupError) {
-  alert(`가계부 생성 실패: ${groupError.message}`);
-  return;
-}
+    if (groupError) {
+      alert(`가계부 생성 실패: ${groupError.message}\\n\\n가계부 유형 기능을 사용하려면 Supabase에 group_type 컬럼 추가 SQL을 먼저 실행해주세요.`);
+      return;
+    }
+    if (!newGroup) return;
 
-    if (newGroup) {
-  const { error } = await supabase.from("group_members").insert([{
-    group_id: newGroup.id,
-    user_id: session?.user?.id,
-    role: "owner",
-  }]);
+    const { error: memberError } = await supabase.from("group_members").insert([{
+      group_id: newGroup.id, user_id: session?.user?.id, role: "owner",
+    }]);
+    if (memberError) {
+      alert(`모임장 등록 실패: ${memberError.message}`);
+      return;
+    }
 
-  if (error) {
-    alert(`모임장 등록 실패: ${error.message}`);
-    return;
-  }
+    const template = categoryTemplates[newGroupType] || [];
+    if (template.length > 0) {
+      const { error: categoryError } = await supabase.from("categories").insert(
+        template.map((item) => ({ ...item, group_id: newGroup.id, user_id: session?.user?.id }))
+      );
+      if (categoryError) alert(`가계부는 생성됐지만 기본 카테고리 생성에 실패했습니다: ${categoryError.message}`);
+    }
 
-  setNewGroupName("");
-  await fetchUserGroups();
-  setCurrentGroupId(newGroup.id);
-}
+    setNewGroupName("");
+    setNewGroupType("household");
+    await fetchUserGroups();
+    setCurrentGroupId(newGroup.id);
   };
 
   // 🎯 원클릭 초대링크 생성 및 카카오톡 복사 핸들러 함수
@@ -943,23 +991,35 @@ const sumAmount = (list: Item[]) =>
               </label>
             </div>
 
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="예: 우리 가족 가계부"
-                value={newGroupName}
-                onChange={(e) => setNewGroupName(e.target.value)}
-                className="min-w-0 flex-1 rounded-xl border border-[#e9edf2] bg-white px-3 py-2 text-sm text-[#191f28] outline-none transition placeholder:text-[#b0b8c1] focus:border-[#3182f6]"
-              />
-              <button
-                onClick={createGroup}
-                className="shrink-0 rounded-xl bg-[#3182f6] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#1b64da]"
+            <div className="space-y-2">
+              <select
+                value={newGroupType}
+                onChange={(e) => setNewGroupType(e.target.value)}
+                className="min-h-10 w-full rounded-xl border border-[#e9edf2] bg-white px-3 py-2 text-sm text-[#191f28] outline-none focus:border-[#3182f6]"
               >
-                개설
-              </button>
+                <option value="household">부부·가족용</option>
+                <option value="club">모임·동아리용</option>
+                <option value="trip">여행·프로젝트용</option>
+                <option value="custom">직접 설정</option>
+              </select>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="예: 우리 가족 가계부"
+                  value={newGroupName}
+                  onChange={(e) => setNewGroupName(e.target.value)}
+                  className="min-w-0 flex-1 rounded-xl border border-[#e9edf2] bg-white px-3 py-2 text-sm text-[#191f28] outline-none transition placeholder:text-[#b0b8c1] focus:border-[#3182f6]"
+                />
+                <button
+                  onClick={createGroup}
+                  className="shrink-0 rounded-xl bg-[#3182f6] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#1b64da]"
+                >
+                  개설
+                </button>
+              </div>
             </div>
             <p className="mt-2 text-xs text-[#8b95a1]">
-              새로운 공유 가계부를 생성합니다.
+              유형에 맞는 기본 카테고리가 자동 생성되며, 이후 자유롭게 수정할 수 있습니다.
             </p>
           </div>
 
