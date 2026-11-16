@@ -46,7 +46,7 @@ export default function CalendarView({ items, selectedMonth, darkMode }: Props) 
         {/* 요일 헤더 */}
         <div className="grid grid-cols-7 gap-1 text-center mb-2">
           {weekDays.map((d, i) => (
-            <div key={d} className={`text-xs font-bold py-1 ${i === 0 ? "text-red-500" : i === 6 ? "text-blue-500" : darkMode ? "text-gray-400" : "text-gray-500"}`}>
+            <div key={d} className={`text-xs font-bold py-1 ${i === 0 ? "text-red-500" : i === 6 ? "text-[#9145c9]" : darkMode ? "text-gray-400" : "text-gray-500"}`}>
               {d}
             </div>
           ))}
@@ -72,18 +72,18 @@ export default function CalendarView({ items, selectedMonth, darkMode }: Props) 
                 onClick={() => setSelectedDate(isSelected ? null : dayStr)}
                 className={`p-1.5 min-h-[64px] rounded-xl flex flex-col justify-between items-start transition-all border text-left ${
                   isSelected
-                    ? "border-blue-500 bg-blue-500/10"
+                    ? "border-[#9145c9] bg-[#9145c9]/10"
                     : darkMode
                     ? "border-slate-700 hover:bg-slate-700/50"
                     : "border-gray-50 hover:bg-gray-50"
                 }`}
               >
-                <span className={`text-xs font-bold ${idx % 7 === 0 ? "text-red-500" : idx % 7 === 6 ? "text-blue-500" : darkMode ? "text-gray-200" : "text-gray-700"}`}>
+                <span className={`text-xs font-bold ${idx % 7 === 0 ? "text-red-500" : idx % 7 === 6 ? "text-[#9145c9]" : darkMode ? "text-gray-200" : "text-gray-700"}`}>
                   {day}
                 </span>
                 
                 <div className="w-full text-[10px] font-semibold space-y-0.5 overflow-hidden text-right">
-                  {dayIncome > 0 && <p className="text-blue-500 truncate">+{dayIncome.toLocaleString()}</p>}
+                  {dayIncome > 0 && <p className="text-[#9145c9] truncate">+{dayIncome.toLocaleString()}</p>}
                   {dayExpense > 0 && <p className="text-red-500 truncate">-{dayExpense.toLocaleString()}</p>}
                 </div>
               </button>
@@ -108,7 +108,7 @@ export default function CalendarView({ items, selectedMonth, darkMode }: Props) 
                   {item.memo && <p className={`text-xs ${darkMode ? "text-gray-400" : "text-gray-500"}`}>📝 {item.memo}</p>}
                   <p className={`text-[11px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>{item.category}</p>
                 </div>
-                <div className={`font-extrabold text-sm ${item.type === "income" ? "text-blue-500" : "text-red-500"}`}>
+                <div className={`font-extrabold text-sm ${item.type === "income" ? "text-[#9145c9]" : "text-red-500"}`}>
                   {item.type === "income" ? "+" : "-"} ₩{item.amount.toLocaleString()}
                 </div>
               </div>
