@@ -9,6 +9,7 @@ import SummaryCards from "@/components/SummaryCards";
 import DuplicateModal from "@/components/DuplicateModal";
 import CategoryManager from "@/components/CategoryManager";
 import AccountView from "@/components/AccountView";
+import IntroPage from "@/components/IntroPage";
 
 type Item = {
   id: number;
@@ -890,23 +891,7 @@ const sumAmount = (list: Item[]) =>
   );
 }
 
-  if (!session) {
-    return (
-      <main className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
-        <div className="max-w-md w-full bg-white rounded-3xl p-8 shadow-xl border border-gray-100 text-center">
-          <h2 className="text-3xl font-extrabold mb-2 tracking-tight text-slate-900">📊 무계획 속 계획</h2>
-          <p className="text-center text-xs text-gray-400 mb-8 font-medium">우리 집, 모임 지출을 투명하게 공유하고 관리하세요.</p>
-
-          <button
-            onClick={handleGoogleSignIn}
-            className="w-full border-2 rounded-xl px-3 py-2 text-sm bg-transparent border-gray-200 font-bold outline-none text-black"
-          >
-            <span>G</span> 구글 계정으로 시작하기
-          </button>
-        </div>
-      </main>
-    );
-  }
+  if (!session) return <IntroPage />;
 
   // --- 9. 메인 레이아웃 렌더링 ---
   return (
