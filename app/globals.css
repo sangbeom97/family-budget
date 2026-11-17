@@ -25,6 +25,15 @@ body {
     "Apple SD Gothic Neo", "Noto Sans KR", Arial, sans-serif;
 }
 
+/* Keep sidebar scrolling available while hiding the scrollbar */
+.sidebar-scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sidebar-scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
 
 /* Jellian low-stimulation palette */
 main.min-h-screen {
