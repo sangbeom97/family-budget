@@ -81,6 +81,9 @@ export default function AdminPage() {
             <p className="mt-1 text-sm text-[#81768c]">Jellian 서비스에 가입한 회원을 확인합니다.</p>
           </div>
           <div className="flex flex-wrap gap-2">
+            <Link href="/admin/notices" className="rounded-xl bg-[#f3e8ff] px-4 py-2.5 text-sm font-bold text-[#9145c9] hover:bg-[#ead8fa]">
+              공지사항 관리
+            </Link>
             <Link
               href="/admin/stats"
               className="rounded-xl bg-[#f3e8ff] px-4 py-2.5 text-sm font-bold text-[#9145c9] hover:bg-[#ead8fa]"
