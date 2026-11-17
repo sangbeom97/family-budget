@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo, type ChangeEvent } from "react";
+import Link from "next/link";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import * as XLSX from "xlsx";
@@ -1189,6 +1190,17 @@ const sumAmount = (list: Item[]) =>
             })}
 
           <div className="my-3 border-t border-[#f0e8f5]" />
+
+          <Link
+            href="/notices"
+            onClick={() => setIsSidebarOpen(false)}
+            className="mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
+          >
+            <span className="flex w-7 shrink-0 items-center justify-center text-lg">📢</span>
+            <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
+              공지사항
+            </span>
+          </Link>
 
           {[
             { id: "category", label: "카테고리 관리", icon: "📁" },
