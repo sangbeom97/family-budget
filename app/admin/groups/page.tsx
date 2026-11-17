@@ -63,11 +63,9 @@ export default function AdminGroupsPage() {
   }, []);
 
   useEffect(() => {
+    // 세션 확인 후 목록을 한 번만 조회합니다.
+    // 초기 인증 이벤트에서도 재호출하면 조회 이력이 중복 기록됩니다.
     loadGroups();
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      Promise.resolve().then(loadGroups);
-    });
-    return () => listener.subscription.unsubscribe();
   }, [loadGroups]);
 
   const filteredGroups = useMemo(() => {
