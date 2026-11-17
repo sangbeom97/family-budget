@@ -34,7 +34,7 @@ export default function NoticesPage() {
     new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-[#f8f7fa] px-4 py-8 sm:px-6 lg:px-8">
+    <main className="min-h-[calc(100vh-4rem)] bg-[#f8f7fa] px-4 pt-20 pb-8 sm:px-6 md:pt-8 md:pl-20 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <div className="mb-7 flex items-end justify-between gap-3">
           <div>
