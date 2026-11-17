@@ -8,16 +8,27 @@ import { supabase } from "@/lib/supabase";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    const updateAccess = async (session: { user: { id: string } } | null) => {
+      setIsLoggedIn(!!session);
+      if (!session) {
+        setIsAdmin(false);
+        return;
+      }
+      const { data, error } = await supabase.rpc("is_jellian_admin");
+      setIsAdmin(!error && data === true);
+    };
+
     supabase.auth.getSession().then(({ data }) => {
-      setIsLoggedIn(!!data.session);
+      updateAccess(data.session);
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session);
+      updateAccess(session);
     });
 
     return () => subscription.unsubscribe();
@@ -70,6 +81,12 @@ export default function Header() {
           >
             사용 가이드
           </Link>
+
+          {isLoggedIn && isAdmin && (
+            <Link href="/admin" className="rounded-full bg-[#f3e8ff] px-3 py-2 text-sm font-bold text-[#9145c9] transition-colors hover:bg-[#ead8fa]">
+              관리자
+            </Link>
+          )}
 
           {!isLoggedIn && (
             <Link
