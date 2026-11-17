@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import AnnouncementPopup from "@/components/AnnouncementPopup";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -116,7 +115,6 @@ export default function Header() {
         </nav>
       </div>
     </header>
-    <AnnouncementPopup />
     </>
   );
 }
