@@ -63,23 +63,23 @@ export default function AnnouncementPopup() {
 
   return (
     <aside className="fixed bottom-6 right-6 z-[60] hidden w-[340px] max-w-[calc(100vw-3rem)] overflow-hidden rounded-2xl border border-[#eadff2] bg-white shadow-[0_12px_40px_rgba(48,25,67,0.18)] lg:block">
-      <div className="flex items-center justify-between border-b border-[#f1eaf5] bg-[#fbf7ff] px-4 py-3">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between rounded-xl bg-[#fbf7ff] px-2 py-3 md:group-hover:px-3">
+        <div className="flex min-w-0 items-center gap-2">
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#f0e2ff] text-sm">📢</span>
-          <span className="text-sm font-extrabold text-[#352443]">Jellian 공지사항</span>
+          <span className="hidden truncate text-sm font-extrabold text-[#352443] md:group-hover:inline">공지사항</span>
         </div>
         <button
           type="button"
           onClick={() => setExpanded((value) => !value)}
           aria-label={expanded ? "공지 접기" : "공지 펼치기"}
-          className="rounded-lg px-2 py-1 text-lg leading-none text-[#81768c] hover:bg-white"
+          className="hidden rounded-lg px-2 py-1 text-lg leading-none text-[#81768c] hover:bg-white md:group-hover:inline"
         >
           {expanded ? "−" : "+"}
         </button>
       </div>
 
       {expanded && (
-        <div className="p-4">
+        <div className="hidden rounded-xl border border-[#eadff2] bg-white p-3 shadow-sm md:group-hover:block">
           <p className="text-[11px] font-semibold text-[#9874ad]">{date}</p>
           <h2 className="mt-1.5 line-clamp-2 text-sm font-extrabold leading-5 text-[#292238]">{notice.title}</h2>
           <p className="mt-2 line-clamp-4 whitespace-pre-wrap break-words text-xs leading-5 text-[#665675]">{notice.content}</p>
@@ -87,19 +87,19 @@ export default function AnnouncementPopup() {
             <button
               type="button"
               onClick={hideToday}
-              className="text-xs font-semibold text-[#93869e] transition-colors hover:text-[#5e5069]"
+              className="text-[11px] font-semibold text-[#93869e] transition-colors hover:text-[#5e5069]"
             >
               오늘 하루 보지 않기
             </button>
             <Link
               href="/notices"
-              className="rounded-lg bg-[#9145c9] px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-[#7f35b7]"
+              className="rounded-lg bg-[#9145c9] px-2 py-2 text-[11px] font-bold text-white transition-colors hover:bg-[#7f35b7]"
             >
               전체 공지 보기
             </Link>
           </div>
         </div>
       )}
-    </aside>
+    </div>
   );
 }
