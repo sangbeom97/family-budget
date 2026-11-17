@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import AdminNav from "@/app/admin/AdminNav";
 import { supabase } from "@/lib/supabase";
@@ -13,12 +13,32 @@ type AdminMember = {
   group_count: number;
 };
 
+type MemberPageData = {
+  total_count: number;
+  group_member_count: number;
+  filtered_count: number;
+  members: AdminMember[];
+};
+
+const PAGE_SIZE = 20;
+
 export default function AdminPage() {
   const [members, setMembers] = useState<AdminMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [stats, setStats] = useState({ total: 0, groupMembers: 0, filtered: 0 });
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setSearchTerm(search.trim());
+      setPage(1);
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [search]);
 
   const loadMembers = useCallback(async () => {
     setLoading(true);
@@ -41,32 +61,32 @@ export default function AdminPage() {
     }
 
     setAuthorized(true);
-    const { data, error: listError } = await supabase.rpc("get_jellian_admin_members");
+    const { data, error: listError } = await supabase.rpc("get_jellian_admin_members_page", {
+      p_page: page,
+      p_page_size: PAGE_SIZE,
+      p_search: searchTerm,
+    });
+
     if (listError) {
       setError(listError.message);
       setMembers([]);
     } else {
-      setMembers((data || []) as AdminMember[]);
+      const result = data as MemberPageData;
+      setMembers(result?.members || []);
+      setStats({
+        total: Number(result?.total_count || 0),
+        groupMembers: Number(result?.group_member_count || 0),
+        filtered: Number(result?.filtered_count || 0),
+      });
     }
     setLoading(false);
-  }, []);
+  }, [page, searchTerm]);
 
   useEffect(() => {
-    // 세션 확인 후 목록을 한 번만 조회합니다.
-    // 초기 인증 이벤트에서도 재호출하면 조회 이력이 중복 기록됩니다.
     loadMembers();
   }, [loadMembers]);
 
-  const filteredMembers = useMemo(() => {
-    const keyword = search.trim().toLowerCase();
-    if (!keyword) return members;
-    return members.filter((member) =>
-      [member.nickname || "", member.email || ""].some((value) =>
-        value.toLowerCase().includes(keyword)
-      )
-    );
-  }, [members, search]);
-
+  const totalPages = Math.max(1, Math.ceil(stats.filtered / PAGE_SIZE));
   const formatDate = (value: string) =>
     new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
 
@@ -97,15 +117,15 @@ export default function AdminPage() {
             <div className="mb-5 grid gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-[#eee8f2] bg-white p-5">
                 <p className="text-sm font-semibold text-[#81768c]">전체 회원</p>
-                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{members.length.toLocaleString("ko-KR")}<span className="ml-1 text-base">명</span></p>
+                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{stats.total.toLocaleString("ko-KR")}<span className="ml-1 text-base">명</span></p>
               </div>
               <div className="rounded-2xl border border-[#eee8f2] bg-white p-5">
                 <p className="text-sm font-semibold text-[#81768c]">그룹에 가입한 회원</p>
-                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{members.filter((member) => member.group_count > 0).length.toLocaleString("ko-KR")}<span className="ml-1 text-base">명</span></p>
+                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{stats.groupMembers.toLocaleString("ko-KR")}<span className="ml-1 text-base">명</span></p>
               </div>
               <div className="rounded-2xl border border-[#eee8f2] bg-white p-5">
-                <p className="text-sm font-semibold text-[#81768c]">현재 검색 결과</p>
-                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{filteredMembers.length.toLocaleString("ko-KR")}<span className="ml-1 text-base">명</span></p>
+                <p className="text-sm font-semibold text-[#81768c]">검색 결과</p>
+                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{stats.filtered.toLocaleString("ko-KR")}<span className="ml-1 text-base">명</span></p>
               </div>
             </div>
 
@@ -113,7 +133,7 @@ export default function AdminPage() {
               <div className="flex flex-col gap-3 border-b border-[#f0eaf3] p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
                 <div>
                   <h2 className="font-extrabold text-[#292238]">가입 회원 목록</h2>
-                  <p className="mt-1 text-xs text-[#81768c]">가입일 최신순으로 표시됩니다.</p>
+                  <p className="mt-1 text-xs text-[#81768c]">가입일 최신순 · 페이지당 {PAGE_SIZE}명</p>
                 </div>
                 <div className="flex gap-2">
                   <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="이메일 또는 닉네임 검색" className="min-h-10 w-full rounded-xl border border-[#e9e2ef] px-3 text-sm outline-none focus:border-[#a875c4] sm:w-64" />
@@ -123,15 +143,10 @@ export default function AdminPage() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[650px] text-left text-sm">
                   <thead className="bg-[#fbf9fc] text-xs font-bold text-[#81768c]">
-                    <tr>
-                      <th className="px-5 py-3">회원</th>
-                      <th className="px-5 py-3">이메일</th>
-                      <th className="px-5 py-3">가입일</th>
-                      <th className="px-5 py-3 text-right">가입 그룹</th>
-                    </tr>
+                    <tr><th className="px-5 py-3">회원</th><th className="px-5 py-3">이메일</th><th className="px-5 py-3">가입일</th><th className="px-5 py-3 text-right">가입 그룹</th></tr>
                   </thead>
                   <tbody className="divide-y divide-[#f2edf5]">
-                    {filteredMembers.map((member) => (
+                    {members.map((member) => (
                       <tr key={member.id} className="hover:bg-[#fdfbfe]">
                         <td className="px-5 py-4 font-bold text-[#292238]">{member.nickname || "닉네임 없음"}</td>
                         <td className="px-5 py-4 text-[#665675]">{member.email || "-"}</td>
@@ -139,11 +154,17 @@ export default function AdminPage() {
                         <td className="px-5 py-4 text-right font-semibold tabular-nums text-[#665675]">{member.group_count}개</td>
                       </tr>
                     ))}
-                    {filteredMembers.length === 0 && (
-                      <tr><td colSpan={4} className="px-5 py-12 text-center text-sm text-[#81768c]">검색 결과가 없습니다.</td></tr>
-                    )}
+                    {members.length === 0 && <tr><td colSpan={4} className="px-5 py-12 text-center text-sm text-[#81768c]">검색 결과가 없습니다.</td></tr>}
                   </tbody>
                 </table>
+              </div>
+              <div className="flex flex-col gap-3 border-t border-[#f0eaf3] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                <p className="text-sm text-[#81768c]">{stats.filtered.toLocaleString("ko-KR")}명 중 {stats.filtered === 0 ? 0 : (page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, stats.filtered)}명 표시</p>
+                <div className="flex items-center gap-2">
+                  <button disabled={page <= 1 || loading} onClick={() => setPage((value) => value - 1)} className="rounded-lg border border-[#e9e2ef] px-3 py-2 text-sm font-bold text-[#665675] disabled:opacity-40">이전</button>
+                  <span className="min-w-20 text-center text-sm font-semibold text-[#665675]">{page} / {totalPages}</span>
+                  <button disabled={page >= totalPages || loading} onClick={() => setPage((value) => value + 1)} className="rounded-lg border border-[#e9e2ef] px-3 py-2 text-sm font-bold text-[#665675] disabled:opacity-40">다음</button>
+                </div>
               </div>
             </section>
           </>
