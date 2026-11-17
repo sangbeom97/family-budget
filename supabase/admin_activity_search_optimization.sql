@@ -2,19 +2,20 @@
 -- 기존 작업 이력 데이터는 변경하거나 삭제하지 않습니다.
 
 create extension if not exists pg_trgm with schema extensions;
+set search_path = public, extensions;
 
 -- 부분 문자열 검색을 위한 trigram 인덱스
 create index if not exists admin_activity_logs_summary_trgm_idx
-  on public.admin_activity_logs using gin (summary extensions.gin_trgm_ops);
+  on public.admin_activity_logs using gin (summary gin_trgm_ops);
 
 create index if not exists admin_activity_logs_target_id_trgm_idx
-  on public.admin_activity_logs using gin (target_id extensions.gin_trgm_ops);
+  on public.admin_activity_logs using gin (target_id gin_trgm_ops);
 
 create index if not exists profiles_nickname_trgm_idx
-  on public.profiles using gin (nickname extensions.gin_trgm_ops);
+  on public.profiles using gin (nickname gin_trgm_ops);
 
 create index if not exists auth_users_email_trgm_idx
-  on auth.users using gin (email extensions.gin_trgm_ops);
+  on auth.users using gin (email gin_trgm_ops);
 
 -- details::text 전체 검색은 대용량 JSON 변환으로 느려질 수 있어 검색 대상에서 제외합니다.
 -- 작업 요약, 관리자 이메일/닉네임, 대상 ID 검색은 유지합니다.
