@@ -97,9 +97,10 @@ declare
   v_page integer := greatest(coalesce(p_page, 1), 1);
   v_page_size integer := least(greatest(coalesce(p_page_size, 20), 1), 100);
   v_search text := lower(trim(coalesce(p_search, '')));
-  v_status text := case when p_status in ('active', 'archived') then p_status else 'all' end;
+  v_status text := case when p_status in ('active', 'empty', 'archived') then p_status else 'all' end;
   v_total_count bigint;
   v_active_count bigint;
+  v_empty_count bigint;
   v_archived_count bigint;
   v_filtered_count bigint;
   v_groups jsonb;
@@ -110,10 +111,11 @@ begin
 
   select
     count(*),
-    count(*) filter (where archived_at is null),
-    count(*) filter (where archived_at is not null)
-  into v_total_count, v_active_count, v_archived_count
-  from public.groups;
+    count(*) filter (where g.archived_at is null and exists (select 1 from public.group_members gm where gm.group_id = g.id)),
+    count(*) filter (where g.archived_at is null and not exists (select 1 from public.group_members gm where gm.group_id = g.id)),
+    count(*) filter (where g.archived_at is not null)
+  into v_total_count, v_active_count, v_empty_count, v_archived_count
+  from public.groups g;
 
   select count(*)
   into v_filtered_count
@@ -121,7 +123,8 @@ begin
   left join public.profiles p on p.id = g.created_by
   left join auth.users u on u.id = g.created_by
   where (v_status = 'all'
-      or (v_status = 'active' and g.archived_at is null)
+      or (v_status = 'active' and g.archived_at is null and exists (select 1 from public.group_members gm where gm.group_id = g.id))
+      or (v_status = 'empty' and g.archived_at is null and not exists (select 1 from public.group_members gm where gm.group_id = g.id))
       or (v_status = 'archived' and g.archived_at is not null))
     and (v_search = ''
       or lower(coalesce(g.name, '')) like '%' || v_search || '%'
@@ -146,7 +149,8 @@ begin
     left join public.profiles p on p.id = g.created_by
     left join auth.users u on u.id = g.created_by
     where (v_status = 'all'
-        or (v_status = 'active' and g.archived_at is null)
+        or (v_status = 'active' and g.archived_at is null and exists (select 1 from public.group_members gm where gm.group_id = g.id))
+        or (v_status = 'empty' and g.archived_at is null and not exists (select 1 from public.group_members gm where gm.group_id = g.id))
         or (v_status = 'archived' and g.archived_at is not null))
       and (v_search = ''
         or lower(coalesce(g.name, '')) like '%' || v_search || '%'
@@ -168,6 +172,7 @@ begin
   return jsonb_build_object(
     'total_count', v_total_count,
     'active_count', v_active_count,
+    'empty_count', v_empty_count,
     'archived_count', v_archived_count,
     'filtered_count', v_filtered_count,
     'page', v_page,
