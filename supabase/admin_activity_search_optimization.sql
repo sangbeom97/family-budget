@@ -14,9 +14,6 @@ create index if not exists admin_activity_logs_target_id_trgm_idx
 create index if not exists profiles_nickname_trgm_idx
   on public.profiles using gin (nickname gin_trgm_ops);
 
-create index if not exists auth_users_email_trgm_idx
-  on auth.users using gin (email gin_trgm_ops);
-
 -- details::text 전체 검색은 대용량 JSON 변환으로 느려질 수 있어 검색 대상에서 제외합니다.
 -- 작업 요약, 관리자 이메일/닉네임, 대상 ID 검색은 유지합니다.
 create or replace function public.get_jellian_admin_activity_logs_page(
