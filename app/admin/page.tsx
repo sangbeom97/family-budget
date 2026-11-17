@@ -82,6 +82,12 @@ export default function AdminPage() {
           </div>
           <div className="flex flex-wrap gap-2">
             <Link
+              href="/admin/stats"
+              className="rounded-xl bg-[#f3e8ff] px-4 py-2.5 text-sm font-bold text-[#9145c9] hover:bg-[#ead8fa]"
+            >
+              서비스 통계
+            </Link>
+            <Link
               href="/admin/groups"
               className="rounded-xl bg-[#f3e8ff] px-4 py-2.5 text-sm font-bold text-[#9145c9] hover:bg-[#ead8fa]"
             >
