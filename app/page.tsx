@@ -1009,6 +1009,7 @@ const sumAmount = (list: Item[]) =>
   return (
     <main className="min-h-screen bg-[#fffaff] px-3 pt-16 pb-4 text-[#292238] sm:px-5 sm:py-6 md:px-6 md:pl-20">
       <div className="mx-auto w-full max-w-6xl">
+        <AnnouncementPopup />
         
 
         
@@ -1214,7 +1215,6 @@ const sumAmount = (list: Item[]) =>
               </span>
             </button>
           ))}
-          <AnnouncementPopup />
         </aside>
 
         {/* 컨텐츠 조건부 뷰 출력 */}
