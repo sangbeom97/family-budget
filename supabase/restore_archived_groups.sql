@@ -52,3 +52,48 @@ $$;
 
 revoke all on function public.restore_group(uuid) from public;
 grant execute on function public.restore_group(uuid) to authenticated;
+
+
+-- 보관된 모임 영구 삭제: 생성자 본인 + 보관 상태 + 모임명 일치 시에만 허용
+create or replace function public.delete_archived_group(
+  p_group_id uuid,
+  p_group_name text
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  target_name text;
+begin
+  if auth.uid() is null then
+    raise exception '로그인이 필요합니다.';
+  end if;
+
+  select g.name
+    into target_name
+  from public.groups g
+  where g.id = p_group_id
+    and g.created_by = auth.uid()
+    and g.archived_at is not null
+  for update;
+
+  if not found then
+    raise exception '영구 삭제할 수 있는 보관된 모임이 없습니다.';
+  end if;
+
+  if target_name is distinct from p_group_name then
+    raise exception '입력한 모임명이 일치하지 않습니다.';
+  end if;
+
+  -- 확인된 CASCADE 관계에 따라 관련 데이터만 함께 삭제됩니다.
+  delete from public.groups
+  where id = p_group_id
+    and created_by = auth.uid()
+    and archived_at is not null;
+end;
+$$;
+
+revoke all on function public.delete_archived_group(uuid, text) from public;
+grant execute on function public.delete_archived_group(uuid, text) to authenticated;
