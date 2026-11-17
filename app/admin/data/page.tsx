@@ -107,7 +107,7 @@ export default function AdminDataPage() {
 
   return (
     <main className="min-h-[calc(100vh-4rem)] bg-[#f8f7fa] px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-7xl">
         <AdminNav />
         <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
           <div>
