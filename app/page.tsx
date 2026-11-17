@@ -1173,7 +1173,7 @@ const sumAmount = (list: Item[]) =>
                     if (item.view) setView(item.view as "year" | "list" | "calendar" | "budget");
                     setIsSidebarOpen(false);
                   }}
-                  className={`mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
+                  className={`mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
                     active
                       ? "bg-[#f3e8ff] text-[#9145c9]"
                       : "text-[#665675] hover:bg-[#fffaff]"
@@ -1194,7 +1194,7 @@ const sumAmount = (list: Item[]) =>
           <Link
             href="/support"
             onClick={() => setIsSidebarOpen(false)}
-            className="mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
+            className="mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
           >
             <span className="flex w-7 shrink-0 items-center justify-center text-lg">💬</span>
             <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
@@ -1205,7 +1205,7 @@ const sumAmount = (list: Item[]) =>
           <Link
             href="/notices"
             onClick={() => setIsSidebarOpen(false)}
-            className="mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
+            className="mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
           >
             <span className="flex w-7 shrink-0 items-center justify-center text-lg">📢</span>
             <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
@@ -1224,7 +1224,7 @@ const sumAmount = (list: Item[]) =>
                 setMainTab(item.id as "category" | "members" | "archived");
                 setIsSidebarOpen(false);
               }}
-              className={`mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
+              className={`mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
                 mainTab === item.id
                   ? "bg-[#f3e8ff] text-[#9145c9]"
                   : "text-[#665675] hover:bg-[#fffaff]"
