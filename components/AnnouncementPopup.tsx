@@ -62,7 +62,7 @@ export default function AnnouncementPopup() {
   }).format(new Date(notice.created_at));
 
   return (
-    <aside className="fixed bottom-6 right-6 z-[60] hidden w-[340px] max-w-[calc(100vw-3rem)] overflow-hidden rounded-2xl border border-[#eadff2] bg-white shadow-[0_12px_40px_rgba(48,25,67,0.18)] lg:block">
+    <div className="mt-auto hidden w-full shrink-0 border-t border-[#f0e8f5] pt-3 md:block">
       <div className="flex items-center justify-between rounded-xl bg-[#fbf7ff] px-2 py-3 md:group-hover:px-3">
         <div className="flex min-w-0 items-center gap-2">
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#f0e2ff] text-sm">📢</span>
