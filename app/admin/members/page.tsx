@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import AdminNav from "@/app/admin/AdminNav";
 import { supabase } from "@/lib/supabase";
 
 type AdminMember = {
@@ -75,41 +74,11 @@ export default function AdminPage() {
   return (
     <main className="min-h-[calc(100vh-4rem)] bg-[#f8f7fa] px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <AdminNav />
         <div className="mb-7 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-xs font-bold tracking-[0.18em] text-[#9874ad]">JELLIAN BACK OFFICE</p>
             <h1 className="mt-2 text-2xl font-extrabold text-[#292238] sm:text-3xl">회원 관리</h1>
             <p className="mt-1 text-sm text-[#81768c]">Jellian 서비스에 가입한 회원을 확인합니다.</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/admin/data" className="rounded-xl bg-[#f3e8ff] px-4 py-2.5 text-sm font-bold text-[#9145c9] hover:bg-[#ead8fa]">
-              데이터 및 운영 관리
-            </Link>
-            <Link href="/admin/support" className="rounded-xl bg-[#f3e8ff] px-4 py-2.5 text-sm font-bold text-[#9145c9] hover:bg-[#ead8fa]">
-              문의 관리
-            </Link>
-            <Link href="/admin/notices" className="rounded-xl bg-[#f3e8ff] px-4 py-2.5 text-sm font-bold text-[#9145c9] hover:bg-[#ead8fa]">
-              공지사항 관리
-            </Link>
-            <Link
-              href="/admin/stats"
-              className="rounded-xl bg-[#f3e8ff] px-4 py-2.5 text-sm font-bold text-[#9145c9] hover:bg-[#ead8fa]"
-            >
-              서비스 통계
-            </Link>
-            <Link
-              href="/admin/groups"
-              className="rounded-xl bg-[#f3e8ff] px-4 py-2.5 text-sm font-bold text-[#9145c9] hover:bg-[#ead8fa]"
-            >
-              모임 관리
-            </Link>
-            <Link
-              href="/"
-              className="rounded-xl border border-[#e9e2ef] bg-white px-4 py-2.5 text-sm font-bold text-[#665675] hover:bg-[#fbf8fd]"
-            >
-              서비스로 돌아가기
-            </Link>
           </div>
         </div>
 
