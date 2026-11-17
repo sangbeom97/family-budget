@@ -1130,7 +1130,7 @@ const sumAmount = (list: Item[]) =>
 
         {/* 사이드바 */}
         <aside
-          className={`group fixed left-0 top-14 z-50 flex h-[calc(100vh-3.5rem)] w-64 flex-col overflow-x-hidden overflow-y-auto overscroll-contain border-r border-[#f0e8f5] bg-white p-3 shadow-lg transition-all duration-200 md:top-16 md:h-[calc(100vh-4rem)] md:w-16 md:shadow-sm md:hover:w-56 ${
+          className={`sidebar-scrollbar-hidden group fixed left-0 top-14 z-50 flex h-[calc(100vh-3.5rem)] w-64 flex-col overflow-x-hidden overflow-y-auto overscroll-contain border-r border-[#f0e8f5] bg-white p-3 shadow-lg transition-all duration-200 md:top-16 md:h-[calc(100vh-4rem)] md:w-16 md:shadow-sm md:hover:w-56 ${
             isSidebarOpen
               ? "translate-x-0"
               : "-translate-x-full md:translate-x-0"
