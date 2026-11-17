@@ -43,6 +43,8 @@ export default function Home() {
   const [authLoading, setAuthLoading] = useState(true);
   const [groups, setGroups] = useState<Group[]>([]);
   const [archivedGroups, setArchivedGroups] = useState<Group[]>([]);
+  const [deleteTargetGroup, setDeleteTargetGroup] = useState<Group | null>(null);
+  const [deleteGroupNameInput, setDeleteGroupNameInput] = useState("");
   const [showArchivedGroups, setShowArchivedGroups] = useState(false);
   const [loadingGroups, setLoadingGroups] =
     useState(true);
@@ -256,6 +258,28 @@ const restoreArchivedGroup = async (group: Group) => {
   localStorage.setItem("currentGroupId", group.id);
   setShowArchivedGroups(false);
   alert(`"${group.name}" 모임이 복구되었습니다.`);
+};
+
+const permanentlyDeleteArchivedGroup = async (group: Group) => {
+  if (deleteGroupNameInput !== group.name) {
+    alert("모임명이 정확히 일치하지 않습니다.");
+    return;
+  }
+
+  const { error } = await supabase.rpc("delete_archived_group", {
+    p_group_id: group.id,
+    p_group_name: deleteGroupNameInput,
+  });
+
+  if (error) {
+    alert(`모임 영구 삭제 실패: ${error.message}`);
+    return;
+  }
+
+  setDeleteTargetGroup(null);
+  setDeleteGroupNameInput("");
+  await fetchUserGroups();
+  alert(`"${group.name}" 모임과 연결된 데이터가 영구 삭제되었습니다.`);
 };
 
   useEffect(() => {
@@ -1329,19 +1353,68 @@ const sumAmount = (list: Item[]) =>
                             {" · "}기존 데이터 보관 중
                           </p>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => restoreArchivedGroup(group)}
-                          className="min-h-10 rounded-lg bg-[#9145c9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#7828c8]"
-                        >
-                          다시 불러오기
-                        </button>
+                        <div className="flex flex-col gap-2 sm:w-52">
+                          <button
+                            type="button"
+                            onClick={() => restoreArchivedGroup(group)}
+                            className="min-h-10 rounded-lg bg-[#9145c9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#7828c8]"
+                          >
+                            다시 불러오기
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDeleteTargetGroup(group);
+                              setDeleteGroupNameInput("");
+                            }}
+                            className="min-h-10 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-bold text-red-600 transition hover:bg-red-50"
+                          >
+                            영구 삭제
+                          </button>
+                          {deleteTargetGroup?.id === group.id && (
+                            <div className="space-y-2 rounded-lg border border-red-200 bg-white p-3">
+                              <p className="text-xs leading-5 text-red-600">
+                                모임과 거래내역·예산·카테고리·멤버 정보가 모두 삭제되며 복구할 수 없습니다.
+                              </p>
+                              <label className="block text-xs font-semibold text-[#665675]">
+                                계속하려면 모임명 <span className="font-bold text-[#292238]">{group.name}</span> 입력
+                              </label>
+                              <input
+                                type="text"
+                                value={deleteGroupNameInput}
+                                onChange={(event) => setDeleteGroupNameInput(event.target.value)}
+                                placeholder="모임명 정확히 입력"
+                                className="min-h-10 w-full rounded-lg border border-[#e6dce9] px-3 py-2 text-sm outline-none focus:border-red-400"
+                              />
+                              <div className="flex gap-2">
+                                <button
+                                  type="button"
+                                  disabled={deleteGroupNameInput !== group.name}
+                                  onClick={() => permanentlyDeleteArchivedGroup(group)}
+                                  className="min-h-9 flex-1 rounded-lg bg-red-600 px-3 py-2 text-xs font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
+                                >
+                                  영구 삭제 확인
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setDeleteTargetGroup(null);
+                                    setDeleteGroupNameInput("");
+                                  }}
+                                  className="min-h-9 rounded-lg border border-[#e6dce9] px-3 py-2 text-xs font-semibold text-[#665675]"
+                                >
+                                  취소
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
                 )}
-                <p className="mt-4 text-xs text-[#a06b6b]">
-                  영구 삭제 기능은 연결 데이터 확인 후 추가됩니다.
+                <p className="mt-4 text-xs text-[#81768c]">
+                  영구 삭제는 되돌릴 수 없습니다. 삭제 전 모임명을 정확히 입력해야 합니다.
                 </p>
               </section>
             )}
