@@ -1192,6 +1192,17 @@ const sumAmount = (list: Item[]) =>
           <div className="my-3 border-t border-[#f0e8f5]" />
 
           <Link
+            href="/support"
+            onClick={() => setIsSidebarOpen(false)}
+            className="mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
+          >
+            <span className="flex w-7 shrink-0 items-center justify-center text-lg">💬</span>
+            <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
+              고객지원
+            </span>
+          </Link>
+
+          <Link
             href="/notices"
             onClick={() => setIsSidebarOpen(false)}
             className="mb-1 flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
