@@ -80,9 +80,7 @@ export default function AdminPage() {
             <h1 className="mt-2 text-2xl font-extrabold text-[#292238] sm:text-3xl">회원 관리</h1>
             <p className="mt-1 text-sm text-[#81768c]">Jellian 서비스에 가입한 회원을 확인합니다.</p>
           </div>
-          <Link href="/" className="rounded-xl border border-[#e9e2ef] bg-white px-4 py-2.5 text-sm font-bold text-[#665675] hover:bg-[#fbf8fd]">
-            ← 서비스로 돌아가기
-          </Link>
+          <div className="flex flex-wrap gap-2">\n            <Link href="/admin/groups" className="rounded-xl bg-[#f3e8ff] px-4 py-2.5 text-sm font-bold text-[#9145c9] hover:bg-[#ead8fa]">\n              모임 관리 →\n            </Link>\n            <Link href="/" className="rounded-xl border border-[#e9e2ef] bg-white px-4 py-2.5 text-sm font-bold text-[#665675] hover:bg-[#fbf8fd]">\n              ← 서비스로 돌아가기\n            </Link>\n          </div>
         </div>
 
         {loading ? (
