@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import AdminNav from "@/app/admin/AdminNav";
 import { supabase } from "@/lib/supabase";
@@ -42,6 +42,9 @@ const actionColors: Record<string, string> = {
 
 export default function AdminActivityPage() {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [todayCount, setTodayCount] = useState(0);
+  const [filteredCount, setFilteredCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const [error, setError] = useState("");
@@ -71,42 +74,34 @@ export default function AdminActivityPage() {
       return;
     }
     setAuthorized(true);
-    const { data, error: queryError } = await supabase.rpc("get_jellian_admin_activity_logs", { p_limit: 500 });
+    const { data, error: queryError } = await supabase.rpc("get_jellian_admin_activity_logs_page", {
+      p_page: page,
+      p_page_size: pageSize,
+      p_search: search.trim() || null,
+      p_action: filter === "all" ? null : filter,
+      p_start_date: startDate || null,
+      p_end_date: endDate || null,
+    });
     if (queryError) {
       setError(queryError.message);
       setLogs([]);
+      setFilteredCount(0);
     } else {
-      setLogs((data || []) as ActivityLog[]);
+      const result = data as { total_count?: number; today_count?: number; filtered_count?: number; logs?: ActivityLog[] };
+      setLogs(result?.logs || []);
+      setTotalCount(Number(result?.total_count || 0));
+      setTodayCount(Number(result?.today_count || 0));
+      setFilteredCount(Number(result?.filtered_count || 0));
     }
     setLoading(false);
-  }, []);
+  }, [page, search, filter, startDate, endDate]);
 
   useEffect(() => {
     loadLogs();
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      Promise.resolve().then(loadLogs);
-    });
-    return () => listener.subscription.unsubscribe();
   }, [loadLogs]);
 
-  const filteredLogs = useMemo(() => {
-    const keyword = search.trim().toLowerCase();
-    return logs.filter((log) => {
-      const matchesFilter = filter === "all" || log.action === filter;
-      const searchable = [log.summary, log.actor_email || "", log.actor_nickname || "", log.target_id || "", JSON.stringify(log.details || {})].join(" ").toLowerCase();
-      const d = new Date(log.created_at);
-      const dateKey = [d.getFullYear(), String(d.getMonth() + 1).padStart(2, "0"), String(d.getDate()).padStart(2, "0")].join("-");
-      const matchesSearch = !keyword || searchable.includes(keyword);
-      return matchesFilter && matchesSearch && (!startDate || dateKey >= startDate) && (!endDate || dateKey <= endDate);
-    });
-  }, [logs, search, filter, startDate, endDate]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredLogs.length / pageSize));
-  const paginatedLogs = filteredLogs.slice((page - 1) * pageSize, page * pageSize);
-
-  useEffect(() => {
-    setPage(1);
-  }, [search, filter, startDate, endDate]);
+  const totalPages = Math.max(1, Math.ceil(filteredCount / pageSize));
+  const paginatedLogs = logs;
 
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
@@ -148,15 +143,15 @@ export default function AdminActivityPage() {
             <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-[#eee8f2] bg-white p-5">
                 <p className="text-sm font-semibold text-[#81768c]">전체 기록</p>
-                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{logs.length.toLocaleString("ko-KR")}<span className="ml-1 text-base">건</span></p>
+                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{totalCount.toLocaleString("ko-KR")}<span className="ml-1 text-base">건</span></p>
               </div>
               <div className="rounded-2xl border border-[#eee8f2] bg-white p-5">
                 <p className="text-sm font-semibold text-[#81768c]">오늘 작업</p>
-                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{logs.filter((log) => new Date(log.created_at).toDateString() === new Date().toDateString()).length.toLocaleString("ko-KR")}<span className="ml-1 text-base">건</span></p>
+                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{todayCount.toLocaleString("ko-KR")}<span className="ml-1 text-base">건</span></p>
               </div>
               <div className="col-span-2 rounded-2xl border border-[#eee8f2] bg-white p-5 sm:col-span-1">
                 <p className="text-sm font-semibold text-[#81768c]">현재 검색 결과</p>
-                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{filteredLogs.length.toLocaleString("ko-KR")}<span className="ml-1 text-base">건</span></p>
+                <p className="mt-2 text-3xl font-extrabold tabular-nums text-[#292238]">{filteredCount.toLocaleString("ko-KR")}<span className="ml-1 text-base">건</span></p>
               </div>
             </div>
 
@@ -165,19 +160,19 @@ export default function AdminActivityPage() {
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h2 className="font-extrabold text-[#292238]">작업 기록 목록</h2>
-                    <p className="mt-1 text-xs text-[#81768c]">최근 500건을 최신순으로 표시합니다.</p>
+                    <p className="mt-1 text-xs text-[#81768c]">전체 작업 이력을 최신순으로 조회합니다.</p>
                   </div>
-                  <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="작업 내용·관리자 검색" className="min-h-10 w-full rounded-xl border border-[#e9e2ef] px-3 text-sm outline-none focus:border-[#a875c4] sm:w-72" />
+                  <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="작업 내용·관리자 검색" className="min-h-10 w-full rounded-xl border border-[#e9e2ef] px-3 text-sm outline-none focus:border-[#a875c4] sm:w-72" />
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
-                  <label className="flex items-center gap-2 text-xs font-semibold text-[#81768c]">시작일 <input type="date" value={startDate} max={endDate || undefined} onChange={(event) => setStartDate(event.target.value)} className="min-h-10 rounded-xl border border-[#e9e2ef] px-2 text-sm text-[#665675]" /></label>
-                  <label className="flex items-center gap-2 text-xs font-semibold text-[#81768c]">종료일 <input type="date" value={endDate} min={startDate || undefined} onChange={(event) => setEndDate(event.target.value)} className="min-h-10 rounded-xl border border-[#e9e2ef] px-2 text-sm text-[#665675]" /></label>
-                  {(startDate || endDate || search || filter !== "all") && <button onClick={() => { setStartDate(""); setEndDate(""); setSearch(""); setFilter("all"); }} className="min-h-10 rounded-xl px-3 text-xs font-bold text-[#9145c9] hover:bg-[#f8f2fb]">필터 초기화</button>}
+                  <label className="flex items-center gap-2 text-xs font-semibold text-[#81768c]">시작일 <input type="date" value={startDate} max={endDate || undefined} onChange={(event) => { setStartDate(event.target.value); setPage(1); }} className="min-h-10 rounded-xl border border-[#e9e2ef] px-2 text-sm text-[#665675]" /></label>
+                  <label className="flex items-center gap-2 text-xs font-semibold text-[#81768c]">종료일 <input type="date" value={endDate} min={startDate || undefined} onChange={(event) => { setEndDate(event.target.value); setPage(1); }} className="min-h-10 rounded-xl border border-[#e9e2ef] px-2 text-sm text-[#665675]" /></label>
+                  {(startDate || endDate || search || filter !== "all") && <button onClick={() => { setStartDate(""); setEndDate(""); setSearch(""); setFilter("all"); setPage(1); }} className="min-h-10 rounded-xl px-3 text-xs font-bold text-[#9145c9] hover:bg-[#f8f2fb]">필터 초기화</button>}
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <button onClick={() => setFilter("all")} className={`rounded-full px-4 py-2 text-sm font-bold ${filter === "all" ? "bg-[#9145c9] text-white" : "bg-[#f5f0f8] text-[#665675]"}`}>전체</button>
+                  <button onClick={() => { setFilter("all"); setPage(1); }} className={`rounded-full px-4 py-2 text-sm font-bold ${filter === "all" ? "bg-[#9145c9] text-white" : "bg-[#f5f0f8] text-[#665675]"}`}>전체</button>
                   {Object.entries(actionLabels).map(([key, label]) => (
-                    <button key={key} onClick={() => setFilter(key)} className={`rounded-full px-4 py-2 text-sm font-bold ${filter === key ? "bg-[#9145c9] text-white" : "bg-[#f5f0f8] text-[#665675]"}`}>{label}</button>
+                    <button key={key} onClick={() => { setFilter(key); setPage(1); }} className={`rounded-full px-4 py-2 text-sm font-bold ${filter === key ? "bg-[#9145c9] text-white" : "bg-[#f5f0f8] text-[#665675]"}`}>{label}</button>
                   ))}
                 </div>
               </div>
@@ -210,12 +205,12 @@ export default function AdminActivityPage() {
                         </td>
                       </tr>
                     ))}
-                    {filteredLogs.length === 0 && <tr><td colSpan={4} className="px-5 py-12 text-center text-sm text-[#81768c]">기록이 없습니다.</td></tr>}
+                    {filteredCount === 0 && <tr><td colSpan={4} className="px-5 py-12 text-center text-sm text-[#81768c]">기록이 없습니다.</td></tr>}
                   </tbody>
                 </table>
               </div>
               <div className="flex flex-col gap-3 border-t border-[#f0eaf3] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-                <p className="text-xs text-[#81768c]">총 {filteredLogs.length.toLocaleString("ko-KR")}건 중 {filteredLogs.length === 0 ? 0 : ((page - 1) * pageSize + 1).toLocaleString("ko-KR")}–{Math.min(page * pageSize, filteredLogs.length).toLocaleString("ko-KR")}건 표시 · {page}/{totalPages}페이지</p>
+                <p className="text-xs text-[#81768c]">총 {filteredCount.toLocaleString("ko-KR")}건 중 {filteredCount === 0 ? 0 : ((page - 1) * pageSize + 1).toLocaleString("ko-KR")}–{Math.min(page * pageSize, filteredCount).toLocaleString("ko-KR")}건 표시 · {page}/{totalPages}페이지</p>
                 <div className="flex items-center gap-2">
                   <button onClick={() => setPage(1)} disabled={page === 1} className="rounded-lg border border-[#e9e2ef] px-3 py-2 text-xs font-bold text-[#665675] disabled:opacity-40">처음</button>
                   <button onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1} className="rounded-lg border border-[#e9e2ef] px-3 py-2 text-xs font-bold text-[#665675] disabled:opacity-40">이전</button>
