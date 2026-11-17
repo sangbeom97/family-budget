@@ -1210,28 +1210,6 @@ const sumAmount = (list: Item[]) =>
 
           <div className="my-3 border-t border-[#f0e8f5]" />
 
-          <Link
-            href="/support"
-            onClick={() => setIsSidebarOpen(false)}
-            className="mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
-          >
-            <span className="flex w-7 shrink-0 items-center justify-center text-lg">💬</span>
-            <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
-              고객지원
-            </span>
-          </Link>
-
-          <Link
-            href="/notices"
-            onClick={() => setIsSidebarOpen(false)}
-            className="mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
-          >
-            <span className="flex w-7 shrink-0 items-center justify-center text-lg">📢</span>
-            <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
-              공지사항
-            </span>
-          </Link>
-
           {[
             { id: "category", label: "카테고리 관리", icon: "📁" },
             { id: "members", label: "그룹 멤버", icon: "👥" },
@@ -1257,6 +1235,30 @@ const sumAmount = (list: Item[]) =>
               </span>
             </button>
           ))}
+
+          <div className="my-3 border-t border-[#f0e8f5]" />
+
+          <Link
+            href="/support"
+            onClick={() => setIsSidebarOpen(false)}
+            className="mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
+          >
+            <span className="flex w-7 shrink-0 items-center justify-center text-lg">💬</span>
+            <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
+              고객지원
+            </span>
+          </Link>
+
+          <Link
+            href="/notices"
+            onClick={() => setIsSidebarOpen(false)}
+            className="mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
+          >
+            <span className="flex w-7 shrink-0 items-center justify-center text-lg">📢</span>
+            <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
+              공지사항
+            </span>
+          </Link>
         </aside>
 
         {/* 컨텐츠 조건부 뷰 출력 */}
