@@ -21,7 +21,6 @@ function todayKey() {
 export default function AnnouncementPopup() {
   const [notice, setNotice] = useState<Notice | null>(null);
   const [hiddenToday, setHiddenToday] = useState(false);
-  const [expanded, setExpanded] = useState(true);
 
   useEffect(() => {
     setHiddenToday(localStorage.getItem(HIDE_KEY) === todayKey());
@@ -49,10 +48,9 @@ export default function AnnouncementPopup() {
   const hideToday = () => {
     localStorage.setItem(HIDE_KEY, todayKey());
     setHiddenToday(true);
-    setExpanded(false);
   };
 
-  if (!notice) return null;
+  if (!notice || hiddenToday) return null;
 
   const date = new Intl.DateTimeFormat("ko-KR", {
     year: "numeric",
@@ -61,46 +59,33 @@ export default function AnnouncementPopup() {
   }).format(new Date(notice.created_at));
 
   return (
-    <div className="mt-auto hidden w-full shrink-0 border-t border-[#f0e8f5] pt-3 md:block">
-      <div className="flex items-center justify-between rounded-xl bg-[#fbf7ff] px-2 py-3 md:group-hover:px-3">
-        <Link href="/notices" className="flex min-w-0 flex-1 items-center gap-2" aria-label="공지사항 보기">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f0e2ff] text-sm">📢</span>
-          <span className="hidden truncate text-sm font-extrabold text-[#352443] md:group-hover:inline">공지사항</span>
-        </Link>
-        {!hiddenToday && (
-          <button
-            type="button"
-            onClick={() => setExpanded((value) => !value)}
-            aria-label={expanded ? "공지 접기" : "공지 펼치기"}
-            className="hidden rounded-lg px-2 py-1 text-lg leading-none text-[#81768c] hover:bg-white md:group-hover:inline"
-          >
-            {expanded ? "−" : "+"}
-          </button>
-        )}
-      </div>
-
-      {!hiddenToday && expanded && (
-        <div className="hidden rounded-xl border border-[#eadff2] bg-white p-3 shadow-sm md:group-hover:block">
-          <p className="text-[11px] font-semibold text-[#9874ad]">{date}</p>
-          <h2 className="mt-1.5 line-clamp-2 text-sm font-extrabold leading-5 text-[#292238]">{notice.title}</h2>
-          <p className="mt-2 line-clamp-4 whitespace-pre-wrap break-words text-xs leading-5 text-[#665675]">{notice.content}</p>
-          <div className="mt-4 flex items-center justify-between gap-2 border-t border-[#f2edf5] pt-3">
-            <button
-              type="button"
-              onClick={hideToday}
-              className="text-[11px] font-semibold text-[#93869e] transition-colors hover:text-[#5e5069]"
-            >
-              오늘 하루 보지 않기
-            </button>
-            <Link
-              href="/notices"
-              className="rounded-lg bg-[#9145c9] px-2 py-2 text-[11px] font-bold text-white transition-colors hover:bg-[#7f35b7]"
-            >
-              전체 공지 보기
-            </Link>
-          </div>
+    <section className="mb-5 hidden w-full items-center gap-4 rounded-2xl border border-[#eadcf5] bg-gradient-to-r from-[#fbf5ff] to-white px-4 py-3 shadow-sm md:flex md:px-5">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f0e2ff] text-xl" aria-hidden="true">
+        📢
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="mb-1 flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-bold text-[#9145c9]">JELLIAN NOTICE</span>
+          <span className="text-[11px] text-[#a397ad]">{date}</span>
         </div>
-      )}
-    </div>
+        <h2 className="truncate text-sm font-extrabold text-[#352443]">{notice.title}</h2>
+        <p className="mt-1 line-clamp-1 text-xs text-[#766782]">{notice.content}</p>
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          onClick={hideToday}
+          className="rounded-lg px-2 py-2 text-xs font-semibold text-[#93869e] transition-colors hover:bg-[#f6effb] hover:text-[#5e5069]"
+        >
+          오늘 하루 보지 않기
+        </button>
+        <Link
+          href="/notices"
+          className="rounded-lg bg-[#9145c9] px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-[#7f35b7]"
+        >
+          자세히 보기
+        </Link>
+      </div>
+    </section>
   );
 }
