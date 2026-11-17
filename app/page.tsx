@@ -100,6 +100,25 @@ export default function Home() {
   const [duplicateIndex, setDuplicateIndex] = useState(0);
   const [duplicateTotal, setDuplicateTotal] = useState(0);
 
+  // 고객지원·공지사항 사이드바에서 선택한 메뉴를 메인 화면에 반영
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const menu = params.get("menu");
+    const panel = params.get("panel");
+
+    if (panel === "category" || panel === "members" || panel === "archived") {
+      setMainTab(panel);
+    } else if (["all", "income", "fixed", "variable", "allowance", "saving"].includes(menu || "")) {
+      setMainTab("account");
+      setFilter(menu || "all");
+      setView("list");
+    } else if (menu === "year" || menu === "budget" || menu === "list" || menu === "calendar") {
+      setMainTab("account");
+      setView(menu);
+      if (menu === "list") setFilter("all");
+    }
+  }, []);
+
   // --- 3. 인증 및 세션 제어 흐름 ---
   useEffect(() => {
   const init = async () => {
