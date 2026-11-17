@@ -25,6 +25,8 @@ const actionLabels: Record<string, string> = {
   data_backup: "데이터 백업",
   data_restore: "데이터 복원",
   support_update: "문의 처리",
+  member_list_view: "회원 목록 조회",
+  group_list_view: "모임 목록 조회",
 };
 
 const actionColors: Record<string, string> = {
@@ -34,6 +36,8 @@ const actionColors: Record<string, string> = {
   data_backup: "bg-violet-50 text-violet-700",
   data_restore: "bg-amber-50 text-amber-800",
   support_update: "bg-[#f3eef7] text-[#665675]",
+  member_list_view: "bg-sky-50 text-sky-700",
+  group_list_view: "bg-teal-50 text-teal-700",
 };
 
 export default function AdminActivityPage() {
