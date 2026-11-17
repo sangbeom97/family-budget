@@ -50,6 +50,8 @@ export default function AdminActivityPage() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedLog, setSelectedLog] = useState<ActivityLog | null>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 50;
 
   const loadLogs = useCallback(async () => {
     setLoading(true);
@@ -98,6 +100,17 @@ export default function AdminActivityPage() {
       return matchesFilter && matchesSearch && (!startDate || dateKey >= startDate) && (!endDate || dateKey <= endDate);
     });
   }, [logs, search, filter, startDate, endDate]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredLogs.length / pageSize));
+  const paginatedLogs = filteredLogs.slice((page - 1) * pageSize, page * pageSize);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, filter, startDate, endDate]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   const dateTime = (value: string) =>
     new Intl.DateTimeFormat("ko-KR", {
@@ -180,7 +193,7 @@ export default function AdminActivityPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#f2edf5]">
-                    {filteredLogs.map((log) => (
+                    {paginatedLogs.map((log) => (
                       <tr key={log.id} onClick={() => setSelectedLog(log)} className="cursor-pointer hover:bg-[#fdfbfe]">
                         <td className="whitespace-nowrap px-5 py-4 text-[#81768c]">{dateTime(log.created_at)}</td>
                         <td className="px-5 py-4">
@@ -200,6 +213,16 @@ export default function AdminActivityPage() {
                     {filteredLogs.length === 0 && <tr><td colSpan={4} className="px-5 py-12 text-center text-sm text-[#81768c]">기록이 없습니다.</td></tr>}
                   </tbody>
                 </table>
+              </div>
+              <div className="flex flex-col gap-3 border-t border-[#f0eaf3] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                <p className="text-xs text-[#81768c]">총 {filteredLogs.length.toLocaleString("ko-KR")}건 중 {filteredLogs.length === 0 ? 0 : ((page - 1) * pageSize + 1).toLocaleString("ko-KR")}–{Math.min(page * pageSize, filteredLogs.length).toLocaleString("ko-KR")}건 표시 · {page}/{totalPages}페이지</p>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPage(1)} disabled={page === 1} className="rounded-lg border border-[#e9e2ef] px-3 py-2 text-xs font-bold text-[#665675] disabled:opacity-40">처음</button>
+                  <button onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page === 1} className="rounded-lg border border-[#e9e2ef] px-3 py-2 text-xs font-bold text-[#665675] disabled:opacity-40">이전</button>
+                  <span className="min-w-16 text-center text-sm font-bold tabular-nums text-[#292238]">{page} / {totalPages}</span>
+                  <button onClick={() => setPage((current) => Math.min(totalPages, current + 1))} disabled={page >= totalPages} className="rounded-lg border border-[#e9e2ef] px-3 py-2 text-xs font-bold text-[#665675] disabled:opacity-40">다음</button>
+                  <button onClick={() => setPage(totalPages)} disabled={page >= totalPages} className="rounded-lg border border-[#e9e2ef] px-3 py-2 text-xs font-bold text-[#665675] disabled:opacity-40">마지막</button>
+                </div>
               </div>
             </section>
           </>
