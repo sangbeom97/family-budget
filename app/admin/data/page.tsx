@@ -85,25 +85,30 @@ export default function AdminDataPage() {
     return () => listener.subscription.unsubscribe();
   }, [checkAdmin]);
 
+  const createBackupDownload = (data: unknown, prefix = "jellian-backup") => {
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
+      throw new Error("백업 데이터를 가져오지 못했습니다.");
+    }
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    anchor.href = url;
+    anchor.download = `${prefix}-${timestamp}.json`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+  };
+
   const downloadBackup = async () => {
     setExporting(true);
     setError("");
     try {
       const { data, error: backupError } = await supabase.rpc("get_jellian_admin_data_backup");
       if (backupError) throw backupError;
-      if (!data || typeof data !== "object") throw new Error("백업 데이터를 가져오지 못했습니다.");
-
-      const backup = data as BackupData;
-      const json = JSON.stringify(backup, null, 2);
-      const blob = new Blob([json], { type: "application/json;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = `jellian-backup-${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      anchor.remove();
-      URL.revokeObjectURL(url);
+      createBackupDownload(data);
       setLastExport(new Date().toLocaleString("ko-KR"));
     } catch (e) {
       setError(e instanceof Error ? e.message : "백업 파일 생성 중 오류가 발생했습니다.");
@@ -133,9 +138,15 @@ export default function AdminDataPage() {
       }
       const candidate = parsed as Record<string, unknown>;
       const keys = ["groups", "group_members", "categories", "budgets", "transactions"] as const;
+      if (typeof candidate.exported_at !== "string" || Number.isNaN(Date.parse(candidate.exported_at))) {
+        throw new Error("백업 생성 시각이 없거나 올바르지 않습니다. Jellian에서 생성한 백업 파일을 선택하세요.");
+      }
       for (const key of keys) {
         if (!Array.isArray(candidate[key])) {
           throw new Error(`백업 데이터에 ${key} 배열이 없거나 형식이 올바르지 않습니다.`);
+        }
+        if (!(candidate[key] as unknown[]).every((row) => row !== null && typeof row === "object" && !Array.isArray(row))) {
+          throw new Error(`${key} 데이터에 올바르지 않은 항목이 포함되어 있습니다.`);
         }
       }
       setRestoreBackup({
@@ -155,7 +166,7 @@ export default function AdminDataPage() {
   const runRestore = async () => {
     if (!restoreBackup || restoring) return;
     const confirmed = window.confirm(
-      "정말 복원하시겠습니까? 현재 모임, 멤버 관계, 카테고리, 예산, 거래내역 전체가 선택한 백업 데이터로 교체됩니다. 이 작업은 되돌릴 수 없습니다."
+      "복원을 시작하기 전에 현재 운영 데이터를 별도 백업 파일로 먼저 다운로드합니다.\n\n선택한 백업의 내용으로 모임, 멤버 관계, 카테고리, 예산, 거래내역 전체가 교체됩니다. 계속하시겠습니까?"
     );
     if (!confirmed) return;
 
@@ -163,6 +174,23 @@ export default function AdminDataPage() {
     setRestoreError("");
     setRestoreSuccess("");
     try {
+      // 복원 직전의 운영 데이터를 별도 파일로 확보합니다. 백업 실패 시 복원은 중단합니다.
+      const { data: safetyBackup, error: safetyBackupError } = await supabase.rpc("get_jellian_admin_data_backup");
+      if (safetyBackupError) throw new Error(`복원 전 안전 백업에 실패하여 복원을 중단했습니다: ${safetyBackupError.message}`);
+      createBackupDownload(safetyBackup, "jellian-pre-restore-safety-backup");
+      const safetyConfirmed = window.confirm(
+        "복원 직전 현재 데이터의 안전 백업 다운로드를 요청했습니다.\n다운로드 목록에서 'jellian-pre-restore-safety-backup' 파일이 생성됐는지 확인한 뒤 확인을 누르세요.\n\n확인을 누르면 실제 데이터 복원이 진행됩니다."
+      );
+      if (!safetyConfirmed) {
+        setRestoreError("안전 백업 파일을 확인하지 않아 복원을 취소했습니다.");
+        return;
+      }
+      const phrase = window.prompt("마지막 확인입니다. 계속하려면 아래 문구를 그대로 입력하세요.\n\n전체 데이터 복원");
+      if (phrase !== "전체 데이터 복원") {
+        setRestoreError("확인 문구가 일치하지 않아 복원을 취소했습니다.");
+        return;
+      }
+
       const { data, error: restoreRpcError } = await supabase.rpc("restore_jellian_admin_data_backup", {
         p_backup: restoreBackup,
       });
