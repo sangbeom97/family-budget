@@ -138,7 +138,7 @@ export default function AdminActivityPage() {
           </button>
         </div>
 
-        {loading ? (
+        {loading && !authorized ? (
           <div className="rounded-2xl border border-[#eee8f2] bg-white p-12 text-center text-sm text-[#81768c]">작업 이력을 불러오는 중입니다...</div>
         ) : !authorized ? (
           <div className="rounded-2xl border border-[#eee8f2] bg-white p-10 text-center">
@@ -150,6 +150,7 @@ export default function AdminActivityPage() {
         ) : (
           <>
             {error && <p className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">{error}</p>}
+            {loading && <p className="mb-3 text-xs text-[#9874ad]">검색 결과를 업데이트하고 있습니다...</p>}
             <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-[#eee8f2] bg-white p-5">
                 <p className="text-sm font-semibold text-[#81768c]">전체 기록</p>
