@@ -20,12 +20,11 @@ function todayKey() {
 
 export default function AnnouncementPopup() {
   const [notice, setNotice] = useState<Notice | null>(null);
-  const [visible, setVisible] = useState(false);
+  const [hiddenToday, setHiddenToday] = useState(false);
   const [expanded, setExpanded] = useState(true);
 
   useEffect(() => {
-    const hiddenToday = localStorage.getItem(HIDE_KEY) === todayKey();
-    if (hiddenToday) return;
+    setHiddenToday(localStorage.getItem(HIDE_KEY) === todayKey());
 
     let active = true;
     const loadNotice = async () => {
@@ -39,7 +38,6 @@ export default function AnnouncementPopup() {
 
       if (!active || error || !data) return;
       setNotice(data as Notice);
-      setVisible(true);
     };
 
     loadNotice();
@@ -50,10 +48,11 @@ export default function AnnouncementPopup() {
 
   const hideToday = () => {
     localStorage.setItem(HIDE_KEY, todayKey());
-    setVisible(false);
+    setHiddenToday(true);
+    setExpanded(false);
   };
 
-  if (!visible || !notice) return null;
+  if (!notice) return null;
 
   const date = new Intl.DateTimeFormat("ko-KR", {
     year: "numeric",
@@ -64,21 +63,23 @@ export default function AnnouncementPopup() {
   return (
     <div className="mt-auto hidden w-full shrink-0 border-t border-[#f0e8f5] pt-3 md:block">
       <div className="flex items-center justify-between rounded-xl bg-[#fbf7ff] px-2 py-3 md:group-hover:px-3">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#f0e2ff] text-sm">📢</span>
+        <Link href="/notices" className="flex min-w-0 flex-1 items-center gap-2" aria-label="공지사항 보기">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#f0e2ff] text-sm">📢</span>
           <span className="hidden truncate text-sm font-extrabold text-[#352443] md:group-hover:inline">공지사항</span>
-        </div>
-        <button
-          type="button"
-          onClick={() => setExpanded((value) => !value)}
-          aria-label={expanded ? "공지 접기" : "공지 펼치기"}
-          className="hidden rounded-lg px-2 py-1 text-lg leading-none text-[#81768c] hover:bg-white md:group-hover:inline"
-        >
-          {expanded ? "−" : "+"}
-        </button>
+        </Link>
+        {!hiddenToday && (
+          <button
+            type="button"
+            onClick={() => setExpanded((value) => !value)}
+            aria-label={expanded ? "공지 접기" : "공지 펼치기"}
+            className="hidden rounded-lg px-2 py-1 text-lg leading-none text-[#81768c] hover:bg-white md:group-hover:inline"
+          >
+            {expanded ? "−" : "+"}
+          </button>
+        )}
       </div>
 
-      {expanded && (
+      {!hiddenToday && expanded && (
         <div className="hidden rounded-xl border border-[#eadff2] bg-white p-3 shadow-sm md:group-hover:block">
           <p className="text-[11px] font-semibold text-[#9874ad]">{date}</p>
           <h2 className="mt-1.5 line-clamp-2 text-sm font-extrabold leading-5 text-[#292238]">{notice.title}</h2>
