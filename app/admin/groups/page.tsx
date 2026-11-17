@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import AdminNav from "@/app/admin/AdminNav";
 import { supabase } from "@/lib/supabase";
@@ -17,6 +17,15 @@ type AdminGroup = {
   member_count: number;
 };
 
+type GroupPageData = {
+  total_count: number;
+  active_count: number;
+  archived_count: number;
+  filtered_count: number;
+  groups: AdminGroup[];
+};
+
+const PAGE_SIZE = 20;
 const typeLabels: Record<string, string> = {
   household: "부부·가정",
   club: "동아리·모임",
@@ -29,8 +38,19 @@ export default function AdminGroupsPage() {
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState<"all" | "active" | "archived">("all");
+  const [page, setPage] = useState(1);
+  const [stats, setStats] = useState({ total: 0, active: 0, archived: 0, filtered: 0 });
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setSearchTerm(search.trim());
+      setPage(1);
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [search]);
 
   const loadGroups = useCallback(async () => {
     setLoading(true);
@@ -52,38 +72,40 @@ export default function AdminGroupsPage() {
     }
 
     setAuthorized(true);
-    const { data, error: listError } = await supabase.rpc("get_jellian_admin_groups");
+    const { data, error: listError } = await supabase.rpc("get_jellian_admin_groups_page", {
+      p_page: page,
+      p_page_size: PAGE_SIZE,
+      p_search: searchTerm,
+      p_status: status,
+    });
     if (listError) {
       setError(listError.message);
       setGroups([]);
     } else {
-      setGroups((data || []) as AdminGroup[]);
+      const result = data as GroupPageData;
+      setGroups(result?.groups || []);
+      setStats({
+        total: Number(result?.total_count || 0),
+        active: Number(result?.active_count || 0),
+        archived: Number(result?.archived_count || 0),
+        filtered: Number(result?.filtered_count || 0),
+      });
     }
     setLoading(false);
-  }, []);
+  }, [page, searchTerm, status]);
 
   useEffect(() => {
-    // 세션 확인 후 목록을 한 번만 조회합니다.
-    // 초기 인증 이벤트에서도 재호출하면 조회 이력이 중복 기록됩니다.
     loadGroups();
   }, [loadGroups]);
 
-  const filteredGroups = useMemo(() => {
-    const keyword = search.trim().toLowerCase();
-    return groups.filter((group) => {
-      const matchesStatus =
-        status === "all" ||
-        (status === "active" && !group.archived_at) ||
-        (status === "archived" && !!group.archived_at);
-      const matchesSearch = !keyword ||
-        [group.name, group.owner_nickname || "", group.owner_email || ""]
-          .some((value) => value.toLowerCase().includes(keyword));
-      return matchesStatus && matchesSearch;
-    });
-  }, [groups, search, status]);
-
+  const totalPages = Math.max(1, Math.ceil(stats.filtered / PAGE_SIZE));
   const dateLabel = (value: string | null) =>
     value ? new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value)) : "-";
+
+  const changeStatus = (value: "all" | "active" | "archived") => {
+    setStatus(value);
+    setPage(1);
+  };
 
   return (
     <main className="min-h-[calc(100vh-4rem)] bg-[#f8f7fa] px-4 py-8 sm:px-6 lg:px-8">
@@ -111,9 +133,9 @@ export default function AdminGroupsPage() {
             {error && <p className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">{error}</p>}
             <div className="mb-5 grid gap-3 sm:grid-cols-3">
               {[
-                { label: "전체 모임", value: groups.length },
-                { label: "운영 중", value: groups.filter((g) => !g.archived_at).length },
-                { label: "해체·보관", value: groups.filter((g) => !!g.archived_at).length },
+                { label: "전체 모임", value: stats.total },
+                { label: "운영 중", value: stats.active },
+                { label: "해체·보관", value: stats.archived },
               ].map((item) => (
                 <div key={item.label} className="rounded-2xl border border-[#eee8f2] bg-white p-5">
                   <p className="text-sm font-semibold text-[#81768c]">{item.label}</p>
@@ -127,13 +149,13 @@ export default function AdminGroupsPage() {
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h2 className="font-extrabold text-[#292238]">전체 모임 목록</h2>
-                    <p className="mt-1 text-xs text-[#81768c]">모임 데이터는 조회 전용이며 원본 가계부에는 영향을 주지 않습니다.</p>
+                    <p className="mt-1 text-xs text-[#81768c]">모임 데이터는 조회 전용 · 페이지당 {PAGE_SIZE}개</p>
                   </div>
                   <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="모임명·모임장 검색" className="min-h-10 w-full rounded-xl border border-[#e9e2ef] px-3 text-sm outline-none focus:border-[#a875c4] sm:w-72" />
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {(["all", "active", "archived"] as const).map((value) => (
-                    <button key={value} onClick={() => setStatus(value)} className={`rounded-full px-4 py-2 text-sm font-bold transition ${status === value ? "bg-[#9145c9] text-white" : "bg-[#f5f0f8] text-[#665675] hover:bg-[#eee5f3]"}`}>
+                    <button key={value} onClick={() => changeStatus(value)} className={`rounded-full px-4 py-2 text-sm font-bold transition ${status === value ? "bg-[#9145c9] text-white" : "bg-[#f5f0f8] text-[#665675] hover:bg-[#eee5f3]"}`}>
                       {value === "all" ? "전체" : value === "active" ? "운영 중" : "해체·보관"}
                     </button>
                   ))}
@@ -142,17 +164,10 @@ export default function AdminGroupsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[760px] text-left text-sm">
                   <thead className="bg-[#fbf9fc] text-xs font-bold text-[#81768c]">
-                    <tr>
-                      <th className="px-5 py-3">모임명</th>
-                      <th className="px-5 py-3">유형</th>
-                      <th className="px-5 py-3">모임장</th>
-                      <th className="px-5 py-3 text-right">인원</th>
-                      <th className="px-5 py-3">생성일</th>
-                      <th className="px-5 py-3">상태</th>
-                    </tr>
+                    <tr><th className="px-5 py-3">모임명</th><th className="px-5 py-3">유형</th><th className="px-5 py-3">모임장</th><th className="px-5 py-3 text-right">인원</th><th className="px-5 py-3">생성일</th><th className="px-5 py-3">상태</th></tr>
                   </thead>
                   <tbody className="divide-y divide-[#f2edf5]">
-                    {filteredGroups.map((group) => (
+                    {groups.map((group) => (
                       <tr key={group.id} className="hover:bg-[#fdfbfe]">
                         <td className="px-5 py-4 font-bold text-[#292238]">{group.name}</td>
                         <td className="px-5 py-4 text-[#665675]">{typeLabels[group.group_type || "custom"] || "일반"}</td>
@@ -170,9 +185,17 @@ export default function AdminGroupsPage() {
                         </td>
                       </tr>
                     ))}
-                    {filteredGroups.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-sm text-[#81768c]">표시할 모임이 없습니다.</td></tr>}
+                    {groups.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-sm text-[#81768c]">표시할 모임이 없습니다.</td></tr>}
                   </tbody>
                 </table>
+              </div>
+              <div className="flex flex-col gap-3 border-t border-[#f0eaf3] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                <p className="text-sm text-[#81768c]">{stats.filtered.toLocaleString("ko-KR")}개 중 {stats.filtered === 0 ? 0 : (page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, stats.filtered)}개 표시</p>
+                <div className="flex items-center gap-2">
+                  <button disabled={page <= 1 || loading} onClick={() => setPage((value) => value - 1)} className="rounded-lg border border-[#e9e2ef] px-3 py-2 text-sm font-bold text-[#665675] disabled:opacity-40">이전</button>
+                  <span className="min-w-20 text-center text-sm font-semibold text-[#665675]">{page} / {totalPages}</span>
+                  <button disabled={page >= totalPages || loading} onClick={() => setPage((value) => value + 1)} className="rounded-lg border border-[#e9e2ef] px-3 py-2 text-sm font-bold text-[#665675] disabled:opacity-40">다음</button>
+                </div>
               </div>
             </section>
           </>
