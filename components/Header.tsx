@@ -38,6 +38,12 @@ export default function Header() {
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:h-16 sm:px-6 lg:px-8">
         <Link
           href="/"
+          onClick={(event) => {
+            if (window.location.pathname === "/") {
+              event.preventDefault();
+              window.location.reload();
+            }
+          }}
           className="flex items-center transition-opacity hover:opacity-80"
           aria-label="Jellian 홈"
         >
