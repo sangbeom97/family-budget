@@ -10,6 +10,7 @@ import DuplicateModal from "@/components/DuplicateModal";
 import CategoryManager from "@/components/CategoryManager";
 import AccountView from "@/components/AccountView";
 import IntroPage from "@/components/IntroPage";
+import AnnouncementPopup from "@/components/AnnouncementPopup";
 
 type Item = {
   id: number;
@@ -1213,6 +1214,7 @@ const sumAmount = (list: Item[]) =>
               </span>
             </button>
           ))}
+          <AnnouncementPopup />
         </aside>
 
         {/* 컨텐츠 조건부 뷰 출력 */}
