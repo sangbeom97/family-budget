@@ -13,12 +13,39 @@ type BackupData = {
   transactions: unknown[];
 };
 
+type DataStats = {
+  checked_at: string;
+  members: number;
+  groups: number;
+  group_members: number;
+  categories: number;
+  budgets: number;
+  transactions: number;
+  support_requests: number;
+};
+
 export default function AdminDataPage() {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState("");
   const [lastExport, setLastExport] = useState("");
+  const [stats, setStats] = useState<DataStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(false);
+  const [statsError, setStatsError] = useState("");
+
+  const loadStats = useCallback(async () => {
+    setStatsLoading(true);
+    setStatsError("");
+    const { data, error: statsLoadError } = await supabase.rpc("get_jellian_admin_data_stats");
+    if (statsLoadError) {
+      setStatsError(statsLoadError.message);
+      setStats(null);
+    } else {
+      setStats(data as DataStats);
+    }
+    setStatsLoading(false);
+  }, []);
 
   const checkAdmin = useCallback(async () => {
     setLoading(true);
@@ -38,8 +65,9 @@ export default function AdminDataPage() {
       return;
     }
     setAuthorized(true);
+    await loadStats();
     setLoading(false);
-  }, []);
+  }, [loadStats]);
 
   useEffect(() => {
     checkAdmin();
@@ -99,6 +127,55 @@ export default function AdminDataPage() {
           </div>
         ) : (
           <div className="space-y-5">
+            <section className="rounded-2xl border border-[#eee8f2] bg-white p-5 sm:p-6">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-lg font-extrabold text-[#292238]">서비스 데이터 현황</h2>
+                  <p className="mt-1 text-sm text-[#81768c]">현재 데이터베이스에 저장된 항목별 전체 건수입니다.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={loadStats}
+                  disabled={statsLoading}
+                  className="rounded-xl border border-[#e9e2ef] px-4 py-2 text-sm font-bold text-[#665675] hover:bg-[#fbf8fd] disabled:opacity-50"
+                >
+                  {statsLoading ? "조회 중..." : "현황 새로고침"}
+                </button>
+              </div>
+              {statsError ? (
+                <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">
+                  데이터 현황을 불러오지 못했습니다. SQL 설정 여부를 확인하세요. ({statsError})
+                </p>
+              ) : stats ? (
+                <>
+                  <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                    {[
+                      ["전체 회원", stats.members, "명"],
+                      ["모임", stats.groups, "개"],
+                      ["모임 참여 관계", stats.group_members, "건"],
+                      ["카테고리", stats.categories, "개"],
+                      ["예산", stats.budgets, "건"],
+                      ["거래내역", stats.transactions, "건"],
+                      ["고객 문의", stats.support_requests, "건"],
+                    ].map(([label, value, unit]) => (
+                      <div key={String(label)} className="rounded-xl bg-[#faf9fb] p-4">
+                        <p className="text-xs font-semibold text-[#81768c]">{label}</p>
+                        <p className="mt-2 text-2xl font-extrabold tabular-nums text-[#292238]">
+                          {Number(value).toLocaleString("ko-KR")}
+                          <span className="ml-1 text-xs font-semibold text-[#81768c]">{unit}</span>
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs text-[#9a90a2]">
+                    마지막 조회: {new Date(stats.checked_at).toLocaleString("ko-KR")}
+                  </p>
+                </>
+              ) : (
+                <p className="mt-4 text-sm text-[#81768c]">{statsLoading ? "데이터 현황을 불러오고 있습니다..." : "표시할 데이터가 없습니다."}</p>
+              )}
+            </section>
+
             <section className="rounded-2xl border border-[#eee8f2] bg-white p-5 sm:p-6">
               <div className="flex items-start gap-3">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#f3e8ff] text-xl">💾</div>
