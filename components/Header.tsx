@@ -78,7 +78,7 @@ export default function Header() {
           </Link>
           <Link
             href="/notices"
-            className="rounded-full px-3 py-2 text-sm font-semibold text-[#4e5968] transition-colors hover:bg-[#f2f4f6] hover:text-[#191f28]"
+            className="rounded-full px-3 py-2 text-sm font-semibold text-[#4e5968] transition-colors hover:bg-[#f2f4f6] hover:text-[#191f28] md:hidden"
           >
             공지사항
           </Link>
