@@ -21,6 +21,7 @@ type GroupPageData = {
   total_count: number;
   active_count: number;
   archived_count: number;
+  empty_count: number;
   filtered_count: number;
   groups: AdminGroup[];
 };
@@ -39,9 +40,9 @@ export default function AdminGroupsPage() {
   const [authorized, setAuthorized] = useState(false);
   const [search, setSearch] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [status, setStatus] = useState<"all" | "active" | "archived">("all");
+  const [status, setStatus] = useState<"all" | "active" | "empty" | "archived">("all");
   const [page, setPage] = useState(1);
-  const [stats, setStats] = useState({ total: 0, active: 0, archived: 0, filtered: 0 });
+  const [stats, setStats] = useState({ total: 0, active: 0, empty: 0, archived: 0, filtered: 0 });
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -87,6 +88,7 @@ export default function AdminGroupsPage() {
       setStats({
         total: Number(result?.total_count || 0),
         active: Number(result?.active_count || 0),
+        empty: Number(result?.empty_count || 0),
         archived: Number(result?.archived_count || 0),
         filtered: Number(result?.filtered_count || 0),
       });
@@ -102,7 +104,7 @@ export default function AdminGroupsPage() {
   const dateLabel = (value: string | null) =>
     value ? new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value)) : "-";
 
-  const changeStatus = (value: "all" | "active" | "archived") => {
+  const changeStatus = (value: "all" | "active" | "empty" | "archived") => {
     setStatus(value);
     setPage(1);
   };
@@ -131,10 +133,11 @@ export default function AdminGroupsPage() {
         ) : (
           <>
             {error && <p className="mb-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">{error}</p>}
-            <div className="mb-5 grid gap-3 sm:grid-cols-3">
+            <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 { label: "전체 모임", value: stats.total },
                 { label: "운영 중", value: stats.active },
+                { label: "인원 없음", value: stats.empty },
                 { label: "해체·보관", value: stats.archived },
               ].map((item) => (
                 <div key={item.label} className="rounded-2xl border border-[#eee8f2] bg-white p-5">
@@ -154,9 +157,9 @@ export default function AdminGroupsPage() {
                   <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="모임명·모임장 검색" className="min-h-10 w-full rounded-xl border border-[#e9e2ef] px-3 text-sm outline-none focus:border-[#a875c4] sm:w-72" />
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {(["all", "active", "archived"] as const).map((value) => (
+                  {(["all", "active", "empty", "archived"] as const).map((value) => (
                     <button key={value} onClick={() => changeStatus(value)} className={`rounded-full px-4 py-2 text-sm font-bold transition ${status === value ? "bg-[#9145c9] text-white" : "bg-[#f5f0f8] text-[#665675] hover:bg-[#eee5f3]"}`}>
-                      {value === "all" ? "전체" : value === "active" ? "운영 중" : "해체·보관"}
+                      {value === "all" ? "전체" : value === "active" ? "운영 중" : value === "empty" ? "인원 없음" : "해체·보관"}
                     </button>
                   ))}
                 </div>
@@ -178,8 +181,8 @@ export default function AdminGroupsPage() {
                         <td className="px-5 py-4 text-right font-semibold tabular-nums text-[#665675]">{group.member_count}명</td>
                         <td className="px-5 py-4 text-[#81768c]">{dateLabel(group.created_at)}</td>
                         <td className="px-5 py-4">
-                          <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${group.archived_at ? "bg-[#f1edf3] text-[#81768c]" : "bg-[#eaf8ef] text-[#27834b]"}`}>
-                            {group.archived_at ? "해체됨" : "운영 중"}
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${group.archived_at ? "bg-[#f1edf3] text-[#81768c]" : group.member_count === 0 ? "bg-amber-50 text-amber-700" : "bg-[#eaf8ef] text-[#27834b]"}`}>
+                            {group.archived_at ? "해체됨" : group.member_count === 0 ? "인원 없음" : "운영 중"}
                           </span>
                           {group.archived_at && <p className="mt-1 text-xs text-[#9a8da5]">{dateLabel(group.archived_at)}</p>}
                         </td>
