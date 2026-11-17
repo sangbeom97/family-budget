@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
@@ -9,6 +9,24 @@ import { supabase } from "@/lib/supabase";
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [newInquiryCount, setNewInquiryCount] = useState(0);
+  const [inquiryAlert, setInquiryAlert] = useState(false);
+  const previousInquiryCount = useRef<number | null>(null);
+
+  const checkNewInquiries = useCallback(async (notify = false) => {
+    const { count, error } = await supabase.from("support_requests").select("id", { count: "exact", head: true }).eq("status", "received");
+    if (error) { console.error("새 문의 확인 실패:", error); return; }
+    const nextCount = count || 0;
+    setNewInquiryCount(nextCount);
+    if (previousInquiryCount.current !== null && nextCount > previousInquiryCount.current && notify) {
+      const added = nextCount - previousInquiryCount.current;
+      setInquiryAlert(true);
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification("Jellian 새 문의", { body: "새로운 문의 " + added + "건이 접수되었습니다.", tag: "jellian-support-request" });
+      }
+    }
+    previousInquiryCount.current = nextCount;
+  }, []);
 
   useEffect(() => {
     const updateAccess = async (session: { user: { id: string } } | null) => {
@@ -33,6 +51,21 @@ export default function Header() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!isAdmin) { previousInquiryCount.current = null; setNewInquiryCount(0); setInquiryAlert(false); return; }
+    checkNewInquiries(false);
+    const interval = window.setInterval(() => checkNewInquiries(true), 20000);
+    const handleFocus = () => checkNewInquiries(true);
+    window.addEventListener("focus", handleFocus);
+    return () => { window.clearInterval(interval); window.removeEventListener("focus", handleFocus); };
+  }, [isAdmin, checkNewInquiries]);
+
+  const handleEnableNotifications = async () => {
+    if (!("Notification" in window)) { alert("이 브라우저는 알림을 지원하지 않습니다."); return; }
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") new Notification("Jellian 알림이 켜졌습니다.", { body: "새 문의가 접수되면 브라우저 알림을 보내드립니다." });
+  };
 
   const handleSignOut = async () => {
     localStorage.removeItem("currentGroupId");
@@ -90,8 +123,9 @@ export default function Header() {
           </Link>
 
           {isLoggedIn && isAdmin && (
-            <Link href="/admin" className="rounded-full bg-[#f3e8ff] px-3 py-2 text-sm font-bold text-[#9145c9] transition-colors hover:bg-[#ead8fa]">
+            <Link href="/admin" className="relative rounded-full bg-[#f3e8ff] px-3 py-2 text-sm font-bold text-[#9145c9] transition-colors hover:bg-[#ead8fa]">
               관리자
+              {newInquiryCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-extrabold text-white">{newInquiryCount > 99 ? "99+" : newInquiryCount}</span>}
             </Link>
           )}
 
@@ -115,6 +149,22 @@ export default function Header() {
         </nav>
       </div>
     </header>
+    {isLoggedIn && isAdmin && inquiryAlert && (
+      <div className="fixed right-4 top-20 z-[70] w-[min(360px,calc(100vw-2rem))] rounded-2xl border border-[#e9d9f3] bg-white p-4 shadow-xl">
+        <div className="flex items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#f3e8ff] text-xl">✉️</span>
+          <div className="min-w-0 flex-1">
+            <p className="font-extrabold text-[#292238]">새 문의가 접수되었습니다.</p>
+            <p className="mt-1 text-sm text-[#81768c]">미처리 문의 {newInquiryCount}건이 있습니다.</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link href="/admin/support" onClick={() => setInquiryAlert(false)} className="rounded-lg bg-[#9145c9] px-3 py-2 text-xs font-bold text-white">문의 확인</Link>
+              {"Notification" in window && Notification.permission === "default" && <button onClick={handleEnableNotifications} className="rounded-lg border border-[#e9e2ef] px-3 py-2 text-xs font-bold text-[#665675]">브라우저 알림 켜기</button>}
+            </div>
+          </div>
+          <button onClick={() => setInquiryAlert(false)} aria-label="알림 닫기" className="text-lg leading-none text-[#9a8da5]">×</button>
+        </div>
+      </div>
+    )}
     </>
   );
 }
