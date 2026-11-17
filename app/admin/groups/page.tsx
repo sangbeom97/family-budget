@@ -14,7 +14,7 @@ type AdminGroup = {
   created_by: string | null;
   owner_nickname: string | null;
   owner_email: string | null;
-  member_count: number;
+  member_count: number | string;
 };
 
 type GroupPageData = {
@@ -181,8 +181,8 @@ export default function AdminGroupsPage() {
                         <td className="px-5 py-4 text-right font-semibold tabular-nums text-[#665675]">{group.member_count}명</td>
                         <td className="px-5 py-4 text-[#81768c]">{dateLabel(group.created_at)}</td>
                         <td className="px-5 py-4">
-                          <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${group.archived_at ? "bg-[#f1edf3] text-[#81768c]" : group.member_count === 0 ? "bg-amber-50 text-amber-700" : "bg-[#eaf8ef] text-[#27834b]"}`}>
-                            {group.archived_at ? "해체됨" : group.member_count === 0 ? "인원 없음" : "운영 중"}
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${group.archived_at ? "bg-[#f1edf3] text-[#81768c]" : Number(group.member_count) === 0 ? "bg-amber-50 text-amber-700" : "bg-[#eaf8ef] text-[#27834b]"}`}>
+                            {group.archived_at ? "해체됨" : Number(group.member_count) === 0 ? "인원 없음" : "운영 중"}
                           </span>
                           {group.archived_at && <p className="mt-1 text-xs text-[#9a8da5]">{dateLabel(group.archived_at)}</p>}
                         </td>
