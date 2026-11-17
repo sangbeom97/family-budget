@@ -124,10 +124,6 @@ export default function AdminNoticesPage() {
             <h1 className="mt-2 text-2xl font-extrabold text-[#292238] sm:text-3xl">공지사항 관리</h1>
             <p className="mt-1 text-sm text-[#81768c]">서비스 이용자에게 전달할 공지사항을 관리합니다.</p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/admin" className="rounded-xl border border-[#e9e2ef] bg-white px-4 py-2.5 text-sm font-bold text-[#665675]">회원 관리</Link>
-            <Link href="/notices" className="rounded-xl bg-[#f3e8ff] px-4 py-2.5 text-sm font-bold text-[#9145c9]">공지사항 보기</Link>
-          </div>
         </div>
 
         {loading ? (
