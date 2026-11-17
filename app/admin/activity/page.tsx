@@ -47,6 +47,9 @@ export default function AdminActivityPage() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [selectedLog, setSelectedLog] = useState<ActivityLog | null>(null);
 
   const loadLogs = useCallback(async () => {
     setLoading(true);
@@ -88,15 +91,13 @@ export default function AdminActivityPage() {
     const keyword = search.trim().toLowerCase();
     return logs.filter((log) => {
       const matchesFilter = filter === "all" || log.action === filter;
-      const matchesSearch = !keyword || [
-        log.summary,
-        log.actor_email || "",
-        log.actor_nickname || "",
-        log.target_id || "",
-      ].some((value) => value.toLowerCase().includes(keyword));
-      return matchesFilter && matchesSearch;
+      const searchable = [log.summary, log.actor_email || "", log.actor_nickname || "", log.target_id || "", JSON.stringify(log.details || {})].join(" ").toLowerCase();
+      const d = new Date(log.created_at);
+      const dateKey = [d.getFullYear(), String(d.getMonth() + 1).padStart(2, "0"), String(d.getDate()).padStart(2, "0")].join("-");
+      const matchesSearch = !keyword || searchable.includes(keyword);
+      return matchesFilter && matchesSearch && (!startDate || dateKey >= startDate) && (!endDate || dateKey <= endDate);
     });
-  }, [logs, search, filter]);
+  }, [logs, search, filter, startDate, endDate]);
 
   const dateTime = (value: string) =>
     new Intl.DateTimeFormat("ko-KR", {
@@ -155,6 +156,11 @@ export default function AdminActivityPage() {
                   </div>
                   <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="작업 내용·관리자 검색" className="min-h-10 w-full rounded-xl border border-[#e9e2ef] px-3 text-sm outline-none focus:border-[#a875c4] sm:w-72" />
                 </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <label className="flex items-center gap-2 text-xs font-semibold text-[#81768c]">시작일 <input type="date" value={startDate} max={endDate || undefined} onChange={(event) => setStartDate(event.target.value)} className="min-h-10 rounded-xl border border-[#e9e2ef] px-2 text-sm text-[#665675]" /></label>
+                  <label className="flex items-center gap-2 text-xs font-semibold text-[#81768c]">종료일 <input type="date" value={endDate} min={startDate || undefined} onChange={(event) => setEndDate(event.target.value)} className="min-h-10 rounded-xl border border-[#e9e2ef] px-2 text-sm text-[#665675]" /></label>
+                  {(startDate || endDate || search || filter !== "all") && <button onClick={() => { setStartDate(""); setEndDate(""); setSearch(""); setFilter("all"); }} className="min-h-10 rounded-xl px-3 text-xs font-bold text-[#9145c9] hover:bg-[#f8f2fb]">필터 초기화</button>}
+                </div>
                 <div className="flex flex-wrap gap-2">
                   <button onClick={() => setFilter("all")} className={`rounded-full px-4 py-2 text-sm font-bold ${filter === "all" ? "bg-[#9145c9] text-white" : "bg-[#f5f0f8] text-[#665675]"}`}>전체</button>
                   {Object.entries(actionLabels).map(([key, label]) => (
@@ -175,7 +181,7 @@ export default function AdminActivityPage() {
                   </thead>
                   <tbody className="divide-y divide-[#f2edf5]">
                     {filteredLogs.map((log) => (
-                      <tr key={log.id} className="hover:bg-[#fdfbfe]">
+                      <tr key={log.id} onClick={() => setSelectedLog(log)} className="cursor-pointer hover:bg-[#fdfbfe]">
                         <td className="whitespace-nowrap px-5 py-4 text-[#81768c]">{dateTime(log.created_at)}</td>
                         <td className="px-5 py-4">
                           <p className="font-semibold text-[#292238]">{log.actor_nickname || "관리자"}</p>
@@ -187,6 +193,7 @@ export default function AdminActivityPage() {
                         <td className="max-w-[420px] px-5 py-4">
                           <p className="break-words font-semibold text-[#665675]">{log.summary}</p>
                           {log.target_id && <p className="mt-1 break-all text-xs text-[#9a8da5]">대상 ID: {log.target_id}</p>}
+                          <p className="mt-1 text-xs font-semibold text-[#9874ad]">상세 보기 →</p>
                         </td>
                       </tr>
                     ))}
@@ -196,6 +203,23 @@ export default function AdminActivityPage() {
               </div>
             </section>
           </>
+        )}
+        {selectedLog && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setSelectedLog(null)}>
+            <section role="dialog" aria-modal="true" aria-labelledby="activity-detail-title" onClick={(event) => event.stopPropagation()} className="max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 shadow-xl sm:p-7">
+              <div className="flex items-start justify-between gap-4">
+                <div><p className="text-xs font-bold tracking-[0.15em] text-[#9874ad]">ACTIVITY DETAIL</p><h2 id="activity-detail-title" className="mt-2 text-xl font-extrabold text-[#292238]">{actionLabels[selectedLog.action] || selectedLog.action}</h2><p className="mt-1 text-sm text-[#81768c]">{dateTime(selectedLog.created_at)}</p></div>
+                <button onClick={() => setSelectedLog(null)} aria-label="닫기" className="rounded-lg px-3 py-2 text-lg text-[#81768c] hover:bg-[#f5f0f8]">✕</button>
+              </div>
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl bg-[#faf8fc] p-4"><p className="text-xs font-semibold text-[#9a8da5]">관리자</p><p className="mt-1 font-bold text-[#292238]">{selectedLog.actor_nickname || "관리자"}</p><p className="mt-1 break-all text-xs text-[#81768c]">{selectedLog.actor_email || "-"}</p></div>
+                <div className="rounded-xl bg-[#faf8fc] p-4"><p className="text-xs font-semibold text-[#9a8da5]">대상</p><p className="mt-1 font-bold text-[#292238]">{selectedLog.target_type || "-"}</p><p className="mt-1 break-all text-xs text-[#81768c]">{selectedLog.target_id || "대상 ID 없음"}</p></div>
+              </div>
+              <div className="mt-4"><p className="text-xs font-bold text-[#81768c]">작업 내용</p><p className="mt-1 rounded-xl border border-[#eee8f2] p-4 text-sm font-semibold text-[#665675]">{selectedLog.summary}</p></div>
+              <div className="mt-4"><p className="text-xs font-bold text-[#81768c]">상세 데이터</p>{Object.keys(selectedLog.details || {}).length > 0 ? <pre className="mt-2 overflow-x-auto rounded-xl bg-[#292238] p-4 text-xs leading-6 text-white">{JSON.stringify(selectedLog.details, null, 2)}</pre> : <p className="mt-2 rounded-xl bg-[#faf8fc] p-4 text-sm text-[#9a8da5]">추가 상세 데이터가 없습니다.</p>}</div>
+              <div className="mt-5 flex justify-end"><button onClick={() => setSelectedLog(null)} className="rounded-xl bg-[#9145c9] px-5 py-2.5 text-sm font-bold text-white">닫기</button></div>
+            </section>
+          </div>
         )}
       </div>
     </main>
