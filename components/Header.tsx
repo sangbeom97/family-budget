@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import AnnouncementPopup from "@/components/AnnouncementPopup";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -45,6 +46,7 @@ export default function Header() {
   };
 
   return (
+    <>
     <header className="sticky top-0 z-50 w-full border-b border-[#e9edf2] bg-white/95 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:h-16 sm:px-6 lg:px-8">
         <Link
@@ -114,5 +116,7 @@ export default function Header() {
         </nav>
       </div>
     </header>
+    <AnnouncementPopup />
+    </>
   );
 }
