@@ -113,7 +113,7 @@ export default function AdminDataPage() {
             <h1 className="mt-2 text-2xl font-extrabold text-[#292238] sm:text-3xl">데이터 및 운영 관리</h1>
             <p className="mt-1 text-sm text-[#81768c]">서비스 데이터를 안전하게 백업하고 운영 상태를 관리합니다.</p>
           </div>
-          <Link href="/admin" className="rounded-xl border border-[#e9e2ef] bg-white px-4 py-2.5 text-sm font-bold text-[#665675]">← 관리자 홈</Link>
+          <Link href="/admin/members" className="rounded-xl border border-[#e9e2ef] bg-white px-4 py-2.5 text-sm font-bold text-[#665675]">회원 관리</Link>
         </div>
 
         {loading ? (
