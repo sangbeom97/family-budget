@@ -14,6 +14,8 @@ type BackupData = {
   transactions: unknown[];
 };
 
+type RestoreCounts = { groups: number; group_members: number; categories: number; budgets: number; transactions: number };
+
 type DataStats = {
   checked_at: string;
   members: number;
@@ -31,6 +33,11 @@ export default function AdminDataPage() {
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState("");
   const [lastExport, setLastExport] = useState("");
+  const [restoreBackup, setRestoreBackup] = useState<BackupData | null>(null);
+  const [restoreFileName, setRestoreFileName] = useState("");
+  const [restoreError, setRestoreError] = useState("");
+  const [restoreSuccess, setRestoreSuccess] = useState("");
+  const [restoring, setRestoring] = useState(false);
   const [stats, setStats] = useState<DataStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
   const [statsError, setStatsError] = useState("");
@@ -210,11 +217,71 @@ export default function AdminDataPage() {
             </section>
 
             <section className="rounded-2xl border border-[#eee8f2] bg-white p-5 sm:p-6">
-              <h2 className="font-extrabold text-[#292238]">백업 시 유의사항</h2>
+              <div className="flex items-start gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#fff1e8] text-xl">♻️</div>
+                <div>
+                  <h2 className="text-lg font-extrabold text-[#292238]">백업 데이터 복원</h2>
+                  <p className="mt-1 text-sm leading-6 text-[#81768c]">이전에 다운로드한 Jellian JSON 백업 파일을 선택해 데이터를 복원합니다.</p>
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <p className="text-sm font-bold text-amber-900">주의: 기존 데이터가 교체됩니다.</p>
+                <p className="mt-1 text-sm leading-6 text-amber-800">복원하면 현재 모임, 모임 멤버 관계, 카테고리, 예산, 거래내역이 백업 파일의 내용으로 전부 교체됩니다. 회원 정보와 고객 문의는 변경하지 않습니다.</p>
+              </div>
+
+              <label className="mt-5 block">
+                <span className="mb-2 block text-sm font-bold text-[#665675]">백업 파일 선택 (JSON, 최대 25MB)</span>
+                <input
+                  type="file"
+                  accept=".json,application/json"
+                  onChange={(event) => selectRestoreFile(event.target.files?.[0])}
+                  className="block w-full cursor-pointer rounded-xl border border-[#e9e2ef] bg-[#faf9fb] p-3 text-sm text-[#665675] file:mr-3 file:rounded-lg file:border-0 file:bg-[#eee6f4] file:px-3 file:py-2 file:text-sm file:font-bold file:text-[#665675]"
+                />
+              </label>
+
+              {restoreFileName && restoreBackup && (
+                <div className="mt-4 rounded-xl bg-[#faf9fb] p-4">
+                  <p className="text-sm font-bold text-[#292238]">선택된 파일: {restoreFileName}</p>
+                  <p className="mt-1 text-xs text-[#81768c]">백업 생성 시각: {restoreBackup.exported_at ? new Date(restoreBackup.exported_at).toLocaleString("ko-KR") : "정보 없음"}</p>
+                  <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
+                    {([
+                      ["모임", restoreBackup.groups.length],
+                      ["멤버 관계", restoreBackup.group_members.length],
+                      ["카테고리", restoreBackup.categories.length],
+                      ["예산", restoreBackup.budgets.length],
+                      ["거래내역", restoreBackup.transactions.length],
+                    ] as [string, number][]).map(([label, count]) => (
+                      <div key={label} className="rounded-lg bg-white p-3">
+                        <p className="text-xs text-[#81768c]">{label}</p>
+                        <p className="mt-1 text-lg font-extrabold tabular-nums text-[#292238]">{count.toLocaleString("ko-KR")}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs text-[#81768c]">파일 구조 검사를 통과했습니다. 실제 복원은 아래 버튼을 누르고 최종 확인해야 시작됩니다.</p>
+                </div>
+              )}
+
+              {restoreError && <p className="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">{restoreError}</p>}
+              {restoreSuccess && <p className="mt-4 rounded-lg bg-green-50 p-3 text-sm text-green-700">{restoreSuccess}</p>}
+
+              <button
+                type="button"
+                onClick={runRestore}
+                disabled={!restoreBackup || restoring}
+                className="mt-5 min-h-11 rounded-xl bg-[#a45b37] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#88482b] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {restoring ? "데이터 복원 중..." : "선택한 백업으로 데이터 복원"}
+              </button>
+            </section>
+
+            <section className="rounded-2xl border border-[#eee8f2] bg-white p-5 sm:p-6">
+              <h2 className="font-extrabold text-[#292238]">백업 및 복원 유의사항</h2>
               <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-[#81768c]">
-                <li>이 기능은 데이터를 내려받기만 하며 서비스의 원본 데이터는 변경하지 않습니다.</li>
-                <li>백업 파일에는 거래내역과 모임 구성 정보가 포함되므로 안전한 장소에 보관하세요.</li>
-                <li>현재는 JSON 백업만 지원하며, 파일을 이용한 복원 기능은 제공하지 않습니다.</li>
+                <li>복원 전 현재 데이터를 먼저 백업하는 것을 권장합니다.</li>
+                <li>복원 대상은 모임, 멤버 관계, 카테고리, 예산, 거래내역이며 회원 정보와 고객 문의는 변경하지 않습니다.</li>
+                <li>복원은 관리자 권한으로만 실행되며, 데이터베이스 오류가 발생하면 전체 변경이 롤백됩니다.</li>
+                <li>백업 파일에는 개인 거래내역과 모임 정보가 포함되므로 안전한 장소에 보관하세요.</li>
               </ul>
             </section>
           </div>
