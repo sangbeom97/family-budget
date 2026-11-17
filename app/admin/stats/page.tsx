@@ -10,13 +10,10 @@ type AdminStats = {
   active_groups: number;
   archived_groups: number;
   total_transactions: number;
-  total_income: number;
-  total_expense: number;
   current_month_transactions: number;
 };
 
 const number = (value: number) => Number(value || 0).toLocaleString("ko-KR");
-const money = (value: number) => `₩${number(value)}`;
 
 export default function AdminStatsPage() {
   const [stats, setStats] = useState<AdminStats | null>(null);
@@ -66,8 +63,6 @@ export default function AdminStatsPage() {
     { label: "전체 회원", value: number(stats.total_members), unit: "명", detail: "가입한 전체 계정" },
     { label: "전체 모임", value: number(stats.total_groups), unit: "개", detail: `운영 중 ${number(stats.active_groups)}개 · 해체 ${number(stats.archived_groups)}개` },
     { label: "전체 거래", value: number(stats.total_transactions), unit: "건", detail: `이번 달 ${number(stats.current_month_transactions)}건 등록` },
-    { label: "누적 수입", value: money(stats.total_income), unit: "", detail: "전체 거래내역 기준" },
-    { label: "누적 지출", value: money(stats.total_expense), unit: "", detail: "전체 거래내역 기준" },
   ] : [];
 
   return (
@@ -98,18 +93,15 @@ export default function AdminStatsPage() {
         ) : error ? (
           <div className="rounded-2xl border border-red-100 bg-white p-6 text-sm text-red-600">{error}</div>
         ) : stats ? (
-          <>
-            <div className="mb-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {cards.map((card) => (
-                <section key={card.label} className="rounded-2xl border border-[#eee8f2] bg-white p-5">
-                  <p className="text-sm font-semibold text-[#81768c]">{card.label}</p>
-                  <p className="mt-2 break-words text-2xl font-extrabold tabular-nums text-[#292238] sm:text-3xl">{card.value}{card.unit && <span className="ml-1 text-base">{card.unit}</span>}</p>
-                  <p className="mt-2 text-xs text-[#9a8da5]">{card.detail}</p>
-                </section>
-              ))}
-            </div>
-            <p className="text-xs text-[#9a8da5]">금액은 현재 데이터베이스에 저장된 전체 거래내역의 단순 합계입니다. 거래 삭제·수정 시 통계도 함께 반영됩니다.</p>
-          </>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {cards.map((card) => (
+              <section key={card.label} className="rounded-2xl border border-[#eee8f2] bg-white p-5">
+                <p className="text-sm font-semibold text-[#81768c]">{card.label}</p>
+                <p className="mt-2 break-words text-2xl font-extrabold tabular-nums text-[#292238] sm:text-3xl">{card.value}<span className="ml-1 text-base">{card.unit}</span></p>
+                <p className="mt-2 text-xs text-[#9a8da5]">{card.detail}</p>
+              </section>
+            ))}
+          </div>
         ) : (
           <div className="rounded-2xl border border-[#eee8f2] bg-white p-10 text-center text-sm text-[#81768c]">표시할 통계가 없습니다.</div>
         )}
