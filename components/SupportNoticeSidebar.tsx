@@ -78,10 +78,10 @@ export default function SupportNoticeSidebar() {
         {renderItems(accountItems)}
 
         <div className="my-3 border-t border-[#f0e8f5]" />
-        {renderItems(serviceItems, (href) => pathname === href)}
+        {renderItems(managementItems)}
 
         <div className="my-3 border-t border-[#f0e8f5]" />
-        {renderItems(managementItems)}
+        {renderItems(serviceItems, (href) => pathname === href)}
       </aside>
     </>
   );
