@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import AdminNav from "@/app/admin/AdminNav";
 import { supabase } from "@/lib/supabase";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 type AdminStats = {
   total_members: number;
@@ -19,6 +20,13 @@ type AdminStats = {
   estimated_monthly_revenue: number;
 };
 
+type RevenueTrend = {
+  month_label: string;
+  snapshot_date: string;
+  premium_group_owners: number;
+  estimated_monthly_revenue: number;
+};
+
 const number = (value: number) => Number(value || 0).toLocaleString("ko-KR");
 const won = (value: number) => `${number(value)}원`;
 
@@ -27,6 +35,8 @@ export default function AdminStatsPage() {
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const [error, setError] = useState("");
+  const [revenueTrend, setRevenueTrend] = useState<RevenueTrend[]>([]);
+  const [trendError, setTrendError] = useState("");
 
   const loadStats = useCallback(async () => {
     setLoading(true);
@@ -54,6 +64,14 @@ export default function AdminStatsPage() {
       setStats(null);
     } else {
       setStats((data?.[0] || null) as AdminStats | null);
+      const { data: trendData, error: revenueError } = await supabase.rpc("get_jellian_admin_revenue_trend");
+      if (revenueError) {
+        setTrendError(revenueError.message);
+        setRevenueTrend([]);
+      } else {
+        setTrendError("");
+        setRevenueTrend((trendData || []) as RevenueTrend[]);
+      }
     }
     setLoading(false);
   }, []);
@@ -110,6 +128,55 @@ export default function AdminStatsPage() {
                 <span className="rounded-full bg-[#f4edf8] px-3 py-1.5 text-sm font-bold text-[#80509c]">월 2,900원</span>
               </div>
               <p className="mt-3 text-xs text-[#9a8da5]">결제 시스템 연동 전이므로 아래 이용료는 실제 결제 매출이 아닌 예상 금액입니다. 모임원으로 참여하는 모임은 과금 집계에서 제외합니다.</p>
+            </section>
+
+            <section className="mb-5 rounded-2xl border border-[#eee8f2] bg-white p-5">
+              <div className="mb-4">
+                <h2 className="text-base font-extrabold text-[#292238]">월별 예상 이용료 추이</h2>
+                <p className="mt-1 text-xs text-[#9a8da5]">최근 12개월 · 각 월의 마지막 통계 조회 시점 기준 · 실제 결제 매출 아님</p>
+              </div>
+              {trendError ? (
+                <p className="rounded-xl bg-red-50 p-4 text-sm text-red-600">추이 데이터를 불러오지 못했습니다: {trendError}</p>
+              ) : revenueTrend.length === 0 ? (
+                <p className="rounded-xl bg-[#faf8fc] p-8 text-center text-sm text-[#81768c]">첫 통계 기록을 준비하고 있습니다.</p>
+              ) : (
+                <>
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={revenueTrend} margin={{ top: 12, right: 12, left: 8, bottom: 4 }}>
+                        <CartesianGrid stroke="#eee8f2" strokeDasharray="3 3" />
+                        <XAxis dataKey="month_label" tick={{ fill: "#81768c", fontSize: 11 }} />
+                        <YAxis tick={{ fill: "#81768c", fontSize: 11 }} tickFormatter={(value) => String(Math.round(Number(value) / 10000)) + "만"} width={52} />
+                        <Tooltip
+                          formatter={(value) => [won(Number(value)), "월 예상 이용료"]}
+                          labelFormatter={(label) => String(label) + "월"}
+                        />
+                        <Line type="monotone" dataKey="estimated_monthly_revenue" stroke="#9145c9" strokeWidth={3} dot={{ r: 4, fill: "#9145c9" }} activeDot={{ r: 6 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="mt-3 overflow-x-auto">
+                    <table className="w-full min-w-[420px] text-left text-xs">
+                      <thead className="text-[#81768c]">
+                        <tr className="border-b border-[#eee8f2]">
+                          <th className="py-2 font-semibold">기준 월</th>
+                          <th className="py-2 text-right font-semibold">프리미엄 모임장</th>
+                          <th className="py-2 text-right font-semibold">월 예상 이용료</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {revenueTrend.map((item) => (
+                          <tr key={item.month_label} className="border-b border-[#f3eff5] last:border-0">
+                            <td className="py-2 text-[#665675]">{item.month_label}</td>
+                            <td className="py-2 text-right tabular-nums text-[#665675]">{number(item.premium_group_owners)}명</td>
+                            <td className="py-2 text-right font-bold tabular-nums text-[#292238]">{won(item.estimated_monthly_revenue)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
             </section>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {cards.map((card) => (
