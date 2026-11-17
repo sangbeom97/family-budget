@@ -27,6 +27,7 @@ const actionLabels: Record<string, string> = {
   support_update: "문의 처리",
   member_list_view: "회원 목록 조회",
   group_list_view: "모임 목록 조회",
+  support_list_view: "문의 목록 조회",
 };
 
 const actionColors: Record<string, string> = {
@@ -49,12 +50,21 @@ export default function AdminActivityPage() {
   const [authorized, setAuthorized] = useState(false);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [selectedLog, setSelectedLog] = useState<ActivityLog | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 50;
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setSearchTerm(search.trim());
+      setPage(1);
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [search]);
 
   const loadLogs = useCallback(async () => {
     setLoading(true);
@@ -77,7 +87,7 @@ export default function AdminActivityPage() {
     const { data, error: queryError } = await supabase.rpc("get_jellian_admin_activity_logs_page", {
       p_page: page,
       p_page_size: pageSize,
-      p_search: search.trim() || null,
+      p_search: searchTerm || null,
       p_action: filter === "all" ? null : filter,
       p_start_date: startDate || null,
       p_end_date: endDate || null,
@@ -94,7 +104,7 @@ export default function AdminActivityPage() {
       setFilteredCount(Number(result?.filtered_count || 0));
     }
     setLoading(false);
-  }, [page, search, filter, startDate, endDate]);
+  }, [page, searchTerm, filter, startDate, endDate]);
 
   useEffect(() => {
     loadLogs();
@@ -162,7 +172,7 @@ export default function AdminActivityPage() {
                     <h2 className="font-extrabold text-[#292238]">작업 기록 목록</h2>
                     <p className="mt-1 text-xs text-[#81768c]">전체 작업 이력을 최신순으로 조회합니다.</p>
                   </div>
-                  <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="작업 내용·관리자 검색" className="min-h-10 w-full rounded-xl border border-[#e9e2ef] px-3 text-sm outline-none focus:border-[#a875c4] sm:w-72" />
+                  <input value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="작업 내용·관리자·대상 ID 검색" className="min-h-10 w-full rounded-xl border border-[#e9e2ef] px-3 text-sm outline-none focus:border-[#a875c4] sm:w-72" />
                 </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <label className="flex items-center gap-2 text-xs font-semibold text-[#81768c]">시작일 <input type="date" value={startDate} max={endDate || undefined} onChange={(event) => { setStartDate(event.target.value); setPage(1); }} className="min-h-10 rounded-xl border border-[#e9e2ef] px-2 text-sm text-[#665675]" /></label>
