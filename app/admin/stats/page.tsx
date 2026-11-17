@@ -12,9 +12,15 @@ type AdminStats = {
   archived_groups: number;
   total_transactions: number;
   current_month_transactions: number;
+  total_group_owners: number;
+  free_group_owners: number;
+  premium_group_owners: number;
+  premium_owned_groups: number;
+  estimated_monthly_revenue: number;
 };
 
 const number = (value: number) => Number(value || 0).toLocaleString("ko-KR");
+const won = (value: number) => `${number(value)}원`;
 
 export default function AdminStatsPage() {
   const [stats, setStats] = useState<AdminStats | null>(null);
@@ -62,7 +68,11 @@ export default function AdminStatsPage() {
 
   const cards = stats ? [
     { label: "전체 회원", value: number(stats.total_members), unit: "명", detail: "가입한 전체 계정" },
-    { label: "전체 모임", value: number(stats.total_groups), unit: "개", detail: `운영 중 ${number(stats.active_groups)}개 · 해체 ${number(stats.archived_groups)}개` },
+    { label: "운영 중인 모임", value: number(stats.active_groups), unit: "개", detail: `전체 ${number(stats.total_groups)}개 · 해체 ${number(stats.archived_groups)}개` },
+    { label: "무료 모임장", value: number(stats.free_group_owners), unit: "명", detail: "운영 중인 모임을 1개 소유" },
+    { label: "프리미엄 대상 모임장", value: number(stats.premium_group_owners), unit: "명", detail: "운영 중인 모임을 2개 이상 소유" },
+    { label: "프리미엄 대상 모임", value: number(stats.premium_owned_groups), unit: "개", detail: "프리미엄 대상 모임장이 소유한 전체 모임" },
+    { label: "월 예상 이용료", value: won(stats.estimated_monthly_revenue), unit: "", detail: `프리미엄 대상 ${number(stats.premium_group_owners)}명 × 월 2,900원` },
     { label: "전체 거래", value: number(stats.total_transactions), unit: "건", detail: `이번 달 ${number(stats.current_month_transactions)}건 등록` },
   ] : [];
 
@@ -74,7 +84,7 @@ export default function AdminStatsPage() {
           <div>
             <p className="text-xs font-bold tracking-[0.18em] text-[#9874ad]">JELLIAN BACK OFFICE</p>
             <h1 className="mt-2 text-2xl font-extrabold text-[#292238] sm:text-3xl">서비스 통계</h1>
-            <p className="mt-1 text-sm text-[#81768c]">Jellian 전체 서비스 이용 현황을 확인합니다.</p>
+            <p className="mt-1 text-sm text-[#81768c]">모임장 기준 요금 정책과 서비스 이용 현황을 확인합니다.</p>
           </div>
         </div>
 
@@ -90,15 +100,27 @@ export default function AdminStatsPage() {
         ) : error ? (
           <div className="rounded-2xl border border-red-100 bg-white p-6 text-sm text-red-600">{error}</div>
         ) : stats ? (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {cards.map((card) => (
-              <section key={card.label} className="rounded-2xl border border-[#eee8f2] bg-white p-5">
-                <p className="text-sm font-semibold text-[#81768c]">{card.label}</p>
-                <p className="mt-2 break-words text-2xl font-extrabold tabular-nums text-[#292238] sm:text-3xl">{card.value}<span className="ml-1 text-base">{card.unit}</span></p>
-                <p className="mt-2 text-xs text-[#9a8da5]">{card.detail}</p>
-              </section>
-            ))}
-          </div>
+          <>
+            <section className="mb-5 rounded-2xl border border-[#e8dff0] bg-white p-5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <p className="text-sm font-extrabold text-[#292238]">현재 이용료 정책</p>
+                  <p className="mt-1 text-sm text-[#665675]">모임장 소유의 운영 중인 모임 1개 무료 · 2개 이상이면 월 2,900원 고정</p>
+                </div>
+                <span className="rounded-full bg-[#f4edf8] px-3 py-1.5 text-sm font-bold text-[#80509c]">월 2,900원</span>
+              </div>
+              <p className="mt-3 text-xs text-[#9a8da5]">결제 시스템 연동 전이므로 아래 이용료는 실제 결제 매출이 아닌 예상 금액입니다. 모임원으로 참여하는 모임은 과금 집계에서 제외합니다.</p>
+            </section>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {cards.map((card) => (
+                <section key={card.label} className="rounded-2xl border border-[#eee8f2] bg-white p-5">
+                  <p className="text-sm font-semibold text-[#81768c]">{card.label}</p>
+                  <p className="mt-2 break-words text-2xl font-extrabold tabular-nums text-[#292238] sm:text-3xl">{card.value}<span className="ml-1 text-base">{card.unit}</span></p>
+                  <p className="mt-2 text-xs text-[#9a8da5]">{card.detail}</p>
+                </section>
+              ))}
+            </div>
+          </>
         ) : (
           <div className="rounded-2xl border border-[#eee8f2] bg-white p-10 text-center text-sm text-[#81768c]">표시할 통계가 없습니다.</div>
         )}
