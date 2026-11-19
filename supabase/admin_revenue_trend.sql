@@ -42,7 +42,7 @@ begin
     having count(*) >= 2
   ) owners;
 
-  insert into public.jellian_admin_revenue_snapshots (
+  insert into public.jellian_admin_revenue_snapshots as snapshots (
     snapshot_date,
     premium_group_owners,
     estimated_monthly_revenue
@@ -52,7 +52,7 @@ begin
     v_premium_owners,
     v_premium_owners * 2900
   )
-  on conflict (snapshot_date) do nothing;
+  on conflict on constraint jellian_admin_revenue_snapshots_pkey do nothing;
 
   return query
   with monthly_latest as (
