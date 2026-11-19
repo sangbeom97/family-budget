@@ -38,9 +38,7 @@ type AccountViewProps = {
     isRealExpense: (item: any) => boolean;
     mainTab: string;
     filter: string;
-    setFilter: (v: string) => void;
     view: "year" | "list" | "calendar" | "budget";
-    setView: React.Dispatch<React.SetStateAction<"year" | "list" | "calendar" | "budget">>;
     selectedYear: string;
     setSelectedYear: React.Dispatch<React.SetStateAction<string>>;
     selectedMonth: string;
