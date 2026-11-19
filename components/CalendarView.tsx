@@ -9,7 +9,6 @@ type Item = {
   type: string;
   category: string;
   date: string;
-  spend_type: string;
   memo: string;
 };
 
