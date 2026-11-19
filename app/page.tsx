@@ -1303,9 +1303,7 @@ const sumAmount = (list: Item[]) =>
                 isRealExpense={isRealExpense}
                 mainTab={mainTab}
                 filter={filter}
-                setFilter={setFilter}
                 view={view}
-                setView={setView}
                 selectedYear={selectedYear}
                 setSelectedYear={setSelectedYear}
                 selectedMonth={selectedMonth}
