@@ -135,8 +135,7 @@ export default function Home() {
   const role = useGroupRole(currentGroupId, session?.user?.id);
 
   const {
-    categorizedNames, graphCategories, isRealExpense, creatorFilteredItems,
-    creatorFilteredYearlyItems, periodFilteredItems, yearlySourceItems,
+    categorizedNames, graphCategories, isRealExpense, periodFilteredItems,
     categoryData, yearlyCategoryData, totals, budgetCompareData,
     variableBudgetTotal, remainVariableBudget, monthlyData, topCategories,
   } = useBudgetAnalytics({
