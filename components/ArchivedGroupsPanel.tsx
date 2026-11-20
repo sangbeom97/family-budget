@@ -25,7 +25,6 @@ export default function ArchivedGroupsPanel({
 }: Props) {
   return (
     <>
-{mainTab === "archived" && (
               <section className="overflow-hidden rounded-2xl border border-[#f0e8f5] bg-white p-4 shadow-sm sm:p-5">
                 <div className="mb-4 flex items-center gap-2">
                   <span className="text-lg" aria-hidden="true">🗑️</span>
@@ -116,7 +115,6 @@ export default function ArchivedGroupsPanel({
                   영구 삭제는 되돌릴 수 없습니다. 삭제 전 모임명을 정확히 입력해야 합니다.
                 </p>
               </section>
-            )}
     </>
   );
 }
