@@ -25,7 +25,6 @@ type UseGroupManagementParams = {
   setNewGroupType: Dispatch<SetStateAction<string>>;
   setDeleteTargetGroup: Dispatch<SetStateAction<Group | null>>;
   setDeleteGroupNameInput: Dispatch<SetStateAction<string>>;
-  setShowArchivedGroups: Dispatch<SetStateAction<boolean>>;
 };
 
 export function useGroupManagement({
@@ -42,7 +41,6 @@ export function useGroupManagement({
   setNewGroupType,
   setDeleteTargetGroup,
   setDeleteGroupNameInput,
-  setShowArchivedGroups,
 }: UseGroupManagementParams) {
   const fetchUserGroups = async () => {
     if (!userId) {
@@ -141,7 +139,6 @@ export function useGroupManagement({
     await fetchUserGroups();
     setCurrentGroupId(group.id);
     localStorage.setItem("currentGroupId", group.id);
-    setShowArchivedGroups(false);
     alert(`"${group.name}" 모임이 복구되었습니다.`);
   };
 
