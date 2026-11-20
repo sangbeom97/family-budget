@@ -1139,15 +1139,17 @@ const sumAmount = (list: Item[]) =>
               />
             )}
 
-            <ArchivedGroupsPanel
-              archivedGroups={archivedGroups}
-              deleteTargetGroup={deleteTargetGroup}
-              setDeleteTargetGroup={setDeleteTargetGroup}
-              deleteGroupNameInput={deleteGroupNameInput}
-              setDeleteGroupNameInput={setDeleteGroupNameInput}
-              restoreArchivedGroup={restoreArchivedGroup}
-              permanentlyDeleteArchivedGroup={permanentlyDeleteArchivedGroup}
-            />
+            {mainTab === "archived" && (
+              <ArchivedGroupsPanel
+                archivedGroups={archivedGroups}
+                deleteTargetGroup={deleteTargetGroup}
+                setDeleteTargetGroup={setDeleteTargetGroup}
+                deleteGroupNameInput={deleteGroupNameInput}
+                setDeleteGroupNameInput={setDeleteGroupNameInput}
+                restoreArchivedGroup={restoreArchivedGroup}
+                permanentlyDeleteArchivedGroup={permanentlyDeleteArchivedGroup}
+              />
+            )}
 
             {mainTab === "members" && (
   <MemberView
