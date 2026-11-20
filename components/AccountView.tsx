@@ -2,6 +2,7 @@
 
 import React, { useMemo } from "react";
 import ListView from "@/components/ListView";
+import SummaryCards from "@/components/SummaryCards";
 import CalendarView from "@/components/CalendarView";
 import CategoryChart from "@/components/CategoryChart";
 import TransactionForm from "@/components/TransactionForm";
@@ -55,7 +56,6 @@ type AccountViewProps = {
     savingCategories: string[];
     categories: any[];
     filteredTotal: number;
-    SummaryCards: any;
     yearlyIncome: number;
     incomeTotal: number;
     yearlyExpense: number;
@@ -91,7 +91,7 @@ export default function AccountView(props: AccountViewProps) {
         mainTab, filter, view, selectedYear, setSelectedYear,
         selectedMonth, setSelectedMonth, startDate, setStartDate, endDate, setEndDate,
         search, setSearch, categoryFilter, setCategoryFilter, graphCategories,
-        savingCategories, categories, filteredTotal, SummaryCards, yearlyIncome, incomeTotal,
+        savingCategories, categories, filteredTotal, yearlyIncome, incomeTotal,
         yearlyExpense, expenseTotal, yearlySaving, savingTotal, yearlyTotal, total,
         categoryData, yearlyCategoryData, budgetCompareData, handleFileUpload, selectedFileName,
         exportToExcel, periodFilteredItems, loadingItems, groupMembers, selectedCreator, setSelectedCreator,
@@ -401,7 +401,6 @@ export default function AccountView(props: AccountViewProps) {
                     <div className="space-y-4 pb-3">
                         {role !== "member" && (
                             <TransactionForm
-                                darkMode={false}
                                 name={name} setName={setName} memo={memo} setMemo={setMemo}
                                 amount={amount} setAmount={setAmount} date={date} setDate={setDate}
                                 type={type} setType={setType} category={category} setCategory={setCategory}
@@ -442,7 +441,7 @@ export default function AccountView(props: AccountViewProps) {
 
             {/* 8. 달력 뷰 영역 */}
             {view === "calendar" && (
-                <CalendarView items={periodFilteredItems} selectedMonth={selectedMonth} darkMode={false} />
+                <CalendarView items={periodFilteredItems} selectedMonth={selectedMonth} />
             )}
 
             {/* 9. 연요약 통계 뷰 영역 */}
