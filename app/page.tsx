@@ -12,6 +12,9 @@ import CategoryManager from "@/components/CategoryManager";
 import AccountView from "@/components/AccountView";
 import IntroPage from "@/components/IntroPage";
 import AnnouncementPopup from "@/components/AnnouncementPopup";
+import GroupManagementPanel from "@/components/GroupManagementPanel";
+import AppSidebar from "@/components/AppSidebar";
+import ArchivedGroupsPanel from "@/components/ArchivedGroupsPanel";
 
 type Item = {
   id: number;
@@ -1006,232 +1009,29 @@ const sumAmount = (list: Item[]) =>
 
         
         {/* 공유 가계부 관리 패널 */}
-        <div className="mb-6 grid grid-cols-1 gap-4 rounded-2xl border border-[#f0e8f5] bg-white p-4 shadow-sm sm:p-5 md:grid-cols-3">
+        <GroupManagementPanel
+          groups={groups}
+          currentGroupId={currentGroupId}
+          setCurrentGroupId={setCurrentGroupId}
+          newGroupType={newGroupType}
+          setNewGroupType={setNewGroupType}
+          newGroupName={newGroupName}
+          setNewGroupName={setNewGroupName}
+          createGroup={createGroup}
+          handleCopyInviteLink={handleCopyInviteLink}
+        />
 
-          {/* 현재 가계부 선택 */}
-          <div className="min-w-0 rounded-xl bg-[#fffaff] p-4">
-            <div className="mb-3 flex items-center gap-2">
-              <span className="text-lg">🏠</span>
-              <label className="text-sm font-bold text-[#292238]">
-                현재 가계부
-              </label>
-            </div>
-
-            <select
-              value={currentGroupId}
-              onChange={(e) => {
-                setCurrentGroupId(e.target.value);
-                localStorage.setItem("currentGroupId", e.target.value);
-              }}
-              className="min-h-11 w-full rounded-xl border border-[#f0e8f5] bg-white px-3 py-2 text-sm font-semibold text-[#292238] outline-none transition focus:border-[#9145c9]"
-            >
-              {groups.length === 0 && (
-                <option value="">소속된 방이 없습니다</option>
-              )}
-              {groups.map((g) => (
-                <option key={g.id} value={g.id}>
-                  {g.name}
-                </option>
-              ))}
-            </select>
-            <p className="mt-2 text-xs text-[#81768c]">
-              관리할 공유 가계부를 선택하세요.
-            </p>
-          </div>
-
-          {/* 새 가계부 만들기 */}
-          <div className="min-w-0 rounded-xl bg-[#fffaff] p-4">
-            <div className="mb-3 flex items-center gap-2">
-              <span className="text-lg">➕</span>
-              <label className="text-sm font-bold text-[#292238]">
-                새 가계부 만들기
-              </label>
-            </div>
-
-            <div className="space-y-2">
-              <select
-                value={newGroupType}
-                onChange={(e) => setNewGroupType(e.target.value)}
-                className="min-h-10 w-full rounded-xl border border-[#f0e8f5] bg-white px-3 py-2 text-sm text-[#292238] outline-none focus:border-[#9145c9]"
-              >
-                <option value="household">부부·가족용</option>
-                <option value="club">모임·동아리용</option>
-                <option value="trip">여행·프로젝트용</option>
-                <option value="custom">직접 설정</option>
-              </select>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="예: 우리 가족 가계부"
-                  value={newGroupName}
-                  onChange={(e) => setNewGroupName(e.target.value)}
-                  className="min-w-0 flex-1 rounded-xl border border-[#f0e8f5] bg-white px-3 py-2 text-sm text-[#292238] outline-none transition placeholder:text-[#b0b8c1] focus:border-[#9145c9]"
-                />
-                <button
-                  onClick={createGroup}
-                  className="shrink-0 rounded-xl bg-[#9145c9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#7828c8]"
-                >
-                  개설
-                </button>
-              </div>
-            </div>
-            <p className="mt-2 text-xs text-[#81768c]">
-              유형에 맞는 기본 카테고리가 자동 생성되며, 이후 자유롭게 수정할 수 있습니다.
-            </p>
-          </div>
-
-          {/* 멤버 초대 */}
-          <div className="min-w-0 rounded-xl bg-[#fffaff] p-4">
-            <div className="mb-3 flex items-center gap-2">
-              <span className="text-lg">👥</span>
-              <label className="text-sm font-bold text-[#292238]">
-                멤버 초대
-              </label>
-            </div>
-
-            <button
-              onClick={handleCopyInviteLink}
-              className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#f5d778] bg-[#fff5d6] px-3 py-2 text-sm font-bold text-[#805b10] transition hover:bg-[#ffedb5]"
-            >
-              💬 카카오톡 초대 링크 복사
-            </button>
-            <p className="mt-2 text-xs text-[#81768c]">
-              링크를 공유해 멤버를 초대하세요.
-            </p>
-          </div>
-        </div>
-
-        {/* 모바일 메뉴 버튼 */}
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="fixed left-3 top-16 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-[#f0e8f5] bg-white text-xl shadow-sm md:hidden"
-          aria-label="메뉴 열기"
-        >
-          ☰
-        </button>
-
-        {/* 모바일 사이드바 배경 */}
-        {isSidebarOpen && (
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="fixed inset-0 z-40 bg-black/30 md:hidden"
-            aria-label="메뉴 닫기"
-          />
-        )}
-
-        {/* 사이드바 */}
-        <aside
-          className={`sidebar-scrollbar-hidden group fixed left-0 top-14 z-50 flex h-[calc(100vh-3.5rem)] w-64 flex-col overflow-x-hidden overflow-y-auto overscroll-contain border-r border-[#f0e8f5] bg-white p-3 shadow-lg transition-all duration-200 md:top-16 md:h-[calc(100vh-4rem)] md:w-16 md:shadow-sm md:hover:w-56 ${
-            isSidebarOpen
-              ? "translate-x-0"
-              : "-translate-x-full md:translate-x-0"
-          }`}
-        >
-          <div className="mb-4 px-3 py-2 text-xs font-bold text-[#81768c] md:opacity-0 md:group-hover:opacity-100">
-            MAIN MENU
-          </div>
-
-                    <div className="mb-2 px-3 text-xs font-bold text-[#81768c] md:opacity-0 md:group-hover:opacity-100">
-            가계부
-          </div>
-
-          {[
-            { id: "all", label: "전체", icon: "📊", filter: "all", view: "list" },
-            { id: "income", label: "수입", icon: "💰", filter: "income", view: "list" },
-            { id: "fixed", label: "고정지출", icon: "🏠", filter: "fixed", view: "list" },
-            { id: "variable", label: "변동지출", icon: "🛒", filter: "variable", view: "list" },
-            { id: "allowance", label: "용돈", icon: "💳", filter: "allowance", view: "list" },
-            { id: "saving", label: "저축", icon: "🐷", filter: "saving", view: "list" },
-            { id: "year", label: "연요약", icon: "📈", view: "year" },
-            { id: "budget", label: "예산", icon: "🎯", view: "budget" },
-            { id: "list", label: "리스트", icon: "📋", view: "list" },
-            { id: "calendar", label: "달력", icon: "📅", view: "calendar" },
-          ]
-            .filter((item) => item.id !== "budget" || role !== "member")
-            .map((item) => {
-              const active =
-                mainTab === "account" &&
-                (item.filter
-                  ? filter === item.filter && view === "list"
-                  : view === item.view);
-
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setMainTab("account");
-                    if (item.filter) setFilter(item.filter);
-                    if (item.view) setView(item.view as "year" | "list" | "calendar" | "budget");
-                    setIsSidebarOpen(false);
-                  }}
-                  className={`mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
-                    active
-                      ? "bg-[#f3e8ff] text-[#9145c9]"
-                      : "text-[#665675] hover:bg-[#fffaff]"
-                  }`}
-                >
-                  <span className="flex w-7 shrink-0 items-center justify-center text-lg">
-                    {item.icon}
-                  </span>
-                  <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
-                    {item.label}
-                  </span>
-                </button>
-              );
-            })}
-
-          <div className="my-3 border-t border-[#f0e8f5]" />
-
-          {[
-            { id: "category", label: "카테고리 관리", icon: "📁" },
-            { id: "members", label: "그룹 멤버", icon: "👥" },
-            { id: "archived", label: "해체된 모임 관리", icon: "🗑️" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => {
-                setMainTab(item.id as "category" | "members" | "archived");
-                setIsSidebarOpen(false);
-              }}
-              className={`mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
-                mainTab === item.id
-                  ? "bg-[#f3e8ff] text-[#9145c9]"
-                  : "text-[#665675] hover:bg-[#fffaff]"
-              }`}
-            >
-              <span className="flex w-7 shrink-0 items-center justify-center text-lg">
-                {item.icon}
-              </span>
-              <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
-                {item.label}
-              </span>
-            </button>
-          ))}
-
-          <div className="my-3 border-t border-[#f0e8f5]" />
-
-          <Link
-            href="/support"
-            onClick={() => setIsSidebarOpen(false)}
-            className="mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
-          >
-            <span className="flex w-7 shrink-0 items-center justify-center text-lg">💬</span>
-            <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
-              고객지원
-            </span>
-          </Link>
-
-          <Link
-            href="/notices"
-            onClick={() => setIsSidebarOpen(false)}
-            className="mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold text-[#665675] transition-all hover:bg-[#fffaff]"
-          >
-            <span className="flex w-7 shrink-0 items-center justify-center text-lg">📢</span>
-            <span className="whitespace-nowrap md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
-              공지사항
-            </span>
-          </Link>
-        </aside>
+        <AppSidebar
+          mainTab={mainTab}
+          setMainTab={setMainTab}
+          filter={filter}
+          setFilter={setFilter}
+          view={view}
+          setView={setView}
+          role={role}
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+        />
 
         {/* 컨텐츠 조건부 뷰 출력 */}
         {loadingGroups ? (
@@ -1339,98 +1139,15 @@ const sumAmount = (list: Item[]) =>
               />
             )}
 
-            {mainTab === "archived" && (
-              <section className="overflow-hidden rounded-2xl border border-[#f0e8f5] bg-white p-4 shadow-sm sm:p-5">
-                <div className="mb-4 flex items-center gap-2">
-                  <span className="text-lg" aria-hidden="true">🗑️</span>
-                  <h2 className="text-base font-bold text-[#292238]">해체된 모임 관리</h2>
-                  <span className="rounded-full bg-[#f3e8ff] px-2 py-0.5 text-xs text-[#9145c9]">
-                    {archivedGroups.length}
-                  </span>
-                </div>
-                {archivedGroups.length === 0 ? (
-                  <p className="py-8 text-center text-sm text-[#81768c]">
-                    보관 중인 모임이 없습니다.
-                  </p>
-                ) : (
-                  <div className="space-y-3">
-                    {archivedGroups.map((group) => (
-                      <div
-                        key={group.id}
-                        className="flex flex-col gap-3 rounded-xl border border-[#f0e8f5] bg-[#fffaff] p-3 sm:flex-row sm:items-center sm:justify-between"
-                      >
-                        <div className="min-w-0">
-                          <p className="break-words text-sm font-bold text-[#292238]">{group.name}</p>
-                          <p className="mt-1 text-xs text-[#81768c]">
-                            해체일: {group.archived_at ? new Date(group.archived_at).toLocaleDateString("ko-KR") : "날짜 정보 없음"}
-                            {" · "}기존 데이터 보관 중
-                          </p>
-                        </div>
-                        <div className="flex flex-col gap-2 sm:w-52">
-                          <button
-                            type="button"
-                            onClick={() => restoreArchivedGroup(group)}
-                            className="min-h-10 rounded-lg bg-[#9145c9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#7828c8]"
-                          >
-                            다시 불러오기
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setDeleteTargetGroup(group);
-                              setDeleteGroupNameInput("");
-                            }}
-                            className="min-h-10 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-bold text-red-600 transition hover:bg-red-50"
-                          >
-                            영구 삭제
-                          </button>
-                          {deleteTargetGroup?.id === group.id && (
-                            <div className="space-y-2 rounded-lg border border-red-200 bg-white p-3">
-                              <p className="text-xs leading-5 text-red-600">
-                                모임과 거래내역·예산·카테고리·멤버 정보가 모두 삭제되며 복구할 수 없습니다.
-                              </p>
-                              <label className="block text-xs font-semibold text-[#665675]">
-                                계속하려면 모임명 <span className="font-bold text-[#292238]">{group.name}</span> 입력
-                              </label>
-                              <input
-                                type="text"
-                                value={deleteGroupNameInput}
-                                onChange={(event) => setDeleteGroupNameInput(event.target.value)}
-                                placeholder="모임명 정확히 입력"
-                                className="min-h-10 w-full rounded-lg border border-[#e6dce9] px-3 py-2 text-sm outline-none focus:border-red-400"
-                              />
-                              <div className="flex gap-2">
-                                <button
-                                  type="button"
-                                  disabled={deleteGroupNameInput !== group.name}
-                                  onClick={() => permanentlyDeleteArchivedGroup(group)}
-                                  className="min-h-9 flex-1 rounded-lg bg-red-600 px-3 py-2 text-xs font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
-                                >
-                                  영구 삭제 확인
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setDeleteTargetGroup(null);
-                                    setDeleteGroupNameInput("");
-                                  }}
-                                  className="min-h-9 rounded-lg border border-[#e6dce9] px-3 py-2 text-xs font-semibold text-[#665675]"
-                                >
-                                  취소
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <p className="mt-4 text-xs text-[#81768c]">
-                  영구 삭제는 되돌릴 수 없습니다. 삭제 전 모임명을 정확히 입력해야 합니다.
-                </p>
-              </section>
-            )}
+            <ArchivedGroupsPanel
+              archivedGroups={archivedGroups}
+              deleteTargetGroup={deleteTargetGroup}
+              setDeleteTargetGroup={setDeleteTargetGroup}
+              deleteGroupNameInput={deleteGroupNameInput}
+              setDeleteGroupNameInput={setDeleteGroupNameInput}
+              restoreArchivedGroup={restoreArchivedGroup}
+              permanentlyDeleteArchivedGroup={permanentlyDeleteArchivedGroup}
+            />
 
             {mainTab === "members" && (
   <MemberView
