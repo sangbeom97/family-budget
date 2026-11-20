@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { supabase } from "@/lib/supabase";
 import { GROUP_CATEGORY_TEMPLATES } from "@/lib/groupCategoryTemplates";
 
