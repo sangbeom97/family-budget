@@ -16,6 +16,7 @@ import ArchivedGroupsPanel from "@/components/ArchivedGroupsPanel";
 import { useGroupData } from "@/hooks/useGroupData";
 import { useTransactionActions } from "@/hooks/useTransactionActions";
 import { useTransactionExcel } from "@/hooks/useTransactionExcel";
+import { useCategoryBudgetActions } from "@/hooks/useCategoryBudgetActions";
 import type { Item } from "@/hooks/useGroupData";
 
 type Group = {
@@ -597,45 +598,22 @@ const sumAmount = (list: Item[]) =>
   }, [graphCategories, filter, categorizedNames.saving, yearlySourceItems]);
 
   // --- 7. 카테고리 및 예산 액션 핸들러 ---
-    const addCategory = async () => {
+  const {
+    addCategory: createCategory,
+    deleteCategory,
+    saveBudget,
+  } = useCategoryBudgetActions({
+    currentGroupId,
+    userId: session?.user?.id,
+    selectedMonth,
+    fetchCategories,
+    fetchBudgets,
+  });
+
+  const addCategory = async () => {
     if (!categoryName.trim() || !currentGroupId) return;
-    await supabase.from("categories").insert([
-      { name: categoryName.trim(), type: categoryType, group_id: currentGroupId, user_id: session?.user?.id }
-    ]);
+    await createCategory(categoryName, categoryType);
     setCategoryName("");
-    fetchCategories();
-  };
-
-  const deleteCategory = async (name: string) => {
-    if (!confirm(`[${name}] 카테고리를 삭제하시겠습니까?`)) return;
-    await supabase.from("categories").delete().eq("group_id", currentGroupId).eq("name", name);
-    fetchCategories();
-  };
-
-  const saveBudget = async (catName: string, value: string) => {
-    if (!currentGroupId) return;
-    const numValue = Number(value) || 0;
-
-    const { data } = await supabase
-      .from("budgets")
-      .select("*")
-      .eq("group_id", currentGroupId)
-      .eq("month", selectedMonth)
-      .eq("category", catName);
-
-    if (data && data.length > 0) {
-      await supabase
-        .from("budgets")
-        .update({ amount: numValue })
-        .eq("group_id", currentGroupId)
-        .eq("month", selectedMonth)
-        .eq("category", catName);
-    } else {
-      await supabase.from("budgets").insert([
-        { group_id: currentGroupId, month: selectedMonth, category: catName, amount: numValue }
-      ]);
-    }
-    fetchBudgets();
   };
 
   const { handleFileUpload, exportToExcel } = useTransactionExcel({
