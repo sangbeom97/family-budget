@@ -1,14 +1,9 @@
 "use client";
 
 type TransactionItem = {
-  id: number;
   name: string;
   amount: number;
-  type: string;
-  category: string;
   date: string;
-  spend_type: string;
-  memo: string;
 };
 
 type DuplicateItem = {
