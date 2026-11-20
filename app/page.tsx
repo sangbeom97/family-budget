@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import MemberView from "@/components/MemberView";
 import DuplicateModal from "@/components/DuplicateModal";
 import CategoryManager from "@/components/CategoryManager";
@@ -134,22 +133,6 @@ export default function Home() {
     setLoadingGroups(false);
   }
 }, [session]);
-
-    const redirectUrl = pendingInvite || window.location.origin;
-
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: redirectUrl,
-      },
-    });
-
-    if (error) {
-      alert(`구글 로그인 실패: ${error.message}`);
-    }
-  };
-
-  
 
   const role = useGroupRole(currentGroupId, session?.user?.id);
 
