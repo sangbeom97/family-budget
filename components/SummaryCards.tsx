@@ -1,6 +1,5 @@
 
 type Props = {
-  darkMode: boolean;
   totalIncome: number;
   totalExpense: number;
   totalSaving: number;
@@ -10,7 +9,6 @@ type Props = {
 };
 
 export default function SummaryCards({
-  darkMode,
   totalIncome,
   totalExpense,
   totalSaving,
@@ -18,11 +16,8 @@ export default function SummaryCards({
   monthlyVariableBudget,
   remainingVariableBudget,
 }: Props) {
-  const cardClass = darkMode
-    ? "bg-slate-800 border-slate-700 text-white"
-    : "bg-white border-[#eef0f3] text-[#292238]";
-
-  const subTextClass = darkMode ? "text-slate-400" : "text-[#81768c]";
+  const cardClass = "bg-white border-[#eef0f3] text-[#292238]";
+  const subTextClass = "text-[#81768c]";
 
   const cards = [
     {
