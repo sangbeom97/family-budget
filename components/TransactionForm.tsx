@@ -8,7 +8,6 @@ type Category = {
 };
 
 type Props = {
-  darkMode: boolean;
   name: string;
   setName: (value: string) => void;
   memo: string;
@@ -30,7 +29,6 @@ type Props = {
 };
 
 export default function TransactionForm({
-  darkMode,
   name,
   setName,
   memo,
@@ -49,26 +47,17 @@ export default function TransactionForm({
   addItem,
   editingId,
 }: Props) {
-  const inputClass = `w-full min-w-0 min-h-12 rounded-xl border px-4 py-3 text-sm font-medium outline-none transition-colors focus:border-[#9145c9] focus:ring-2 focus:ring-[#9145c9]/15 ${
-    darkMode
-      ? "bg-slate-700 text-white border-slate-600 placeholder:text-slate-400"
-      : "bg-[#fffaff] text-[#292238] border-[#f0e8f5] placeholder:text-[#81768c]"
-  }`;
+  const inputClass =
+    "w-full min-w-0 min-h-12 rounded-xl border px-4 py-3 text-sm font-medium outline-none transition-colors focus:border-[#9145c9] focus:ring-2 focus:ring-[#9145c9]/15 bg-[#fffaff] text-[#292238] border-[#f0e8f5] placeholder:text-[#81768c]";
 
   return (
         <div
       id="transaction-form"
-      className={`mb-4 scroll-mt-20 rounded-2xl border p-4 shadow-sm sm:p-5 ${
-        darkMode
-          ? "bg-slate-800 border-slate-700"
-          : "bg-white border-[#f0e8f5]"
-      }`}
+      className="mb-4 scroll-mt-20 rounded-2xl border p-4 shadow-sm sm:p-5 bg-white border-[#f0e8f5]"
     >
       <div className="mb-5 flex items-center justify-between">
         <h3
-          className={`text-base font-extrabold ${
-            darkMode ? "text-white" : "text-[#292238]"
-          }`}
+          className="text-base font-extrabold text-[#292238]"
         >
           {editingId ? "내역 수정" : "새 내역 추가"}
         </h3>
@@ -85,8 +74,6 @@ export default function TransactionForm({
           className={`min-h-12 rounded-xl text-sm font-bold transition-all ${
             type === "expense"
               ? "bg-[#e45d94] text-white shadow-sm"
-              : darkMode
-              ? "bg-slate-700 text-slate-300"
               : "bg-[#fffaff] text-[#81768c]"
           }`}
         >
@@ -98,8 +85,6 @@ export default function TransactionForm({
           className={`min-h-12 rounded-xl text-sm font-bold transition-all ${
             type === "income"
               ? "bg-[#9145c9] text-white shadow-sm"
-              : darkMode
-              ? "bg-slate-700 text-slate-300"
               : "bg-[#fffaff] text-[#81768c]"
           }`}
         >
