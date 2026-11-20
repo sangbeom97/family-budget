@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import MemberView from "@/components/MemberView";
 import DuplicateModal from "@/components/DuplicateModal";
@@ -19,12 +18,12 @@ import { useCategoryBudgetActions } from "@/hooks/useCategoryBudgetActions";
 import { useGroupManagement, type Group } from "@/hooks/useGroupManagement";
 import { useBudgetAnalytics } from "@/hooks/useBudgetAnalytics";
 import { useGroupRole } from "@/hooks/useGroupRole";
+import { useAuthSession } from "@/hooks/useAuthSession";
 import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
   // --- 1. 인증 및 공유 그룹 관련 상태 ---
-  const [session, setSession] = useState<Session | null>(null);
-  const [authLoading, setAuthLoading] = useState(true);
+  const { session, authLoading, handleGoogleSignIn } = useAuthSession();
   const [groups, setGroups] = useState<Group[]>([]);
   const [archivedGroups, setArchivedGroups] = useState<Group[]>([]);
   const [deleteTargetGroup, setDeleteTargetGroup] = useState<Group | null>(null);
@@ -126,34 +125,6 @@ export default function Home() {
     }
   }, []);
 
-  // --- 3. 인증 및 세션 제어 흐름 ---
-  useEffect(() => {
-  const init = async () => {
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      setSession(session);
-    } finally {
-      setAuthLoading(false);
-    }
-  };
-
-  init();
-
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange(
-    (_event, session) => {
-
-      setSession(session);
-    }
-  );
-
-  return () => subscription.unsubscribe();
-}, []);
-
   useEffect(() => {
   if (session?.user) {
     fetchUserGroups();
@@ -163,10 +134,6 @@ export default function Home() {
     setLoadingGroups(false);
   }
 }, [session]);
-
-  // 구글 로그인 핸들러 함수
-  const handleGoogleSignIn = async () => {
-    const pendingInvite = localStorage.getItem("pendingInvite");
 
     const redirectUrl = pendingInvite || window.location.origin;
 
