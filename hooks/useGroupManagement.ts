@@ -122,6 +122,12 @@ export function useGroupManagement({
     }
   };
 
+  useEffect(() => {
+    void fetchUserGroups();
+    // Reload groups when the authenticated user changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
+
   const restoreArchivedGroup = async (group: Group) => {
     if (!confirm(`"${group.name}" 모임을 다시 불러올까요?\\n\\n기존 거래내역·예산·카테고리가 그대로 복구됩니다.`)) {
       return;
