@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import MemberView from "@/components/MemberView";
@@ -17,6 +17,7 @@ import { useTransactionActions } from "@/hooks/useTransactionActions";
 import { useTransactionExcel } from "@/hooks/useTransactionExcel";
 import { useCategoryBudgetActions } from "@/hooks/useCategoryBudgetActions";
 import { useGroupManagement, type Group } from "@/hooks/useGroupManagement";
+import { useBudgetAnalytics } from "@/hooks/useBudgetAnalytics";
 import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
@@ -202,22 +203,15 @@ export default function Home() {
     fetchRole();
   }, [currentGroupId, session]);
 
-  // --- 6. 연산 최적화 연산 메모이제이션 (useMemo) ---
-  const categorizedNames = useMemo(() => {
-    const filterBy = (t: string) =>
-      categories.filter((c) => c.type?.trim().toLowerCase() === t).map((c) => c.name);
-
-    return {
-      fixed: filterBy("fixed"),
-      variable: filterBy("variable"),
-      allowance: filterBy("allowance"),
-      saving: filterBy("saving"),
-      income: filterBy("income"),
-      current: categories
-        .filter((c) => c.type?.trim().toLowerCase() === (type === "income" ? "income" : spendType))
-        .map((c) => c.name),
-    };
-  }, [categories, type, spendType]);
+  const {
+    categorizedNames, graphCategories, isRealExpense, creatorFilteredItems,
+    creatorFilteredYearlyItems, periodFilteredItems, yearlySourceItems,
+    categoryData, yearlyCategoryData, totals, budgetCompareData,
+    variableBudgetTotal, remainVariableBudget, monthlyData, topCategories,
+  } = useBudgetAnalytics({
+    categories, type, spendType, filter, selectedCreator, items, yearlyItems,
+    view, search, categoryFilter, startDate, endDate, selectedYear, budgets,
+  });
 
   useEffect(() => {
     if (categorizedNames.current.length > 0 && !categorizedNames.current.includes(category)) {
