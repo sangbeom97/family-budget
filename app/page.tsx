@@ -48,17 +48,6 @@ export default function Home() {
     "account" | "category" | "members" | "archived"
   >("account");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const {
-    items,
-    loadingItems,
-    yearlyItems,
-    categories,
-    groupMembers,
-    budgets,
-    refreshTransactionData,
-    fetchCategories,
-    fetchBudgets,
-  } = useGroupData({ currentGroupId, selectedMonth, selectedYear });
   const [selectedCreator, setSelectedCreator] = useState("all");
   const [view, setView] = useState<"list" | "year" | "budget" | "calendar">("list");
 
@@ -81,7 +70,18 @@ export default function Home() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  const [budgets, setBudgets] = useState<Record<string, string>>({});
+  const {
+    items,
+    loadingItems,
+    yearlyItems,
+    categories,
+    groupMembers,
+    budgets,
+    refreshTransactionData,
+    fetchCategories,
+    fetchBudgets,
+  } = useGroupData({ currentGroupId, selectedMonth, selectedYear });
+
   const [categoryName, setCategoryName] = useState("");
   const [categoryType, setCategoryType] = useState("variable");
 
