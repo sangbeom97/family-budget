@@ -18,6 +18,7 @@ import { useTransactionExcel } from "@/hooks/useTransactionExcel";
 import { useCategoryBudgetActions } from "@/hooks/useCategoryBudgetActions";
 import { useGroupManagement, type Group } from "@/hooks/useGroupManagement";
 import { useBudgetAnalytics } from "@/hooks/useBudgetAnalytics";
+import { useGroupRole } from "@/hooks/useGroupRole";
 import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
@@ -32,7 +33,6 @@ export default function Home() {
   const [loadingGroups, setLoadingGroups] =
     useState(true);
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
-  const [role, setRole] = useState("member");
   const [newGroupName, setNewGroupName] = useState("");
   const [newGroupType, setNewGroupType] = useState("household");
 
@@ -184,24 +184,7 @@ export default function Home() {
 
   
 
-  useEffect(() => {
-    const fetchRole = async () => {
-      if (!currentGroupId || !session?.user?.id) return;
-
-      const { data } = await supabase
-        .from("group_members")
-        .select("role")
-        .eq("group_id", currentGroupId)
-        .eq("user_id", session.user.id)
-        .single();
-
-      if (data) {
-        setRole(data.role);
-      }
-    };
-
-    fetchRole();
-  }, [currentGroupId, session]);
+  const role = useGroupRole(currentGroupId, session?.user?.id);
 
   const {
     categorizedNames, graphCategories, isRealExpense, creatorFilteredItems,
