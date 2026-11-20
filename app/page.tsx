@@ -27,7 +27,6 @@ export default function Home() {
   const [archivedGroups, setArchivedGroups] = useState<Group[]>([]);
   const [deleteTargetGroup, setDeleteTargetGroup] = useState<Group | null>(null);
   const [deleteGroupNameInput, setDeleteGroupNameInput] = useState("");
-  const [showArchivedGroups, setShowArchivedGroups] = useState(false);
   const [loadingGroups, setLoadingGroups] =
     useState(true);
   const [currentGroupId, setCurrentGroupId] = useState<string>("");
@@ -102,7 +101,6 @@ export default function Home() {
     setNewGroupType,
     setDeleteTargetGroup,
     setDeleteGroupNameInput,
-    setShowArchivedGroups,
   });
 
   // 고객지원·공지사항 사이드바에서 선택한 메뉴를 메인 화면에 반영
