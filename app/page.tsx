@@ -6,7 +6,6 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import * as XLSX from "xlsx";
 import MemberView from "@/components/MemberView";
-import SummaryCards from "@/components/SummaryCards";
 import DuplicateModal from "@/components/DuplicateModal";
 import CategoryManager from "@/components/CategoryManager";
 import AccountView from "@/components/AccountView";
@@ -1320,7 +1319,6 @@ const sumAmount = (list: Item[]) =>
                 savingCategories={categorizedNames.saving}
                 categories={categories}
                 filteredTotal={totals.filteredTotal}
-                SummaryCards={SummaryCards}
                 incomeTotal={totals.incomeTotal}
                 yearlyIncome={totals.yearlyIncome}
                 expenseTotal={totals.expenseTotal}
@@ -1354,7 +1352,6 @@ const sumAmount = (list: Item[]) =>
 
             {mainTab === "category" && (
               <CategoryManager
-                darkMode={false}
                 categoryName={categoryName}
                 setCategoryName={setCategoryName}
                 categoryType={categoryType}
@@ -1365,7 +1362,6 @@ const sumAmount = (list: Item[]) =>
                 allowanceCategories={categorizedNames.allowance}
                 savingCategories={categorizedNames.saving}
                 incomeCategories={categorizedNames.income}
-                fetchCategories={fetchCategories}
                 deleteCategory={deleteCategory}
               />
             )}
@@ -1478,7 +1474,6 @@ const sumAmount = (list: Item[]) =>
       </div>
 
       <DuplicateModal
-        darkMode={false}
         duplicateItem={duplicateItem}
         duplicateIndex={duplicateIndex}
         duplicateTotal={duplicateTotal}
