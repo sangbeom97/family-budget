@@ -166,8 +166,7 @@ export function useBudgetAnalytics({
     .slice(0, 5), [graphCategories, filter, categorizedNames.saving, yearlySourceItems]);
 
   return {
-    categorizedNames, graphCategories, isRealExpense, creatorFilteredItems,
-    creatorFilteredYearlyItems, periodFilteredItems, yearlySourceItems,
+    categorizedNames, graphCategories, isRealExpense, periodFilteredItems,
     categoryData, yearlyCategoryData, totals, budgetCompareData,
     variableBudgetTotal, remainVariableBudget, monthlyData, topCategories,
   };
