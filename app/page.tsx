@@ -22,7 +22,7 @@ import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
   // --- 1. 인증 및 공유 그룹 관련 상태 ---
-  const { session, authLoading, handleGoogleSignIn } = useAuthSession();
+  const { session, authLoading } = useAuthSession();
   const [groups, setGroups] = useState<Group[]>([]);
   const [archivedGroups, setArchivedGroups] = useState<Group[]>([]);
   const [deleteTargetGroup, setDeleteTargetGroup] = useState<Group | null>(null);
