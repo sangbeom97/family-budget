@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState, useMemo, type ChangeEvent } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { GROUP_CATEGORY_TEMPLATES } from "@/lib/groupCategoryTemplates";
-import * as XLSX from "xlsx";
 import MemberView from "@/components/MemberView";
 import DuplicateModal from "@/components/DuplicateModal";
 import CategoryManager from "@/components/CategoryManager";
@@ -16,6 +15,7 @@ import AppSidebar from "@/components/AppSidebar";
 import ArchivedGroupsPanel from "@/components/ArchivedGroupsPanel";
 import { useGroupData } from "@/hooks/useGroupData";
 import { useTransactionActions } from "@/hooks/useTransactionActions";
+import { useTransactionExcel } from "@/hooks/useTransactionExcel";
 import type { Item } from "@/hooks/useGroupData";
 
 type Group = {
@@ -638,158 +638,18 @@ const sumAmount = (list: Item[]) =>
     fetchBudgets();
   };
 
-  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (!file || !currentGroupId) return;
-  setSelectedFileName(file.name);
-
-  const reader = new FileReader();
-
-  reader.onload = async () => {
-    const bstr = reader.result as string;
-    const wb = XLSX.read(bstr, { type: "binary" });
-    const wsname = wb.SheetNames[0];
-    const ws = wb.Sheets[wsname];
-    const data = XLSX.utils.sheet_to_json<Record<string, unknown>>(ws);
-
-    const parsedItems = data.map((row) => {
-      const rawAmount = String(row["금액"] || "").replace(/[^0-9-]/g, "");
-      const parsedAmount = Number(rawAmount);
-
-      return {
-        name: (row["내역명"] || row["항목"] || "미지정") as string,
-        amount: isNaN(parsedAmount) ? 0 : parsedAmount,
-        type: row["타입"] === "수입" ? "income" : "expense",
-        category: (row["카테고리"] || "기타") as string,
-        date: (row["날짜"] || new Date().toISOString().split("T")[0]) as string,
-        spend_type: (row["지출분류"] || "variable") as string,
-        memo: (row["메모"] || "") as string,
-        group_id: currentGroupId,
-        user_id: session?.user?.id,
-      };
-    });
-
-    if (parsedItems.length === 0) {
-      alert("업로드할 데이터가 없습니다.");
-      return;
-    }
-
-    const { data: existingData, error: existingError } = await supabase
-      .from("transactions")
-      .select("id, name, amount, type, category, date, spend_type, memo")
-      .eq("group_id", currentGroupId);
-
-    if (existingError) {
-      alert("기존 거래내역을 불러오지 못했습니다.");
-      return;
-    }
-
-    const knownItems: {
-      id?: number;
-      name: string;
-      amount: number;
-      type: string;
-      category: string;
-      date: string;
-      spend_type: string;
-      memo: string;
-    }[] = (existingData || []).map((item) => ({
-      id: item.id,
-      name: item.name,
-      amount: item.amount,
-      type: item.type,
-      category: item.category,
-      date: item.date,
-      spend_type: item.spend_type,
-      memo: item.memo,
-    }));
-
-    const duplicateMatches: ({ oldItem: (typeof knownItems)[number] } | null)[] = [];
-
-    for (const item of parsedItems) {
-      const duplicate = knownItems.find(
-        (old) =>
-          old.date === item.date &&
-          old.name.trim() === item.name.trim() &&
-          Number(old.amount) === Number(item.amount) &&
-          old.type === item.type &&
-          old.category === item.category
-      );
-
-      duplicateMatches.push(duplicate ? { oldItem: duplicate } : null);
-      knownItems.push(item);
-    }
-
-    const duplicateTotal = duplicateMatches.filter(Boolean).length;
-    const itemsToInsert = [];
-    let duplicateIndex = 0;
-
-    for (let i = 0; i < parsedItems.length; i++) {
-      const match = duplicateMatches[i];
-
-      if (match) {
-        duplicateIndex++;
-
-        const shouldAdd = await new Promise<boolean>((resolve) => {
-          setDuplicateResolve(() => resolve);
-          setDuplicateItem({
-            newItem: parsedItems[i],
-            oldItem: match.oldItem,
-          });
-          setDuplicateIndex(duplicateIndex);
-          setDuplicateTotal(duplicateTotal);
-        });
-
-        setDuplicateResolve(null);
-
-        if (!shouldAdd) continue;
-      }
-
-      itemsToInsert.push(parsedItems[i]);
-    }
-
-    if (itemsToInsert.length === 0) {
-      alert("등록할 거래가 없습니다. 중복 거래를 모두 건너뛰었습니다.");
-      return;
-    }
-
-    const { error } = await supabase
-      .from("transactions")
-      .insert(itemsToInsert);
-
-    if (error) {
-      alert("거래내역 업로드에 실패했습니다.");
-      console.error("Excel 업로드 실패:", error);
-      return;
-    }
-
-    refreshTransactionData();
-
-    alert(
-      `${itemsToInsert.length}건의 거래를 등록했습니다.\n중복 의심 거래 ${duplicateTotal}건`
-    );
-  };
-
-  reader.readAsBinaryString(file);
-};
-
-  const exportToExcel = () => {
-    if (items.length === 0) return alert("내보낼 데이터가 없습니다.");
-    const excelData = items.map((i) => ({
-      날짜: i.date,
-      내역명: i.name,
-      금액: i.amount,
-      타입: i.type === "income" ? "수입" : "지출",
-      카테고리: i.category,
-      지출분류: i.spend_type,
-      메모: i.memo,
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "가계부내역");
-    XLSX.writeFile(workbook, `가계부_내역_${selectedMonth}.xlsx`);
-  };
+  const { handleFileUpload, exportToExcel } = useTransactionExcel({
+    currentGroupId,
+    userId: session?.user?.id,
+    selectedMonth,
+    items,
+    setSelectedFileName,
+    setDuplicateItem,
+    setDuplicateResolve,
+    setDuplicateIndex,
+    setDuplicateTotal,
+    refreshTransactionData,
+  });
 
   // --- 8. 미인증 상태 UI (소셜 로그인 전용 화면) ---
   if (authLoading) {
