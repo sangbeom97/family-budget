@@ -1,12 +1,6 @@
 
 "use client";
 
-type Category = {
-  id: number;
-  name: string;
-  type: string;
-};
-
 type Props = {
   name: string;
   setName: (value: string) => void;
@@ -22,7 +16,6 @@ type Props = {
   setCategory: (value: string) => void;
   spendType: string;
   setSpendType: (value: string) => void;
-  categories: Category[];
   currentCategories: string[];
   addItem: () => void;
   editingId: number | null;
