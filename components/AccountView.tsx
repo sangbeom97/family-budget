@@ -404,7 +404,7 @@ export default function AccountView(props: AccountViewProps) {
                                 name={name} setName={setName} memo={memo} setMemo={setMemo}
                                 amount={amount} setAmount={setAmount} date={date} setDate={setDate}
                                 type={type} setType={setType} category={category} setCategory={setCategory}
-                                spendType={spendType} setSpendType={setSpendType} categories={categories}
+                                spendType={spendType} setSpendType={setSpendType}
                                 currentCategories={currentCategories} addItem={addItem} editingId={editingId}
                             />
                         )}
