@@ -122,16 +122,6 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(() => {
-  if (session?.user) {
-    fetchUserGroups();
-  } else {
-    setGroups([]);
-    setCurrentGroupId("");
-    setLoadingGroups(false);
-  }
-}, [session]);
-
   const role = useGroupRole(currentGroupId, session?.user?.id);
 
   const {
