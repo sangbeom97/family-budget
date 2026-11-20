@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useMemo, type ChangeEvent } from "react";
-import Link from "next/link";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { GROUP_CATEGORY_TEMPLATES } from "@/lib/groupCategoryTemplates";
