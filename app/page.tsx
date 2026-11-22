@@ -18,6 +18,7 @@ import { useGroupManagement, type Group } from "@/hooks/useGroupManagement";
 import { useBudgetAnalytics } from "@/hooks/useBudgetAnalytics";
 import { useGroupRole } from "@/hooks/useGroupRole";
 import { useAuthSession } from "@/hooks/useAuthSession";
+import { useTransactionForm } from "@/hooks/useTransactionForm";
 import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
@@ -41,19 +42,21 @@ export default function Home() {
   const [selectedCreator, setSelectedCreator] = useState("all");
   const [view, setView] = useState<"list" | "year" | "budget" | "calendar">("list");
 
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [name, setName] = useState("");
-  const [memo, setMemo] = useState("");
-  const [amount, setAmount] = useState("");
-  const [type, setType] = useState("expense");
-  const [category, setCategory] = useState("");
-  const [spendType, setSpendType] = useState("variable");
+  const {
+    editingId, setEditingId,
+    name, setName,
+    memo, setMemo,
+    amount, setAmount,
+    type, setType,
+    category, setCategory,
+    spendType, setSpendType,
+    date, setDate,
+  } = useTransactionForm();
 
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [selectedFileName, setSelectedFileName] = useState("");
