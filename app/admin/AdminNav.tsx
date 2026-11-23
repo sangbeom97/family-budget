@@ -71,6 +71,17 @@ export default function AdminNav() {
               void loadUnprocessedCount();
             },
           )
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "support_requests",
+            },
+            () => {
+              void loadUnprocessedCount();
+            },
+          )
           .subscribe((channelStatus) => {
             if (channelStatus === "CHANNEL_ERROR" || channelStatus === "TIMED_OUT") {
               console.error("실시간 문의 알림 연결 실패:", channelStatus);
