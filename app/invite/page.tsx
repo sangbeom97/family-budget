@@ -16,25 +16,27 @@ function InviteContent() {
       if (!code) {
         setStatus("잘못된 초대 링크");
         return;
-      }const {
-        data: { user },
-      } = await supabase.auth.getUser();if (!user) {
-        localStorage.setItem(
-          "pendingInvite",
-          window.location.href
-        );
+      }
 
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        localStorage.setItem("pendingInvite", window.location.href);
         alert("로그인이 필요합니다.");
         router.push("/");
         return;
       }
 
       const { data: group, error: groupError } = await supabase
-  .from("groups")
-  .select("id,name,invite_code")
-  .eq("invite_code", code)
-  .is("archived_at", null)
-  .single();if (groupError || !group) {
+        .from("groups")
+        .select("id,name,invite_code")
+        .eq("invite_code", code)
+        .is("archived_at", null)
+        .single();
+
+      if (groupError || !group) {
         alert("잘못된 초대 코드입니다.");
         router.push("/");
         return;
@@ -46,7 +48,9 @@ function InviteContent() {
           group_id: group.id,
           user_id: user.id,
           role: "member",
-        });if (insertError) {
+        });
+
+      if (insertError) {
         if (insertError.code === "23505") {
           alert("이미 가입된 그룹입니다.");
         } else {
