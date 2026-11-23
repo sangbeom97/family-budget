@@ -107,24 +107,32 @@ export default function SupportPage() {
     setSubmitting(true);
     setError("");
     setMessage("");
-    const { error: insertError } = await supabase.from("support_requests").insert({
-      user_id: userId,
-      contact_email: email || null,
-      category,
-      subject: subject.trim(),
-      content: content.trim(),
-    });
 
-    if (insertError) {
-      setError(insertError.message);
-    } else {
+    try {
+      const { error: insertError } = await supabase.from("support_requests").insert({
+        user_id: userId,
+        contact_email: email || null,
+        category,
+        subject: subject.trim(),
+        content: content.trim(),
+      });
+
+      if (insertError) {
+        setError(insertError.message);
+        return;
+      }
+
       setSubject("");
       setContent("");
       setCategory("general");
       setMessage("문의가 접수되었습니다. 답변은 이 페이지의 내 문의 내역에서 확인할 수 있습니다.");
       await loadRequests();
+    } catch (submitError) {
+      console.error("문의 접수 실패:", submitError);
+      setError("문의 접수 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const selected = requests.find((item) => item.id === selectedId) || null;
