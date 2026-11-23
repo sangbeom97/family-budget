@@ -50,7 +50,7 @@ export default function MemberView({
             .eq("group_id", currentGroupId);
 
         if (error || !memberRows) {
-            console.log(error);
+            console.error("그룹 멤버 조회 실패:", error);
             return;
         }
 
@@ -62,7 +62,7 @@ export default function MemberView({
             .in("id", ids);
 
         if (profileError) {
-            console.log(profileError);
+            console.error("멤버 프로필 조회 실패:", profileError);
             return;
         }
 
