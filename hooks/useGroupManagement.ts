@@ -60,7 +60,6 @@ export function useGroupManagement({
 
       if (archivedError) {
         console.error("보관된 모임 조회 실패:", archivedError);
-        setArchivedGroups([]);
       } else {
         setArchivedGroups((archivedRows || []) as Group[]);
       }
@@ -114,9 +113,8 @@ export function useGroupManagement({
         }
       }
     } catch (error) {
-      console.error("fetchUserGroups error:", error);
-      setGroups([]);
-      setCurrentGroupId("");
+      // Keep the last successfully loaded group list if a refresh fails.
+      console.error("모임 목록 조회 실패:", error);
     } finally {
       setLoadingGroups(false);
     }
