@@ -35,18 +35,23 @@ export function useAuthSession() {
   }, []);
 
   const handleGoogleSignIn = async () => {
-    const pendingInvite = localStorage.getItem("pendingInvite");
-    const redirectUrl = pendingInvite || window.location.origin;
+    try {
+      const pendingInvite = localStorage.getItem("pendingInvite");
+      const redirectUrl = pendingInvite || window.location.origin;
 
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: redirectUrl,
-      },
-    });
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: redirectUrl,
+        },
+      });
 
-    if (error) {
-      alert(`구글 로그인 실패: ${error.message}`);
+      if (error) {
+        alert(`구글 로그인 실패: ${error.message}`);
+      }
+    } catch (error) {
+      console.error("구글 로그인 요청 실패:", error);
+      alert("구글 로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
     }
   };
 
