@@ -6,6 +6,7 @@ import SummaryCards from "@/components/SummaryCards";
 import CalendarView from "@/components/CalendarView";
 import CategoryChart from "@/components/CategoryChart";
 import TransactionForm from "@/components/TransactionForm";
+import { getLocalMonthString } from "@/lib/dateUtils";
 import {
     ResponsiveContainer,
     BarChart,
