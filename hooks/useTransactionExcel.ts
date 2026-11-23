@@ -29,7 +29,7 @@ type ExistingTransaction = {
   memo: string;
 };
 
-type DuplicateItemState = {
+export type DuplicateItemState = {
   newItem: ImportedTransaction;
   oldItem: ExistingTransaction;
 };
@@ -39,7 +39,7 @@ type UseTransactionExcelOptions = {
   userId?: string;
   selectedMonth: string;
   items: Item[];
-  setDuplicateItem: Dispatch<SetStateAction<any>>;
+  setDuplicateItem: Dispatch<SetStateAction<DuplicateItemState | null>>;
   setDuplicateResolve: Dispatch<SetStateAction<((value: boolean) => void) | null>>;
   setDuplicateIndex: Dispatch<SetStateAction<number>>;
   setDuplicateTotal: Dispatch<SetStateAction<number>>;
