@@ -65,26 +65,49 @@ export function useTransactionActions({
       group_id: currentGroupId,
     };
 
-    if (editingId) {
-      // 수정 시 최초 작성자(user_id)는 변경하지 않습니다.
-      await supabase.from("transactions").update(payload).eq("id", editingId);
-      setEditingId(null);
-    } else {
-      await supabase.from("transactions").insert([{
-        ...payload,
-        user_id: userId,
-      }]);
-    }
+    try {
+      if (editingId !== null) {
+        // 수정 시 최초 작성자(user_id)는 변경하지 않습니다.
+        const { error } = await supabase
+          .from("transactions")
+          .update(payload)
+          .eq("id", editingId);
 
-    setName("");
-    setAmount("");
-    setMemo("");
-    refreshTransactionData();
+        if (error) throw error;
+        setEditingId(null);
+      } else {
+        const { error } = await supabase.from("transactions").insert([{
+          ...payload,
+          user_id: userId,
+        }]);
+
+        if (error) throw error;
+      }
+
+      setName("");
+      setAmount("");
+      setMemo("");
+      refreshTransactionData();
+    } catch (error) {
+      console.error("거래내역 저장 실패:", error);
+      alert("거래내역 저장에 실패했습니다. 입력 내용을 확인하고 다시 시도해 주세요.");
+    }
   };
 
   const deleteItem = async (id: number) => {
     if (!confirm("정말 이 내역을 삭제하시겠습니까?")) return;
-    await supabase.from("transactions").delete().eq("id", id);
+
+    const { error } = await supabase
+      .from("transactions")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("거래내역 삭제 실패:", error);
+      alert("거래내역 삭제에 실패했습니다. 다시 시도해 주세요.");
+      return;
+    }
+
     refreshTransactionData();
   };
 
