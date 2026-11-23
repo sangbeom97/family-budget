@@ -1,15 +1,13 @@
 import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
-
-type MainTab = "account" | "category" | "members" | "archived";
-type View = "list" | "year" | "budget" | "calendar";
+import type { MainTab, AccountViewMode } from "@/hooks/useAppNavigationState";
 
 type Props = {
   mainTab: MainTab;
   setMainTab: Dispatch<SetStateAction<MainTab>>;
   filter: string;
   setFilter: Dispatch<SetStateAction<string>>;
-  view: View;
+  view: AccountViewMode;
   setView: Dispatch<SetStateAction<View>>;
   role: string;
   isSidebarOpen: boolean;
@@ -89,7 +87,7 @@ export default function AppSidebar({
                   onClick={() => {
                     setMainTab("account");
                     if (item.filter) setFilter(item.filter);
-                    if (item.view) setView(item.view as "year" | "list" | "calendar" | "budget");
+                    if (item.view) setView(item.view as AccountViewMode);
                     setIsSidebarOpen(false);
                   }}
                   className={`mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
@@ -118,7 +116,7 @@ export default function AppSidebar({
             <button
               key={item.id}
               onClick={() => {
-                setMainTab(item.id as "category" | "members" | "archived");
+                setMainTab(item.id as MainTab);
                 setIsSidebarOpen(false);
               }}
               className={`mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
