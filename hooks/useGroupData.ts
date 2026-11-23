@@ -184,19 +184,24 @@ export function useGroupData({
     if (!currentGroupId) return;
     const version = requestVersion.current;
 
-    const { data } = await supabase
-      .from("budgets")
-      .select("*")
-      .eq("group_id", currentGroupId)
-      .eq("month", selectedMonth);
+    try {
+      const { data, error } = await supabase
+        .from("budgets")
+        .select("*")
+        .eq("group_id", currentGroupId)
+        .eq("month", selectedMonth);
 
-    if (version !== requestVersion.current) return;
+      if (error) throw error;
+      if (version !== requestVersion.current) return;
 
-    const budgetMap: Record<string, string> = {};
-    data?.forEach((item) => {
-      budgetMap[item.category] = item.amount.toString();
-    });
-    setBudgets(budgetMap);
+      const budgetMap: Record<string, string> = {};
+      data?.forEach((item) => {
+        budgetMap[item.category] = item.amount.toString();
+      });
+      setBudgets(budgetMap);
+    } catch (error) {
+      console.error("예산 조회 실패:", error);
+    }
   };
 
   useEffect(() => {
