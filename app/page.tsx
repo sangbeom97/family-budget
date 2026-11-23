@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import MemberView from "@/components/MemberView";
 import DuplicateModal from "@/components/DuplicateModal";
 import CategoryManager from "@/components/CategoryManager";
@@ -75,8 +74,6 @@ export default function Home() {
     startDate, setStartDate,
     endDate, setEndDate,
   } = useTransactionFilters();
-
-  const [selectedFileName, setSelectedFileName] = useState("");
 
   const {
     items,
@@ -182,12 +179,11 @@ export default function Home() {
     setCategoryName("");
   };
 
-  const { handleFileUpload, exportToExcel } = useTransactionExcel({
+  const { handleFileUpload, exportToExcel, selectedFileName } = useTransactionExcel({
     currentGroupId,
     userId: session?.user?.id,
     selectedMonth,
     items,
-    setSelectedFileName,
     setDuplicateItem,
     setDuplicateResolve,
     setDuplicateIndex,
