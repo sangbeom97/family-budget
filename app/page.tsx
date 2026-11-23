@@ -22,20 +22,22 @@ import { useTransactionForm } from "@/hooks/useTransactionForm";
 import { useDuplicateImportState } from "@/hooks/useDuplicateImportState";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { useCategoryForm } from "@/hooks/useCategoryForm";
+import { useGroupManagementState } from "@/hooks/useGroupManagementState";
 import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
   // --- 1. 인증 및 공유 그룹 관련 상태 ---
   const { session, authLoading } = useAuthSession();
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [archivedGroups, setArchivedGroups] = useState<Group[]>([]);
-  const [deleteTargetGroup, setDeleteTargetGroup] = useState<Group | null>(null);
-  const [deleteGroupNameInput, setDeleteGroupNameInput] = useState("");
-  const [loadingGroups, setLoadingGroups] =
-    useState(true);
-  const [currentGroupId, setCurrentGroupId] = useState<string>("");
-  const [newGroupName, setNewGroupName] = useState("");
-  const [newGroupType, setNewGroupType] = useState("household");
+  const {
+    groups, setGroups,
+    archivedGroups, setArchivedGroups,
+    deleteTargetGroup, setDeleteTargetGroup,
+    deleteGroupNameInput, setDeleteGroupNameInput,
+    loadingGroups, setLoadingGroups,
+    currentGroupId, setCurrentGroupId,
+    newGroupName, setNewGroupName,
+    newGroupType, setNewGroupType,
+  } = useGroupManagementState();
 
   // --- 2. 일반 가계부 상태 정의 ---
     const [mainTab, setMainTab] = useState<
