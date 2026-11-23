@@ -9,7 +9,7 @@ type AccountMenuItem = {
   label: string;
   icon: string;
   filter?: AccountFilter;
-  view?: AccountViewMode;
+  view: AccountViewMode;
 };
 
 const accountMenuItems = [
@@ -109,7 +109,7 @@ export default function AppSidebar({
                   onClick={() => {
                     setMainTab("account");
                     if (item.filter) setFilter(item.filter);
-                    if (item.view) setView(item.view);
+                    setView(item.view);
                     setIsSidebarOpen(false);
                   }}
                   className={`mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
