@@ -14,6 +14,7 @@ type Props = {
   newGroupName: string;
   setNewGroupName: Dispatch<SetStateAction<string>>;
   createGroup: () => void | Promise<void>;
+  creatingGroup: boolean;
   handleCopyInviteLink: () => void;
 };
 
@@ -26,6 +27,7 @@ export default function GroupManagementPanel({
   newGroupName,
   setNewGroupName,
   createGroup,
+  creatingGroup,
   handleCopyInviteLink,
 }: Props) {
   return (
@@ -93,9 +95,10 @@ export default function GroupManagementPanel({
                 />
                 <button
                   onClick={createGroup}
+                  disabled={creatingGroup || !newGroupName.trim()}
                   className="shrink-0 rounded-xl bg-[#9145c9] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#7828c8]"
                 >
-                  개설
+                  {creatingGroup ? "개설 중..." : "개설"}
                 </button>
               </div>
             </div>
