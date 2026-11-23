@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, type Dispatch, type SetStateAction } from "react";
-
-type MainTab = "account" | "category" | "members" | "archived";
-type View = "list" | "year" | "budget" | "calendar";
+import type { MainTab, AccountViewMode } from "@/hooks/useAppNavigationState";
 
 export function useInitialNavigation({
   setMainTab,
@@ -12,7 +10,7 @@ export function useInitialNavigation({
 }: {
   setMainTab: Dispatch<SetStateAction<MainTab>>;
   setFilter: Dispatch<SetStateAction<string>>;
-  setView: Dispatch<SetStateAction<View>>;
+  setView: Dispatch<SetStateAction<AccountViewMode>>;
 }) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
