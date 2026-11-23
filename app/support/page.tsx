@@ -148,7 +148,7 @@ export default function SupportPage() {
       if (selectedFiles.length > 0) {
         const uploadedPaths: string[] = [];
         try {
-          const attachmentRows = [];
+          const attachmentRows: Array<{ request_id: string; user_id: string; storage_path: string; file_name: string; content_type: string; file_size: number }> = [];
           for (const file of selectedFiles) {
             const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
             const storagePath = `${userId}/${createdRequest.id}/${crypto.randomUUID()}.${extension}`;
@@ -179,6 +179,7 @@ export default function SupportPage() {
           setContent("");
           setSelectedFiles([]);
           await loadRequests();
+          setError("문의는 접수됐지만 첨부파일 업로드에 실패했습니다. 첨부 없이 문의가 접수되었으니 이미지 용량과 형식을 확인해 다시 문의해주세요.");
           return;
         }
       }
