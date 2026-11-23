@@ -2,16 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { getDaysInMonth } from "@/lib/dateUtils";
+import type { Item } from "@/hooks/useGroupData";
 
-type Item = {
-  id: number;
-  name: string;
-  amount: number;
-  type: string;
-  category: string;
-  date: string;
-  memo: string;
-};
+
 
 type Props = {
   items: Item[];
