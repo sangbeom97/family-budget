@@ -6,6 +6,7 @@ import SummaryCards from "@/components/SummaryCards";
 import CalendarView from "@/components/CalendarView";
 import CategoryChart from "@/components/CategoryChart";
 import TransactionForm from "@/components/TransactionForm";
+import type { Item } from "@/hooks/useGroupData";
 import { getLocalMonthString } from "@/lib/dateUtils";
 import {
     ResponsiveContainer,
@@ -18,26 +19,38 @@ import {
     CartesianGrid,
 } from "recharts";
 
+type Category = { id: number; name: string; type: string };
+type CategoryTotal = { name: string; value: number };
+type BudgetComparison = { name: string; 사용금액: number; 남은예산: number };
+type MonthlySummary = {
+    month: string;
+    수입: number;
+    지출: number;
+    저축: number;
+    저축률: number;
+};
+type TopCategory = { category: string; total: number };
+
 type AccountViewProps = {
-    categoryData: any[];
-    yearlyCategoryData: any[];
-    budgetCompareData: any[];
+    categoryData: CategoryTotal[];
+    yearlyCategoryData: CategoryTotal[];
+    budgetCompareData: BudgetComparison[];
     handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
     selectedFileName: string;
     exportToExcel: () => void;
-    periodFilteredItems: any[];
+    periodFilteredItems: Item[];
     loadingItems: boolean;
     groupMembers: { id: string; nickname: string }[];
     selectedCreator: string;
     setSelectedCreator: (value: string) => void;
-    deleteItem: (id: any) => void;
-    startEdit: (item: any) => void;
-    monthlyData: any[];
-    topCategories: any[];
-    items: any[];
+    deleteItem: (id: number) => void;
+    startEdit: (item: Item) => void;
+    monthlyData: MonthlySummary[];
+    topCategories: TopCategory[];
+    items: Item[];
     budgets: Record<string, string>;
     saveBudget: (category: string, value: string) => void;
-    isRealExpense: (item: any) => boolean;
+    isRealExpense: (item: Item) => boolean;
     mainTab: string;
     filter: string;
     view: "year" | "list" | "calendar" | "budget";
@@ -55,7 +68,7 @@ type AccountViewProps = {
     setCategoryFilter: (v: string) => void;
     graphCategories: string[];
     savingCategories: string[];
-    categories: any[];
+    categories: Category[];
     filteredTotal: number;
     yearlyIncome: number;
     incomeTotal: number;
