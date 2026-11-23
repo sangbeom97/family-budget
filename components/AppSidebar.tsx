@@ -2,6 +2,37 @@ import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import type { MainTab, AccountViewMode } from "@/hooks/useAppNavigationState";
 
+type AccountMenuItem = {
+  id: string;
+  label: string;
+  icon: string;
+  filter?: string;
+  view?: AccountViewMode;
+};
+
+const accountMenuItems = [
+  { id: "all", label: "전체", icon: "📊", filter: "all", view: "list" },
+  { id: "income", label: "수입", icon: "💰", filter: "income", view: "list" },
+  { id: "fixed", label: "고정지출", icon: "🏠", filter: "fixed", view: "list" },
+  { id: "variable", label: "변동지출", icon: "🛒", filter: "variable", view: "list" },
+  { id: "allowance", label: "용돈", icon: "💳", filter: "allowance", view: "list" },
+  { id: "saving", label: "저축", icon: "🐷", filter: "saving", view: "list" },
+  { id: "year", label: "연요약", icon: "📈", view: "year" },
+  { id: "budget", label: "예산", icon: "🎯", view: "budget" },
+  { id: "list", label: "리스트", icon: "📋", view: "list" },
+  { id: "calendar", label: "달력", icon: "📅", view: "calendar" },
+] satisfies AccountMenuItem[];
+
+const managementMenuItems = [
+  { id: "category", label: "카테고리 관리", icon: "📁" },
+  { id: "members", label: "그룹 멤버", icon: "👥" },
+  { id: "archived", label: "해체된 모임 관리", icon: "🗑️" },
+] satisfies Array<{
+  id: Exclude<MainTab, "account">;
+  label: string;
+  icon: string;
+}>;
+
 type Props = {
   mainTab: MainTab;
   setMainTab: Dispatch<SetStateAction<MainTab>>;
@@ -61,18 +92,7 @@ export default function AppSidebar({
             가계부
           </div>
 
-          {[
-            { id: "all", label: "전체", icon: "📊", filter: "all", view: "list" },
-            { id: "income", label: "수입", icon: "💰", filter: "income", view: "list" },
-            { id: "fixed", label: "고정지출", icon: "🏠", filter: "fixed", view: "list" },
-            { id: "variable", label: "변동지출", icon: "🛒", filter: "variable", view: "list" },
-            { id: "allowance", label: "용돈", icon: "💳", filter: "allowance", view: "list" },
-            { id: "saving", label: "저축", icon: "🐷", filter: "saving", view: "list" },
-            { id: "year", label: "연요약", icon: "📈", view: "year" },
-            { id: "budget", label: "예산", icon: "🎯", view: "budget" },
-            { id: "list", label: "리스트", icon: "📋", view: "list" },
-            { id: "calendar", label: "달력", icon: "📅", view: "calendar" },
-          ]
+          {accountMenuItems
             .filter((item) => item.id !== "budget" || role !== "member")
             .map((item) => {
               const active =
@@ -87,7 +107,7 @@ export default function AppSidebar({
                   onClick={() => {
                     setMainTab("account");
                     if (item.filter) setFilter(item.filter);
-                    if (item.view) setView(item.view as AccountViewMode);
+                    if (item.view) setView(item.view);
                     setIsSidebarOpen(false);
                   }}
                   className={`mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
@@ -108,15 +128,11 @@ export default function AppSidebar({
 
           <div className="my-3 border-t border-[#f0e8f5]" />
 
-          {[
-            { id: "category", label: "카테고리 관리", icon: "📁" },
-            { id: "members", label: "그룹 멤버", icon: "👥" },
-            { id: "archived", label: "해체된 모임 관리", icon: "🗑️" },
-          ].map((item) => (
+          {managementMenuItems.map((item) => (
             <button
               key={item.id}
               onClick={() => {
-                setMainTab(item.id as MainTab);
+                setMainTab(item.id);
                 setIsSidebarOpen(false);
               }}
               className={`mb-1 flex h-11 min-h-11 w-full shrink-0 items-center gap-3 rounded-xl px-3 text-left text-sm font-bold transition-all ${
