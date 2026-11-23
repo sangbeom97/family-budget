@@ -30,5 +30,5 @@ export function useInitialNavigation({
       setView(menu);
       if (menu === "list") setFilter("all");
     }
-  }, []);
+  }, [setMainTab, setFilter, setView]);
 }
