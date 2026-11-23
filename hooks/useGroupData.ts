@@ -17,13 +17,13 @@ export type Item = {
   group_id?: string;
 };
 
-type Category = {
+export type Category = {
   id: number;
   name: string;
   type: string;
 };
 
-type GroupMember = {
+export type GroupMember = {
   id: string;
   nickname: string;
 };
