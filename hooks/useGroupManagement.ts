@@ -226,7 +226,15 @@ export function useGroupManagement({
         template.map((item) => ({ ...item, group_id: newGroup.id, user_id: userId }))
       );
       if (categoryError) {
-        alert(`가계부는 생성됐지만 기본 카테고리 생성에 실패했습니다: ${categoryError.message}`);
+        console.error("기본 카테고리 일괄 생성 실패:", {
+          groupId: newGroup.id,
+          groupType: newGroupType,
+          categoryCount: template.length,
+          error: categoryError,
+        });
+        alert(
+          `가계부는 정상적으로 생성됐지만 기본 카테고리를 추가하지 못했습니다.\n\n가계부 생성은 완료됐으므로 그대로 사용할 수 있습니다. '카테고리 관리'에서 필요한 항목을 직접 추가해주세요.\n\n오류: ${categoryError.message}`
+        );
       }
     }
 
