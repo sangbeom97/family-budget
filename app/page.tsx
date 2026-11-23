@@ -123,6 +123,11 @@ export default function Home() {
 
   const role = useGroupRole(currentGroupId, session?.user?.id);
 
+  const handleLeaveGroup = async () => {
+    await fetchUserGroups();
+    setMainTab("account");
+  };
+
   const {
     categorizedNames, graphCategories, isRealExpense, periodFilteredItems,
     categoryData, yearlyCategoryData, totals, budgetCompareData,
@@ -344,10 +349,7 @@ export default function Home() {
   <MemberView
     currentGroupId={currentGroupId}
     role={role}
-    onLeave={async () => {
-      await fetchUserGroups();
-      setMainTab("account");
-    }}
+    onLeave={handleLeaveGroup}
   />
 )}
           </>
