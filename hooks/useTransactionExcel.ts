@@ -67,7 +67,8 @@ export function useTransactionExcel({
     const reader = new FileReader();
 
     reader.onload = async () => {
-      const bstr = reader.result as string;
+      try {
+        const bstr = reader.result as string;
       const wb = XLSX.read(bstr, { type: "binary" });
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
@@ -180,6 +181,17 @@ export function useTransactionExcel({
       alert(
         `${itemsToInsert.length}건의 거래를 등록했습니다.\n중복 의심 거래 ${duplicateTotal}건`
       );
+      } catch (error) {
+        console.error("Excel 파일 처리 실패:", error);
+        setDuplicateResolve(null);
+        setDuplicateItem(null);
+        alert("엑셀 파일을 처리하는 중 오류가 발생했습니다. 파일 형식과 내용을 확인해 주세요.");
+      }
+    };
+
+    reader.onerror = () => {
+      console.error("Excel 파일 읽기 실패:", reader.error);
+      alert("엑셀 파일을 읽지 못했습니다. 파일을 다시 선택해 주세요.");
     };
 
     reader.readAsBinaryString(file);
