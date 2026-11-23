@@ -28,7 +28,7 @@ import { useCategorySelection } from "@/hooks/useCategorySelection";
 import { useAppNavigationState } from "@/hooks/useAppNavigationState";
 
 export default function Home() {
-  // --- 1. 인증 및 공유 그룹 관련 상태 ---
+  // 인증 및 그룹 상태
   const { session, authLoading } = useAuthSession();
   const {
     groups, setGroups,
@@ -41,7 +41,7 @@ export default function Home() {
     newGroupType, setNewGroupType,
   } = useGroupManagementState();
 
-  // --- 2. 화면 이동 및 선택 상태 ---
+  // 화면 이동 및 선택 상태
   const {
     mainTab,
     setMainTab,
@@ -162,7 +162,7 @@ export default function Home() {
     refreshTransactionData,
   });
 
-  // --- 7. 카테고리 및 예산 액션 핸들러 ---
+  // 카테고리 및 예산 액션
   const {
     addCategory: createCategory,
     deleteCategory,
@@ -195,7 +195,7 @@ export default function Home() {
     refreshTransactionData,
   });
 
-  // --- 8. 미인증 상태 UI (소셜 로그인 전용 화면) ---
+  // 인증 상태에 따른 화면 분기
   if (authLoading) {
     return (
       <main className="min-h-screen flex items-center justify-center">
@@ -206,14 +206,12 @@ export default function Home() {
 
   if (!session) return <IntroPage />;
 
-  // --- 9. 메인 레이아웃 렌더링 ---
+  // 메인 레이아웃
   return (
     <main className="min-h-screen bg-[#fffaff] px-3 pt-16 pb-4 text-[#292238] sm:px-5 sm:py-6 md:px-6 md:pl-20">
       <div className="mx-auto w-full max-w-6xl">
         <AnnouncementPopup />
-        
 
-        
         {/* 공유 가계부 관리 패널 */}
         <GroupManagementPanel
           groups={groups}
@@ -346,12 +344,12 @@ export default function Home() {
             )}
 
             {mainTab === "members" && (
-  <MemberView
-    currentGroupId={currentGroupId}
-    role={role}
-    onLeave={handleLeaveGroup}
-  />
-)}
+              <MemberView
+                currentGroupId={currentGroupId}
+                role={role}
+                onLeave={handleLeaveGroup}
+              />
+            )}
           </>
         )}
       </div>
