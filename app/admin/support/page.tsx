@@ -140,6 +140,34 @@ export default function AdminSupportPage() {
     loadRequests();
   }, [loadRequests]);
 
+  useEffect(() => {
+    if (!authorized) return;
+
+    const channel = supabase
+      .channel("admin-support-requests")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "support_requests",
+        },
+        () => {
+          setNotice("새 문의가 접수되었습니다. 문의 목록을 업데이트했습니다.");
+          void loadRequests();
+        },
+      )
+      .subscribe((channelStatus) => {
+        if (channelStatus === "CHANNEL_ERROR" || channelStatus === "TIMED_OUT") {
+          console.error("실시간 문의 알림 연결 실패:", channelStatus);
+        }
+      });
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [authorized, loadRequests]);
+
   const loadEvents = useCallback(async (requestId: string) => {
     try {
       const { data, error: eventsError } = await supabase
