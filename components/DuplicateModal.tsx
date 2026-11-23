@@ -1,22 +1,13 @@
 "use client";
 
-type TransactionItem = {
-  name: string;
-  amount: number;
-  date: string;
-};
-
-type DuplicateItem = {
-  newItem: TransactionItem;
-  oldItem: TransactionItem;
-};
+import type { DuplicateItemState } from "@/hooks/useTransactionExcel";
 
 type Props = {
-  duplicateItem: DuplicateItem | null;
+  duplicateItem: DuplicateItemState | null;
   duplicateIndex: number;
   duplicateTotal: number;
   duplicateResolve: ((add: boolean) => void) | null;
-  setDuplicateItem: (item: DuplicateItem | null) => void;
+  setDuplicateItem: (item: DuplicateItemState | null) => void;
 };
 
 export default function DuplicateModal({
@@ -33,7 +24,7 @@ export default function DuplicateModal({
     setDuplicateItem(null);
   };
 
-  const renderItem = (title: string, item: TransactionItem) => (
+  const renderItem = (title: string, item: DuplicateItemState["newItem"]) => (
     <div className="mb-3 rounded-xl border p-3">
       <p className="font-bold">{title}</p>
       <p>{item.date}</p>
