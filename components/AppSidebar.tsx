@@ -2,11 +2,13 @@ import Link from "next/link";
 import type { Dispatch, SetStateAction } from "react";
 import type { MainTab, AccountViewMode } from "@/hooks/useAppNavigationState";
 
+type AccountFilter = "all" | "income" | "fixed" | "variable" | "allowance" | "saving";
+
 type AccountMenuItem = {
-  id: string;
+  id: AccountFilter | "year" | "budget" | "list" | "calendar";
   label: string;
   icon: string;
-  filter?: string;
+  filter?: AccountFilter;
   view?: AccountViewMode;
 };
 
