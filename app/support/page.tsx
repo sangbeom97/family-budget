@@ -148,6 +148,7 @@ export default function SupportPage() {
       if (selectedFiles.length > 0) {
         const uploadedPaths: string[] = [];
         try {
+          const attachmentRows = [];
           for (const file of selectedFiles) {
             const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
             const storagePath = `${userId}/${createdRequest.id}/${crypto.randomUUID()}.${extension}`;
@@ -157,7 +158,7 @@ export default function SupportPage() {
             });
             if (uploadError) throw uploadError;
             uploadedPaths.push(storagePath);
-            const { error: metadataError } = await supabase.from("support_request_attachments").insert({
+            attachmentRows.push({
               request_id: createdRequest.id,
               user_id: userId,
               storage_path: storagePath,
@@ -165,13 +166,14 @@ export default function SupportPage() {
               content_type: file.type,
               file_size: file.size,
             });
-            if (metadataError) throw metadataError;
           }
+          const { error: metadataError } = await supabase.from("support_request_attachments").insert(attachmentRows);
+          if (metadataError) throw metadataError;
         } catch (attachmentError) {
           if (uploadedPaths.length > 0) {
             await supabase.storage.from("support-attachments").remove(uploadedPaths);
-            await supabase.from("support_request_attachments").delete().eq("request_id", createdRequest.id);
           }
+          console.error("문의 첨부파일 업로드 실패:", attachmentError);
           setError("문의는 접수됐지만 첨부파일 업로드에 실패했습니다. 첨부 없이 문의가 접수되었으니 이미지 용량과 형식을 확인해 다시 문의해주세요.");
           setSubject("");
           setContent("");
