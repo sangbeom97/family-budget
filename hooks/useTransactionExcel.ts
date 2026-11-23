@@ -5,6 +5,7 @@ import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import * as XLSX from "xlsx";
 import { supabase } from "@/lib/supabase";
 import type { Item } from "@/hooks/useGroupData";
+import { getLocalDateString } from "@/lib/dateUtils";
 
 type ImportedTransaction = {
   name: string;
@@ -83,7 +84,7 @@ export function useTransactionExcel({
           amount: isNaN(parsedAmount) ? 0 : parsedAmount,
           type: row["타입"] === "수입" ? "income" : "expense",
           category: (row["카테고리"] || "기타") as string,
-          date: (row["날짜"] || new Date().toISOString().split("T")[0]) as string,
+          date: (row["날짜"] || getLocalDateString()) as string,
           spend_type: (row["지출분류"] || "variable") as string,
           memo: (row["메모"] || "") as string,
           group_id: currentGroupId,
