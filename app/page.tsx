@@ -100,6 +100,7 @@ export default function Home() {
   const {
     fetchUserGroups,
     createGroup,
+    creatingGroup,
     restoreArchivedGroup,
     permanentlyDeleteArchivedGroup,
     handleCopyInviteLink,
@@ -222,6 +223,7 @@ export default function Home() {
           newGroupName={newGroupName}
           setNewGroupName={setNewGroupName}
           createGroup={createGroup}
+          creatingGroup={creatingGroup}
           handleCopyInviteLink={handleCopyInviteLink}
         />
 
