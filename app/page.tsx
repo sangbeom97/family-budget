@@ -26,6 +26,7 @@ import { useCategoryForm } from "@/hooks/useCategoryForm";
 import { useGroupManagementState } from "@/hooks/useGroupManagementState";
 import { useInitialNavigation } from "@/hooks/useInitialNavigation";
 import { useCategorySelection } from "@/hooks/useCategorySelection";
+import { useAppNavigationState } from "@/hooks/useAppNavigationState";
 import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
@@ -42,13 +43,17 @@ export default function Home() {
     newGroupType, setNewGroupType,
   } = useGroupManagementState();
 
-  // --- 2. 일반 가계부 상태 정의 ---
-    const [mainTab, setMainTab] = useState<
-    "account" | "category" | "members" | "archived"
-  >("account");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedCreator, setSelectedCreator] = useState("all");
-  const [view, setView] = useState<"list" | "year" | "budget" | "calendar">("list");
+  // --- 2. 화면 이동 및 선택 상태 ---
+  const {
+    mainTab,
+    setMainTab,
+    isSidebarOpen,
+    setIsSidebarOpen,
+    selectedCreator,
+    setSelectedCreator,
+    view,
+    setView,
+  } = useAppNavigationState();
 
   const {
     editingId, setEditingId,
