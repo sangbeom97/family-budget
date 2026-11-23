@@ -127,7 +127,7 @@ export function useGroupManagement({
   }, [userId]);
 
   const restoreArchivedGroup = async (group: Group) => {
-    if (!confirm(`"${group.name}" 모임을 다시 불러올까요?\\n\\n기존 거래내역·예산·카테고리가 그대로 복구됩니다.`)) {
+    if (!confirm(`"${group.name}" 모임을 다시 불러올까요?\n\n기존 거래내역·예산·카테고리가 그대로 복구됩니다.`)) {
       return;
     }
 
@@ -136,7 +136,7 @@ export function useGroupManagement({
     });
 
     if (error) {
-      alert(`모임 복구 실패: ${error.message}\\n\\nSupabase SQL Editor에서 supabase/restore_archived_groups.sql을 먼저 실행했는지 확인해주세요.`);
+      alert(`모임 복구 실패: ${error.message}\n\nSupabase SQL Editor에서 supabase/restore_archived_groups.sql을 먼저 실행했는지 확인해주세요.`);
       return;
     }
 
@@ -183,7 +183,7 @@ export function useGroupManagement({
       .single();
 
     if (groupError) {
-      alert(`가계부 생성 실패: ${groupError.message}\\n\\n가계부 유형 기능을 사용하려면 Supabase에 group_type 컬럼 추가 SQL을 먼저 실행해주세요.`);
+      alert(`가계부 생성 실패: ${groupError.message}\n\n가계부 유형 기능을 사용하려면 Supabase에 group_type 컬럼 추가 SQL을 먼저 실행해주세요.`);
       return;
     }
     if (!newGroup) return;
@@ -248,7 +248,7 @@ export function useGroupManagement({
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(inviteUrl)
-        .then(() => alert("✨ 카카오톡 초대 링크가 클립보드에 복사되었습니다!\\n카톡창에 Ctrl+V로 공유해 보세요."))
+        .then(() => alert("✨ 카카오톡 초대 링크가 클립보드에 복사되었습니다!\n카톡창에 Ctrl+V로 공유해 보세요."))
         .catch(() => alert("링크 복사에 실패했습니다. 주소: " + inviteUrl));
     } else {
       alert("초대 링크 주소: " + inviteUrl);
