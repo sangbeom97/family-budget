@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export type Item = {
@@ -44,9 +44,11 @@ export function useGroupData({
   const [categories, setCategories] = useState<Category[]>([]);
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
   const [budgets, setBudgets] = useState<Record<string, string>>({});
+  const requestVersion = useRef(0);
 
   const fetchItems = async () => {
     if (!currentGroupId) return;
+    const version = requestVersion.current;
 
     setLoadingItems(true);
 
@@ -70,16 +72,18 @@ export function useGroupData({
         .order("date", { ascending: false });
 
       if (error) throw error;
+      if (version !== requestVersion.current) return;
       setItems(data || []);
     } catch (error) {
       console.error("거래내역 조회 실패:", error);
     } finally {
-      setLoadingItems(false);
+      if (version === requestVersion.current) setLoadingItems(false);
     }
   };
 
   const fetchYearlyItems = async () => {
     if (!currentGroupId) return;
+    const version = requestVersion.current;
 
     try {
       // Supabase 기본 조회 제한(최대 1,000행)으로 연간 거래가 누락되지 않도록 페이지 단위로 전체 조회
@@ -99,13 +103,14 @@ export function useGroupData({
           .range(from, from + pageSize - 1);
 
         if (error) throw error;
+        if (version !== requestVersion.current) return;
         const page = data || [];
         allYearItems.push(...page);
         if (page.length < pageSize) break;
         from += pageSize;
       }
 
-      setYearlyItems(allYearItems);
+      if (version === requestVersion.current) setYearlyItems(allYearItems);
     } catch (error) {
       console.error("연간 거래내역 조회 실패:", error);
     }
@@ -118,6 +123,7 @@ export function useGroupData({
 
   const fetchCategories = async () => {
     if (!currentGroupId) return;
+    const version = requestVersion.current;
 
     try {
       const { data, error } = await supabase
@@ -126,13 +132,14 @@ export function useGroupData({
         .eq("group_id", currentGroupId);
 
       if (error) throw error;
-      setCategories(data || []);
+      if (version === requestVersion.current) setCategories(data || []);
     } catch (error) {
       console.error("카테고리 조회 실패:", error);
     }
   };
 
   const fetchGroupMembers = async () => {
+    const version = requestVersion.current;
     if (!currentGroupId) {
       setGroupMembers([]);
       return;
@@ -145,6 +152,7 @@ export function useGroupData({
         .eq("group_id", currentGroupId);
 
       if (error) throw error;
+      if (version !== requestVersion.current) return;
 
       if (!memberRows?.length) {
         setGroupMembers([]);
@@ -158,6 +166,7 @@ export function useGroupData({
         .in("id", userIds);
 
       if (profileError) throw profileError;
+      if (version !== requestVersion.current) return;
 
       setGroupMembers(
         (profiles || []).map((profile) => ({
@@ -167,18 +176,21 @@ export function useGroupData({
       );
     } catch (error) {
       console.error("그룹 멤버 조회 실패:", error);
-      setGroupMembers([]);
+      if (version === requestVersion.current) setGroupMembers([]);
     }
   };
 
   const fetchBudgets = async () => {
     if (!currentGroupId) return;
+    const version = requestVersion.current;
 
     const { data } = await supabase
       .from("budgets")
       .select("*")
       .eq("group_id", currentGroupId)
       .eq("month", selectedMonth);
+
+    if (version !== requestVersion.current) return;
 
     const budgetMap: Record<string, string> = {};
     data?.forEach((item) => {
@@ -188,6 +200,8 @@ export function useGroupData({
   };
 
   useEffect(() => {
+    requestVersion.current += 1;
+
     if (currentGroupId) {
       refreshTransactionData();
       void fetchBudgets();
