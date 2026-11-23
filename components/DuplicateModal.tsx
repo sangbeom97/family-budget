@@ -24,7 +24,7 @@ export default function DuplicateModal({
     setDuplicateItem(null);
   };
 
-  const renderItem = (title: string, item: DuplicateItemState["newItem"]) => (
+  const renderItem = (title: string, item: Pick<DuplicateItemState["newItem"], "name" | "amount" | "date">) => (
     <div className="mb-3 rounded-xl border p-3">
       <p className="font-bold">{title}</p>
       <p>{item.date}</p>
