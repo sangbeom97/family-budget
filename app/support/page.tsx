@@ -52,6 +52,8 @@ export default function SupportPage() {
   const [category, setCategory] = useState("general");
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -95,6 +97,12 @@ export default function SupportPage() {
   }, []);
 
   useEffect(() => {
+    const urls = selectedFiles.map((file) => URL.createObjectURL(file));
+    setPreviewUrls(urls);
+    return () => urls.forEach((url) => URL.revokeObjectURL(url));
+  }, [selectedFiles]);
+
+  useEffect(() => {
     loadRequests();
     const { data: listener } = supabase.auth.onAuthStateChange(() => {
       Promise.resolve().then(loadRequests);
@@ -110,26 +118,72 @@ export default function SupportPage() {
       return;
     }
 
+    if (selectedFiles.length > 3) {
+      setError("첨부 이미지는 최대 3개까지 등록할 수 있습니다.");
+      return;
+    }
+    if (selectedFiles.some((file) => !["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024)) {
+      setError("JPG, PNG, WEBP 이미지이며 파일당 5MB 이하만 첨부할 수 있습니다.");
+      return;
+    }
+
     setSubmitting(true);
     setError("");
     setMessage("");
 
     try {
-      const { error: insertError } = await supabase.from("support_requests").insert({
+      const { data: createdRequest, error: insertError } = await supabase.from("support_requests").insert({
         user_id: userId,
         contact_email: email || null,
         category,
         subject: subject.trim(),
         content: content.trim(),
-      });
+      }).select("id").single();
 
       if (insertError) {
         setError(insertError.message);
         return;
       }
 
+      if (selectedFiles.length > 0) {
+        const uploadedPaths: string[] = [];
+        try {
+          for (const file of selectedFiles) {
+            const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+            const storagePath = `${userId}/${createdRequest.id}/${crypto.randomUUID()}.${extension}`;
+            const { error: uploadError } = await supabase.storage.from("support-attachments").upload(storagePath, file, {
+              contentType: file.type,
+              upsert: false,
+            });
+            if (uploadError) throw uploadError;
+            uploadedPaths.push(storagePath);
+            const { error: metadataError } = await supabase.from("support_request_attachments").insert({
+              request_id: createdRequest.id,
+              user_id: userId,
+              storage_path: storagePath,
+              file_name: file.name,
+              content_type: file.type,
+              file_size: file.size,
+            });
+            if (metadataError) throw metadataError;
+          }
+        } catch (attachmentError) {
+          if (uploadedPaths.length > 0) {
+            await supabase.storage.from("support-attachments").remove(uploadedPaths);
+            await supabase.from("support_request_attachments").delete().eq("request_id", createdRequest.id);
+          }
+          setError("문의는 접수됐지만 첨부파일 업로드에 실패했습니다. 첨부 없이 문의가 접수되었으니 이미지 용량과 형식을 확인해 다시 문의해주세요.");
+          setSubject("");
+          setContent("");
+          setSelectedFiles([]);
+          await loadRequests();
+          return;
+        }
+      }
+
       setSubject("");
       setContent("");
+      setSelectedFiles([]);
       setCategory("general");
       setMessage("문의가 접수되었습니다. 답변은 이 페이지의 내 문의 내역에서 확인할 수 있습니다.");
       await loadRequests();
@@ -191,6 +245,17 @@ export default function SupportPage() {
                     <label htmlFor="support-content" className="mb-2 block text-sm font-bold text-[#665675]">문의 내용</label>
                     <textarea id="support-content" value={content} onChange={(event) => setContent(event.target.value)} maxLength={5000} required rows={8} placeholder="문의하실 내용을 자세히 작성해주세요. 오류라면 발생한 화면과 상황을 함께 적어주시면 도움이 됩니다." className="w-full resize-y rounded-xl border border-[#e9e2ef] px-3 py-3 text-sm leading-6 outline-none focus:border-[#a875c4]" />
                     <p className="mt-1 text-right text-[11px] text-[#a397ad]">{content.length}/5,000</p>
+                  </div>
+                  <div>
+                    <label htmlFor="support-files" className="mb-2 block text-sm font-bold text-[#665675]">첨부 이미지 <span className="font-normal text-[#9a8da5]">(선택 · 최대 3개)</span></label>
+                    <input id="support-files" type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={(event) => {
+                      const files = Array.from(event.target.files || []);
+                      if (files.length > 3) { setError("첨부 이미지는 최대 3개까지 등록할 수 있습니다."); event.target.value = ""; return; }
+                      if (files.some((file) => !["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024)) { setError("JPG, PNG, WEBP 이미지이며 파일당 5MB 이하만 첨부할 수 있습니다."); event.target.value = ""; return; }
+                      setError(""); setSelectedFiles(files);
+                    }} className="block w-full text-sm text-[#665675] file:mr-3 file:rounded-lg file:border-0 file:bg-[#f3e8ff] file:px-3 file:py-2 file:text-xs file:font-bold file:text-[#9145c9]" />
+                    <p className="mt-1 text-[11px] text-[#9a8da5]">JPG / PNG / WEBP · 파일당 최대 5MB</p>
+                    {selectedFiles.length > 0 && <div className="mt-3 grid grid-cols-3 gap-2">{selectedFiles.map((file, index) => <div key={file.name + index} className="min-w-0 rounded-lg border border-[#eee8f2] p-2"><img src={previewUrls[index]} alt={file.name} className="h-20 w-full rounded-md object-cover" /><p className="mt-1 truncate text-[10px] text-[#665675]">{file.name}</p><button type="button" onClick={() => setSelectedFiles((current) => current.filter((_, i) => i !== index))} className="mt-1 text-[10px] font-bold text-red-600">삭제</button></div>)}</div>}
                   </div>
                   <div className="rounded-xl bg-[#faf7fc] px-3 py-3 text-xs leading-5 text-[#81768c]">
                     답변 알림 메일은 아직 지원하지 않습니다. 이 페이지의 내 문의 내역에서 답변을 확인해주세요.
