@@ -1,9 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import type { Item } from "@/hooks/useGroupData";
+import type { Category, Item } from "@/hooks/useGroupData";
 
-type Category = { name: string; type: string };
 type Options = {
   categories: Category[];
   type: string;
