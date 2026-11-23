@@ -88,32 +88,33 @@ export default function AdminSupportPage() {
   const loadRequests = useCallback(async () => {
     setLoading(true);
     setError("");
-    const { data: sessionData } = await supabase.auth.getSession();
-    if (!sessionData.session) {
-      setAuthorized(false);
-      setError("로그인 후 이용할 수 있습니다.");
-      setLoading(false);
-      return;
-    }
-    const { data: adminCheck, error: adminError } = await supabase.rpc("is_jellian_admin");
-    if (adminError || adminCheck !== true) {
-      setAuthorized(false);
-      setError("관리자 계정만 접근할 수 있습니다.");
-      setLoading(false);
-      return;
-    }
-    setAuthorized(true);
-    const { data, error: listError } = await supabase.rpc("get_jellian_admin_support_requests_page", {
-      p_page: page,
-      p_page_size: PAGE_SIZE,
-      p_search: searchTerm,
-      p_category: category,
-      p_status: status,
-    });
-    if (listError) {
-      setError(listError.message);
-      setRequests([]);
-    } else {
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      if (!sessionData.session) {
+        setAuthorized(false);
+        setError("로그인 후 이용할 수 있습니다.");
+        return;
+      }
+
+      const { data: adminCheck, error: adminError } = await supabase.rpc("is_jellian_admin");
+      if (adminError) throw adminError;
+      if (adminCheck !== true) {
+        setAuthorized(false);
+        setError("관리자 계정만 접근할 수 있습니다.");
+        return;
+      }
+
+      setAuthorized(true);
+      const { data, error: listError } = await supabase.rpc("get_jellian_admin_support_requests_page", {
+        p_page: page,
+        p_page_size: PAGE_SIZE,
+        p_search: searchTerm,
+        p_category: category,
+        p_status: status,
+      });
+      if (listError) throw listError;
+
       const result = data as SupportPageData;
       const rows = result?.requests || [];
       setRequests(rows);
@@ -126,8 +127,13 @@ export default function AdminSupportPage() {
         filtered: Number(result?.filtered_count || 0),
       });
       setSelected((current) => current ? rows.find((item) => item.id === current.id) || current : null);
+    } catch (loadError) {
+      console.error("관리자 문의 목록 조회 실패:", loadError);
+      setError(loadError instanceof Error ? loadError.message : "문의 목록을 불러오지 못했습니다.");
+      setRequests([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [page, searchTerm, category, status]);
 
   useEffect(() => {
@@ -135,16 +141,18 @@ export default function AdminSupportPage() {
   }, [loadRequests]);
 
   const loadEvents = useCallback(async (requestId: string) => {
-    const { data, error: eventsError } = await supabase
-      .from("support_request_events")
-      .select("id,event_type,old_status,new_status,note,created_at")
-      .eq("request_id", requestId)
-      .order("created_at", { ascending: false });
-    if (eventsError) {
-      setError(eventsError.message);
-      setEvents([]);
-    } else {
+    try {
+      const { data, error: eventsError } = await supabase
+        .from("support_request_events")
+        .select("id,event_type,old_status,new_status,note,created_at")
+        .eq("request_id", requestId)
+        .order("created_at", { ascending: false });
+      if (eventsError) throw eventsError;
       setEvents((data || []) as SupportEvent[]);
+    } catch (eventsLoadError) {
+      console.error("문의 처리 이력 조회 실패:", eventsLoadError);
+      setError(eventsLoadError instanceof Error ? eventsLoadError.message : "처리 이력을 불러오지 못했습니다.");
+      setEvents([]);
     }
   }, []);
 
@@ -161,22 +169,27 @@ export default function AdminSupportPage() {
 
   const save = async () => {
     if (!selected) return;
+    const requestId = selected.id;
     setSaving(true);
     setError("");
     setNotice("");
-    const { error: saveError } = await supabase.rpc("update_jellian_admin_support_request", {
-      p_request_id: selected.id,
-      p_status: nextStatus,
-      p_admin_response: response,
-    });
-    if (saveError) {
-      setError(saveError.message);
-    } else {
+    try {
+      const { error: saveError } = await supabase.rpc("update_jellian_admin_support_request", {
+        p_request_id: requestId,
+        p_status: nextStatus,
+        p_admin_response: response,
+      });
+      if (saveError) throw saveError;
+
       setNotice("문의 처리 내용이 저장되었습니다.");
       await loadRequests();
-      await loadEvents(selected.id);
+      await loadEvents(requestId);
+    } catch (saveError) {
+      console.error("문의 처리 내용 저장 실패:", saveError);
+      setError(saveError instanceof Error ? saveError.message : "문의 처리 내용을 저장하지 못했습니다.");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   const totalPages = Math.max(1, Math.ceil(stats.filtered / PAGE_SIZE));
