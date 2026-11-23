@@ -22,6 +22,8 @@ type SupportRequest = {
   updated_at: string;
 };
 
+type SupportAttachment = { id: string; file_name: string; storage_path: string; content_type: string; file_size: number; };
+
 type SupportEvent = {
   id: string;
   event_type: string;
@@ -63,6 +65,7 @@ export default function AdminSupportPage() {
   const [requests, setRequests] = useState<SupportRequest[]>([]);
   const [selected, setSelected] = useState<SupportRequest | null>(null);
   const [events, setEvents] = useState<SupportEvent[]>([]);
+  const [attachments, setAttachments] = useState<Array<SupportAttachment & { signedUrl: string }>>([]);
   const [response, setResponse] = useState("");
   const [nextStatus, setNextStatus] = useState<SupportRequest["status"]>("received");
   const [search, setSearch] = useState("");
@@ -140,6 +143,30 @@ export default function AdminSupportPage() {
     loadRequests();
   }, [loadRequests]);
 
+  const loadAttachments = useCallback(async (requestId: string) => {
+    try {
+      const { data, error: attachmentError } = await supabase
+        .from("support_request_attachments")
+        .select("id,file_name,storage_path,content_type,file_size")
+        .eq("request_id", requestId)
+        .order("created_at", { ascending: true });
+      if (attachmentError) throw attachmentError;
+      const rows = (data || []) as SupportAttachment[];
+      const withUrls = await Promise.all(rows.map(async (item) => {
+        const { data: signed, error: urlError } = await supabase.storage
+          .from("support-attachments")
+          .createSignedUrl(item.storage_path, 60 * 10);
+        if (urlError) throw urlError;
+        return { ...item, signedUrl: signed.signedUrl };
+      }));
+      setAttachments(withUrls);
+    } catch (attachmentLoadError) {
+      console.error("문의 첨부파일 조회 실패:", attachmentLoadError);
+      setAttachments([]);
+      setError("첨부파일을 불러오지 못했습니다. 권한 또는 저장소 설정을 확인해주세요.");
+    }
+  }, []);
+
   const loadEvents = useCallback(async (requestId: string) => {
     try {
       const { data, error: eventsError } = await supabase
@@ -161,11 +188,13 @@ export default function AdminSupportPage() {
       setResponse(selected.admin_response || "");
       setNextStatus(selected.status);
       loadEvents(selected.id);
+      loadAttachments(selected.id);
     } else {
       setEvents([]);
+      setAttachments([]);
       setResponse("");
     }
-  }, [selected?.id, loadEvents]);
+  }, [selected?.id, loadEvents, loadAttachments]);
 
   const save = async () => {
     if (!selected) return;
@@ -303,7 +332,25 @@ export default function AdminSupportPage() {
                       <p className="mt-2 text-xs leading-5 text-[#9a8da5]">작성자: {selected.nickname || "회원 정보 없음"} · {selected.user_email || selected.contact_email || "연락처 없음"}</p>
                       <p className="mt-1 text-xs text-[#9a8da5]">접수일: {dateTime(selected.created_at)}</p>
                     </div>
-                    <div className="mb-6 whitespace-pre-wrap break-words rounded-xl bg-[#fbf9fc] p-4 text-sm leading-6 text-[#51465e]">{selected.content}</div>
+                    <div className="mb-4 whitespace-pre-wrap break-words rounded-xl bg-[#fbf9fc] p-4 text-sm leading-6 text-[#51465e]">{selected.content}</div>
+                    <div className="mb-6">
+                      <h3 className="mb-3 text-sm font-extrabold text-[#665675]">첨부 이미지 ({attachments.length})</h3>
+                      {attachments.length > 0 ? (
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                          {attachments.map((item) => (
+                            <div key={item.id} className="min-w-0 rounded-xl border border-[#eee8f2] p-2">
+                              <a href={item.signedUrl} target="_blank" rel="noreferrer" className="block">
+                                <img src={item.signedUrl} alt={item.file_name} className="h-28 w-full rounded-lg object-cover" />
+                              </a>
+                              <p className="mt-2 truncate text-xs font-semibold text-[#665675]" title={item.file_name}>{item.file_name}</p>
+                              <a href={item.signedUrl} download={item.file_name} target="_blank" rel="noreferrer" className="mt-1 inline-block text-xs font-bold text-[#9145c9]">이미지 열기 / 다운로드</a>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="rounded-xl bg-[#fbf9fc] p-3 text-xs text-[#9a8da5]">첨부된 이미지가 없습니다.</p>
+                      )}
+                    </div>
                     <label className="mb-2 block text-sm font-bold text-[#665675]">처리 상태</label>
                     <select value={nextStatus} onChange={(e) => setNextStatus(e.target.value as SupportRequest["status"])} className="mb-4 min-h-11 w-full rounded-xl border border-[#e9e2ef] bg-white px-3 text-sm outline-none focus:border-[#a875c4]">
                       <option value="received">접수</option>
