@@ -19,6 +19,7 @@ import { useBudgetAnalytics } from "@/hooks/useBudgetAnalytics";
 import { useGroupRole } from "@/hooks/useGroupRole";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { useTransactionForm } from "@/hooks/useTransactionForm";
+import { useDuplicateImportState } from "@/hooks/useDuplicateImportState";
 import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
@@ -78,11 +79,16 @@ export default function Home() {
   const [categoryName, setCategoryName] = useState("");
   const [categoryType, setCategoryType] = useState("variable");
 
-  // 중복 데이터 처리 모달 관련 상태
-  const [duplicateItem, setDuplicateItem] = useState<any>(null);
-  const [duplicateResolve, setDuplicateResolve] = useState<((value: boolean) => void) | null>(null);
-  const [duplicateIndex, setDuplicateIndex] = useState(0);
-  const [duplicateTotal, setDuplicateTotal] = useState(0);
+  const {
+    duplicateItem,
+    setDuplicateItem,
+    duplicateResolve,
+    setDuplicateResolve,
+    duplicateIndex,
+    setDuplicateIndex,
+    duplicateTotal,
+    setDuplicateTotal,
+  } = useDuplicateImportState();
 
   const {
     fetchUserGroups,
