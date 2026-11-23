@@ -121,16 +121,17 @@ export default function AccountView(props: AccountViewProps) {
 
     // 기간 이동 버튼 핸들러
     const handlePageSelect = (direction: "prev" | "next") => {
-        const currentDate = new Date(selectedMonth + "-01");
+        const [year, month] = selectedMonth.split("-").map(Number);
         const offset = direction === "prev" ? -1 : 1;
+        const currentDate =
+            view === "year"
+                ? new Date(year + offset, month - 1, 1)
+                : new Date(year, month - 1 + offset, 1);
 
         if (view === "year") {
-            currentDate.setFullYear(currentDate.getFullYear() + offset);
             setSelectedYear(currentDate.getFullYear().toString());
-        } else {
-            currentDate.setMonth(currentDate.getMonth() + offset);
         }
-        setSelectedMonth(currentDate.toISOString().slice(0, 7));
+        setSelectedMonth(getLocalMonthString(currentDate));
     };
 
     if (mainTab !== "account") return null;
