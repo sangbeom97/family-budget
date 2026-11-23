@@ -234,6 +234,10 @@ export function useGroupManagement({
     setNewGroupType("household");
     await fetchUserGroups();
     setCurrentGroupId(newGroup.id);
+    } finally {
+      isCreatingGroup.current = false;
+      setCreatingGroup(false);
+    }
   };
 
   const [currentInviteCode, setCurrentInviteCode] = useState<string>("");
