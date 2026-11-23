@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getLocalDateString } from "@/lib/dateUtils";
 
 export function useTransactionForm() {
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -10,7 +11,7 @@ export function useTransactionForm() {
   const [type, setType] = useState("expense");
   const [category, setCategory] = useState("");
   const [spendType, setSpendType] = useState("variable");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(getLocalDateString());
 
   return {
     editingId,
