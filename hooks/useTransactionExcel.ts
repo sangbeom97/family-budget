@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
 import * as XLSX from "xlsx";
 import { supabase } from "@/lib/supabase";
@@ -38,7 +39,6 @@ type UseTransactionExcelOptions = {
   userId?: string;
   selectedMonth: string;
   items: Item[];
-  setSelectedFileName: Dispatch<SetStateAction<string>>;
   setDuplicateItem: Dispatch<SetStateAction<any>>;
   setDuplicateResolve: Dispatch<SetStateAction<((value: boolean) => void) | null>>;
   setDuplicateIndex: Dispatch<SetStateAction<number>>;
@@ -51,13 +51,14 @@ export function useTransactionExcel({
   userId,
   selectedMonth,
   items,
-  setSelectedFileName,
   setDuplicateItem,
   setDuplicateResolve,
   setDuplicateIndex,
   setDuplicateTotal,
   refreshTransactionData,
 }: UseTransactionExcelOptions) {
+  const [selectedFileName, setSelectedFileName] = useState("");
+
   const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !currentGroupId) return;
@@ -202,5 +203,5 @@ export function useTransactionExcel({
     XLSX.writeFile(workbook, `가계부_내역_${selectedMonth}.xlsx`);
   };
 
-  return { handleFileUpload, exportToExcel };
+  return { handleFileUpload, exportToExcel, selectedFileName };
 }
