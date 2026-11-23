@@ -4,6 +4,13 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
+type Member = {
+    id: string;
+    nickname: string | null;
+    email: string | null;
+    role: string;
+};
+
 type Props = {
     currentGroupId: string;
     role: string;
@@ -15,7 +22,7 @@ export default function MemberView({
     role,
     onLeave,
 }: Props) {
-    const [members, setMembers] = useState<any[]>([]);
+    const [members, setMembers] = useState<Member[]>([]);
     const [currentUserId, setCurrentUserId] = useState("");
 
     const currentUserRole =
@@ -65,7 +72,9 @@ export default function MemberView({
             );
 
             return {
-                ...profile,
+                id: profile.id,
+                nickname: profile.nickname ?? null,
+                email: profile.email ?? null,
                 role: memberInfo?.role || "member",
             };
         });
