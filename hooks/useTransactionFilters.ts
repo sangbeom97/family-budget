@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { getLocalMonthString } from "@/lib/dateUtils";
 
 export function useTransactionFilters() {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [selectedMonth, setSelectedMonth] = useState(getLocalMonthString());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
