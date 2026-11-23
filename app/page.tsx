@@ -26,7 +26,6 @@ import { useGroupManagementState } from "@/hooks/useGroupManagementState";
 import { useInitialNavigation } from "@/hooks/useInitialNavigation";
 import { useCategorySelection } from "@/hooks/useCategorySelection";
 import { useAppNavigationState } from "@/hooks/useAppNavigationState";
-import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
   // --- 1. 인증 및 공유 그룹 관련 상태 ---
