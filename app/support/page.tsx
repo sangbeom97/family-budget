@@ -61,31 +61,37 @@ export default function SupportPage() {
   const loadRequests = useCallback(async () => {
     setLoading(true);
     setError("");
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError || !userData.user) {
-      setUserId(null);
-      setRequests([]);
-      setLoading(false);
-      return;
-    }
+    try {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError) throw userError;
+      if (!userData.user) {
+        setUserId(null);
+        setRequests([]);
+        setSelectedId(null);
+        return;
+      }
 
-    setUserId(userData.user.id);
-    setEmail(userData.user.email || "");
-    const { data, error: listError } = await supabase
-      .from("support_requests")
-      .select("id,category,subject,content,status,admin_response,created_at,updated_at")
-      .eq("user_id", userData.user.id)
-      .order("created_at", { ascending: false });
+      setUserId(userData.user.id);
+      setEmail(userData.user.email || "");
+      const { data, error: listError } = await supabase
+        .from("support_requests")
+        .select("id,category,subject,content,status,admin_response,created_at,updated_at")
+        .eq("user_id", userData.user.id)
+        .order("created_at", { ascending: false });
 
-    if (listError) {
-      setError(listError.message);
-      setRequests([]);
-    } else {
+      if (listError) throw listError;
+
       const rows = (data || []) as SupportRequest[];
       setRequests(rows);
       setSelectedId((current) => current && rows.some((item) => item.id === current) ? current : rows[0]?.id || null);
+    } catch (loadError) {
+      console.error("내 문의 내역 조회 실패:", loadError);
+      setError("문의 내역을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      setRequests([]);
+      setSelectedId(null);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   useEffect(() => {
