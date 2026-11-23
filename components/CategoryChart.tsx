@@ -13,8 +13,8 @@ import {
 
 type Props = {
   view: string;
-  categoryData: any[];
-  yearlyCategoryData: any[];
+  categoryData: { name: string; value: number }[];
+  yearlyCategoryData: { name: string; value: number }[];
 };
 
 export default function CategoryChart({
