@@ -100,7 +100,7 @@ export default function AppSidebar({
               const active =
                 mainTab === "account" &&
                 (item.filter
-                  ? filter === item.filter && view === "list"
+                  ? filter === item.filter && view === item.view
                   : view === item.view);
 
               return (
