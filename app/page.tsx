@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MemberView from "@/components/MemberView";
 import DuplicateModal from "@/components/DuplicateModal";
 import CategoryManager from "@/components/CategoryManager";
@@ -24,6 +24,7 @@ import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { useCategoryForm } from "@/hooks/useCategoryForm";
 import { useGroupManagementState } from "@/hooks/useGroupManagementState";
 import { useInitialNavigation } from "@/hooks/useInitialNavigation";
+import { useCategorySelection } from "@/hooks/useCategorySelection";
 import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
@@ -131,11 +132,7 @@ export default function Home() {
     view, search, categoryFilter, startDate, endDate, selectedYear, budgets,
   });
 
-  useEffect(() => {
-    if (categorizedNames.current.length > 0 && !categorizedNames.current.includes(category)) {
-      setCategory(categorizedNames.current[0]);
-    }
-  }, [categorizedNames.current.join(","), category]);
+  useCategorySelection({ categoryNames: categorizedNames.current, category, setCategory });
 
   const { addItem, deleteItem, startEdit } = useTransactionActions({
     name,
