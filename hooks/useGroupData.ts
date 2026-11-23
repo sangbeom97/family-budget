@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { getDaysInMonth } from "@/lib/dateUtils";
 
 export type Item = {
   id: number;
@@ -53,15 +54,11 @@ export function useGroupData({
     setLoadingItems(true);
 
     try {
-      const startDateObj = new Date(`${selectedMonth}-01`);
-      const endDateObj = new Date(
-        startDateObj.getFullYear(),
-        startDateObj.getMonth() + 1,
-        0
-      );
+      const [year, month] = selectedMonth.split("-").map(Number);
+      const lastDay = getDaysInMonth(year, month);
 
       const start = `${selectedMonth}-01`;
-      const end = `${selectedMonth}-${String(endDateObj.getDate()).padStart(2, "0")}`;
+      const end = `${selectedMonth}-${String(lastDay).padStart(2, "0")}`;
 
       const { data, error } = await supabase
         .from("transactions")
