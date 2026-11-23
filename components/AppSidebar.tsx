@@ -8,7 +8,7 @@ type Props = {
   filter: string;
   setFilter: Dispatch<SetStateAction<string>>;
   view: AccountViewMode;
-  setView: Dispatch<SetStateAction<View>>;
+  setView: Dispatch<SetStateAction<AccountViewMode>>;
   role: string;
   isSidebarOpen: boolean;
   setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
