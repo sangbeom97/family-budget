@@ -10,6 +10,7 @@ import AnnouncementPopup from "@/components/AnnouncementPopup";
 import GroupManagementPanel from "@/components/GroupManagementPanel";
 import AppSidebar from "@/components/AppSidebar";
 import ArchivedGroupsPanel from "@/components/ArchivedGroupsPanel";
+import GroupStatusView from "@/components/GroupStatusView";
 import { useGroupData } from "@/hooks/useGroupData";
 import { useTransactionActions } from "@/hooks/useTransactionActions";
 import { useTransactionExcel } from "@/hooks/useTransactionExcel";
@@ -191,12 +192,12 @@ export default function Home() {
 
   // --- 8. 미인증 상태 UI (소셜 로그인 전용 화면) ---
   if (authLoading) {
-  return (
-    <main className="min-h-screen flex items-center justify-center">
-      로딩중...
-    </main>
-  );
-}
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        로딩중...
+      </main>
+    );
+  }
 
   if (!session) return <IntroPage />;
 
@@ -235,21 +236,9 @@ export default function Home() {
 
         {/* 컨텐츠 조건부 뷰 출력 */}
         {loadingGroups ? (
-  <div className="flex min-h-64 items-center justify-center rounded-2xl border border-[#f0e8f5] bg-white shadow-sm">
-    <div className="text-sm font-semibold text-[#81768c]">
-      불러오는 중...
-    </div>
-  </div>
-) : !currentGroupId && mainTab === "account" ? (
-          <div className="rounded-2xl border border-dashed border-[#d9e0e8] bg-white px-4 py-20 text-center shadow-sm sm:py-24">
-  <span className="mb-4 block text-5xl">🏠</span>
-  <p className="text-lg font-bold text-[#292238]">
-    활성화된 가계부 방이 존재하지 않습니다.
-  </p>
-  <p className="mt-2 text-sm leading-6 text-[#81768c]">
-    상단에서 새 가계부를 개설하거나 다른 가계부에 초대받아야 내역 관리가 가능합니다.
-  </p>
-</div>
+          <GroupStatusView mode="loading" />
+        ) : !currentGroupId && mainTab === "account" ? (
+          <GroupStatusView mode="empty" />
         ) : (
           <>
             {mainTab === "account" && (
