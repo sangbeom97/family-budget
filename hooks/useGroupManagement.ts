@@ -195,7 +195,21 @@ export function useGroupManagement({
     }]);
 
     if (memberError) {
-      alert(`모임장 등록 실패: ${memberError.message}`);
+      // 모임장 등록에 실패한 경우 방금 만든 빈 모임만 정리해 고아 데이터를 방지합니다.
+      const { error: cleanupError } = await supabase
+        .from("groups")
+        .delete()
+        .eq("id", newGroup.id)
+        .eq("created_by", userId);
+
+      if (cleanupError) {
+        console.error("모임장 등록 실패 후 생성된 모임 정리 실패:", cleanupError);
+        alert(
+          `모임장 등록에 실패했습니다: ${memberError.message}\n\n자동 정리도 실패했습니다. 새로 생성된 모임이 남아 있을 수 있습니다. 모임 목록을 확인해주세요.`
+        );
+      } else {
+        alert(`모임장 등록에 실패하여 생성된 모임을 정리했습니다: ${memberError.message}`);
+      }
       return;
     }
 
