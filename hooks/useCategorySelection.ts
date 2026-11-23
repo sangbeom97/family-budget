@@ -15,5 +15,5 @@ export function useCategorySelection({
     if (categoryNames.length > 0 && !categoryNames.includes(category)) {
       setCategory(categoryNames[0]);
     }
-  }, [categoryNames.join(","), category, setCategory]);
+  }, [categoryNames, category, setCategory]);
 }
