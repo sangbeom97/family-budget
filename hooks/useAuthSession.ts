@@ -16,6 +16,8 @@ export function useAuthSession() {
         } = await supabase.auth.getSession();
 
         setSession(session);
+      } catch (error) {
+        console.error("로그인 세션 확인 실패:", error);
       } finally {
         setAuthLoading(false);
       }
