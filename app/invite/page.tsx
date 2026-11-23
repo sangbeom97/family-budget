@@ -29,6 +29,9 @@ function InviteContent() {
         return;
       }
 
+      // 로그인 후 초대 페이지로 돌아왔다면 이전 초대 주소를 재사용하지 않도록 정리합니다.
+      localStorage.removeItem("pendingInvite");
+
       const { data: group, error: groupError } = await supabase
         .from("groups")
         .select("id,name,invite_code")
