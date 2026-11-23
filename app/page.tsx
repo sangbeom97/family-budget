@@ -14,7 +14,7 @@ import { useGroupData } from "@/hooks/useGroupData";
 import { useTransactionActions } from "@/hooks/useTransactionActions";
 import { useTransactionExcel } from "@/hooks/useTransactionExcel";
 import { useCategoryBudgetActions } from "@/hooks/useCategoryBudgetActions";
-import { useGroupManagement, type Group } from "@/hooks/useGroupManagement";
+import { useGroupManagement } from "@/hooks/useGroupManagement";
 import { useBudgetAnalytics } from "@/hooks/useBudgetAnalytics";
 import { useGroupRole } from "@/hooks/useGroupRole";
 import { useAuthSession } from "@/hooks/useAuthSession";
