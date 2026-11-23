@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getDaysInMonth } from "@/lib/dateUtils";
 
 type Item = {
   id: number;
@@ -20,9 +21,13 @@ type Props = {
 export default function CalendarView({ items, selectedMonth }: Props) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
+  useEffect(() => {
+    setSelectedDate(null);
+  }, [selectedMonth]);
+
   const [year, month] = selectedMonth.split("-").map(Number);
   const firstDay = new Date(year, month - 1, 1).getDay();
-  const daysInMonth = new Date(year, month, 0).getDate();
+  const daysInMonth = getDaysInMonth(year, month);
   const days: (number | null)[] = [
     ...Array(firstDay).fill(null),
     ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
