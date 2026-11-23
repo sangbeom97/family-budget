@@ -6,7 +6,7 @@ import SummaryCards from "@/components/SummaryCards";
 import CalendarView from "@/components/CalendarView";
 import CategoryChart from "@/components/CategoryChart";
 import TransactionForm from "@/components/TransactionForm";
-import type { Item } from "@/hooks/useGroupData";
+import type { Category, GroupMember, Item } from "@/hooks/useGroupData";
 import { getLocalMonthString } from "@/lib/dateUtils";
 import {
     ResponsiveContainer,
@@ -19,7 +19,6 @@ import {
     CartesianGrid,
 } from "recharts";
 
-type Category = { id: number; name: string; type: string };
 type CategoryTotal = { name: string; value: number };
 type BudgetComparison = { name: string; 사용금액: number; 남은예산: number };
 type MonthlySummary = {
@@ -40,7 +39,7 @@ type AccountViewProps = {
     exportToExcel: () => void;
     periodFilteredItems: Item[];
     loadingItems: boolean;
-    groupMembers: { id: string; nickname: string }[];
+    groupMembers: GroupMember[];
     selectedCreator: string;
     setSelectedCreator: (value: string) => void;
     deleteItem: (id: number) => void;
