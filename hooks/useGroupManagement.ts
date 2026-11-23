@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { supabase } from "@/lib/supabase";
 import { GROUP_CATEGORY_TEMPLATES } from "@/lib/groupCategoryTemplates";
 
@@ -168,8 +168,15 @@ export function useGroupManagement({
     alert(`"${group.name}" 모임과 연결된 데이터가 영구 삭제되었습니다.`);
   };
 
+  const isCreatingGroup = useRef(false);
+  const [creatingGroup, setCreatingGroup] = useState(false);
+
   const createGroup = async () => {
-    if (!newGroupName.trim() || !userId) return;
+    if (isCreatingGroup.current || !newGroupName.trim() || !userId) return;
+    isCreatingGroup.current = true;
+    setCreatingGroup(true);
+
+    try {
 
     const { data: newGroup, error: groupError } = await supabase
       .from("groups")
@@ -272,6 +279,7 @@ export function useGroupManagement({
   return {
     fetchUserGroups,
     createGroup,
+    creatingGroup,
     restoreArchivedGroup,
     permanentlyDeleteArchivedGroup,
     handleCopyInviteLink,
