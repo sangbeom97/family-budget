@@ -20,6 +20,7 @@ import { useGroupRole } from "@/hooks/useGroupRole";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { useTransactionForm } from "@/hooks/useTransactionForm";
 import { useDuplicateImportState } from "@/hooks/useDuplicateImportState";
+import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
@@ -54,15 +55,17 @@ export default function Home() {
     date, setDate,
   } = useTransactionForm();
 
-  const [filter, setFilter] = useState("all");
-  const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
+  const {
+    filter, setFilter,
+    search, setSearch,
+    categoryFilter, setCategoryFilter,
+    selectedMonth, setSelectedMonth,
+    selectedYear, setSelectedYear,
+    startDate, setStartDate,
+    endDate, setEndDate,
+  } = useTransactionFilters();
 
-  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [selectedFileName, setSelectedFileName] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
 
   const {
     items,
