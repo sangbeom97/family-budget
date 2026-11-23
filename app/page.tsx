@@ -86,8 +86,6 @@ export default function Home() {
     fetchBudgets,
   } = useGroupData({ currentGroupId, selectedMonth, selectedYear });
 
-  const { categoryName, setCategoryName, categoryType, setCategoryType } = useCategoryForm();
-
   const {
     duplicateItem,
     setDuplicateItem,
@@ -172,11 +170,13 @@ export default function Home() {
     fetchBudgets,
   });
 
-  const addCategory = async () => {
-    if (!categoryName.trim() || !currentGroupId) return;
-    await createCategory(categoryName, categoryType);
-    setCategoryName("");
-  };
+  const {
+    categoryName,
+    setCategoryName,
+    categoryType,
+    setCategoryType,
+    addCategory,
+  } = useCategoryForm({ currentGroupId, createCategory });
 
   const { handleFileUpload, exportToExcel, selectedFileName } = useTransactionExcel({
     currentGroupId,
