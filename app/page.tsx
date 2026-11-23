@@ -21,6 +21,7 @@ import { useAuthSession } from "@/hooks/useAuthSession";
 import { useTransactionForm } from "@/hooks/useTransactionForm";
 import { useDuplicateImportState } from "@/hooks/useDuplicateImportState";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
+import { useCategoryForm } from "@/hooks/useCategoryForm";
 import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
@@ -79,8 +80,7 @@ export default function Home() {
     fetchBudgets,
   } = useGroupData({ currentGroupId, selectedMonth, selectedYear });
 
-  const [categoryName, setCategoryName] = useState("");
-  const [categoryType, setCategoryType] = useState("variable");
+  const { categoryName, setCategoryName, categoryType, setCategoryType } = useCategoryForm();
 
   const {
     duplicateItem,
