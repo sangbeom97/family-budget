@@ -23,6 +23,7 @@ import { useDuplicateImportState } from "@/hooks/useDuplicateImportState";
 import { useTransactionFilters } from "@/hooks/useTransactionFilters";
 import { useCategoryForm } from "@/hooks/useCategoryForm";
 import { useGroupManagementState } from "@/hooks/useGroupManagementState";
+import { useInitialNavigation } from "@/hooks/useInitialNavigation";
 import type { Item } from "@/hooks/useGroupData";
 
 export default function Home() {
@@ -117,24 +118,7 @@ export default function Home() {
     setDeleteGroupNameInput,
   });
 
-  // 고객지원·공지사항 사이드바에서 선택한 메뉴를 메인 화면에 반영
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const menu = params.get("menu");
-    const panel = params.get("panel");
-
-    if (panel === "category" || panel === "members" || panel === "archived") {
-      setMainTab(panel);
-    } else if (["all", "income", "fixed", "variable", "allowance", "saving"].includes(menu || "")) {
-      setMainTab("account");
-      setFilter(menu || "all");
-      setView("list");
-    } else if (menu === "year" || menu === "budget" || menu === "list" || menu === "calendar") {
-      setMainTab("account");
-      setView(menu);
-      if (menu === "list") setFilter("all");
-    }
-  }, []);
+  useInitialNavigation({ setMainTab, setFilter, setView });
 
   const role = useGroupRole(currentGroupId, session?.user?.id);
 
