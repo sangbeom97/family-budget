@@ -175,8 +175,8 @@ export function useGroupData({
         }))
       );
     } catch (error) {
+      // Keep the last successfully loaded members if a refresh fails.
       console.error("그룹 멤버 조회 실패:", error);
-      if (version === requestVersion.current) setGroupMembers([]);
     }
   };
 
