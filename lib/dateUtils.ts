@@ -9,3 +9,7 @@ export function getLocalDateString(date = new Date()) {
 export function getLocalMonthString(date = new Date()) {
   return getLocalDateString(date).slice(0, 7);
 }
+
+export function getDaysInMonth(year: number, month: number) {
+  return new Date(year, month, 0).getDate();
+}
