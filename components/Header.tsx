@@ -110,6 +110,12 @@ export default function Header() {
             서비스 소개
           </Link>
           <Link
+            href="/couple-budget"
+            className="rounded-full px-3 py-2 text-sm font-semibold text-[#4e5968] transition-colors hover:bg-[#f2f4f6] hover:text-[#191f28]"
+          >
+            부부 가계부
+          </Link>
+          <Link
             href="/notices"
             className="rounded-full px-3 py-2 text-sm font-semibold text-[#4e5968] transition-colors hover:bg-[#f2f4f6] hover:text-[#191f28] md:hidden"
           >
