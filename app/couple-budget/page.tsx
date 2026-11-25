@@ -204,6 +204,7 @@ export default function CoupleBudgetPage() {
         <div className="mx-auto mt-6 flex max-w-4xl flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-semibold text-[#8e42c8]">
           <Link href="/intro" className="hover:underline">서비스 소개</Link>
           <Link href="/blog" className="hover:underline">사용 가이드</Link>
+          <Link href="/articles" className="hover:underline">생활비 관리 팁</Link>
           <Link href="/" className="hover:underline">젤리안 홈</Link>
         </div>
       </section>
