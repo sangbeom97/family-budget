@@ -87,6 +87,46 @@ async function exchangeVercelToken(vercelToken: string) {
   return impersonated.accessToken;
 }
 
+async function runAcquisitionReport(accessToken: string) {
+  const response = await fetch(
+    `https://analyticsdata.googleapis.com/v1beta/properties/${GA4_PROPERTY_ID}:runReport`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        dateRanges: [{ startDate: "29daysAgo", endDate: "today" }],
+        dimensions: [
+          { name: "sessionDefaultChannelGroup" },
+          { name: "sessionSourceMedium" },
+          { name: "sessionCampaignName" },
+        ],
+        metrics: [
+          { name: "sessions" },
+          { name: "totalUsers" },
+          { name: "screenPageViews" },
+        ],
+        orderBys: [{ metric: { metricName: "sessions" }, desc: true }],
+        limit: 20,
+      }),
+      cache: "no-store",
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`GA4 유입 경로 조회 실패: ${await readGoogleError(response)}`);
+  }
+
+  return response.json() as Promise<{
+    rows?: Array<{
+      dimensionValues?: Array<{ value?: string }>;
+      metricValues?: Array<{ value?: string }>;
+    }>;
+  }>;
+}
+
 async function runReport(accessToken: string, withDateDimension: boolean) {
   const body = {
     dateRanges: [{ startDate: "29daysAgo", endDate: "today" }],
@@ -169,9 +209,10 @@ export async function GET(request: Request) {
     }
 
     const googleAccessToken = await exchangeVercelToken(vercelOidcToken);
-    const [summaryReport, dailyReport] = await Promise.all([
+    const [summaryReport, dailyReport, acquisitionReport] = await Promise.all([
       runReport(googleAccessToken, false),
       runReport(googleAccessToken, true),
+      runAcquisitionReport(googleAccessToken),
     ]);
 
     const summaryValues = summaryReport.rows?.[0]?.metricValues || [];
@@ -179,6 +220,15 @@ export async function GET(request: Request) {
       date: row.dimensionValues?.[0]?.value || "",
       users: Number(row.metricValues?.[0]?.value || 0),
       sessions: Number(row.metricValues?.[1]?.value || 0),
+      pageViews: Number(row.metricValues?.[2]?.value || 0),
+    }));
+
+    const acquisition = (acquisitionReport.rows || []).map((row) => ({
+      channel: row.dimensionValues?.[0]?.value || "(not set)",
+      sourceMedium: row.dimensionValues?.[1]?.value || "(not set)",
+      campaign: row.dimensionValues?.[2]?.value || "(not set)",
+      sessions: Number(row.metricValues?.[0]?.value || 0),
+      users: Number(row.metricValues?.[1]?.value || 0),
       pageViews: Number(row.metricValues?.[2]?.value || 0),
     }));
 
@@ -190,6 +240,7 @@ export async function GET(request: Request) {
           pageViews: Number(summaryValues[2]?.value || 0),
         },
         daily,
+        acquisition,
         period: "최근 30일",
       },
       { headers: { "Cache-Control": "no-store, max-age=0" } },
