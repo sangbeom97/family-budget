@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import Header from "@/components/Header";
 import SupportNoticeSidebar from "@/components/SupportNoticeSidebar";
 import "./globals.css";
@@ -50,6 +51,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-80YCVLSJCX"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];\nfunction gtag(){window.dataLayer.push(arguments);}\ngtag("js", new Date());\ngtag("config", "G-80YCVLSJCX");`}
+        </Script>
+      </head>
       <body className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
         <Header />
         <SupportNoticeSidebar />
