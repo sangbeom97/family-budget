@@ -8,6 +8,7 @@ const ANALYTICS_SCOPE = "https://www.googleapis.com/auth/analytics.readonly";
 
 type GoogleTokenResponse = {
   access_token?: string;
+  accessToken?: string;
   error?: string;
   error_description?: string;
 };
@@ -79,11 +80,11 @@ async function exchangeVercelToken(vercelToken: string) {
   }
 
   const impersonated = (await impersonationResponse.json()) as GoogleTokenResponse;
-  if (!impersonated.access_token) {
-    throw new Error("서비스 계정 응답에 액세스 토큰이 없습니다.");
+  if (!impersonated.accessToken) {
+    throw new Error("서비스 계정 응답에 accessToken 필드가 없습니다.");
   }
 
-  return impersonated.access_token;
+  return impersonated.accessToken;
 }
 
 async function runReport(accessToken: string, withDateDimension: boolean) {
