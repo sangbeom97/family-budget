@@ -31,6 +31,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: `${SITE_URL}/articles`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    ...[
+      "newlywed-budget-split",
+      "couple-joint-account",
+      "newlywed-fixed-expenses",
+      "couple-budget-routine",
+    ].map((slug) => ({
+      url: `${SITE_URL}/articles/${slug}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    {
       url: `${SITE_URL}/notices`,
       lastModified,
       changeFrequency: "weekly",
