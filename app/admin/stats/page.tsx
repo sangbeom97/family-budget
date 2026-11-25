@@ -30,6 +30,14 @@ type RevenueTrend = {
 type AnalyticsData = {
   summary: { totalUsers: number; sessions: number; pageViews: number };
   daily: { date: string; users: number; sessions: number; pageViews: number }[];
+  acquisition: {
+    channel: string;
+    sourceMedium: string;
+    campaign: string;
+    sessions: number;
+    users: number;
+    pageViews: number;
+  }[];
   period: string;
 };
 
@@ -206,6 +214,45 @@ export default function AdminStatsPage() {
                         <Line type="monotone" dataKey="pageViews" name="페이지 조회" stroke="#399b83" strokeWidth={3} dot={false} activeDot={{ r: 5 }} />
                       </LineChart>
                     </ResponsiveContainer>
+                  </div>
+                  <div className="mt-7 border-t border-[#eee8f2] pt-5">
+                    <div className="mb-3">
+                      <h3 className="text-sm font-extrabold text-[#292238]">방문 경로별 유입</h3>
+                      <p className="mt-1 text-xs text-[#9a8da5]">최근 30일 · 세션 기준 · 유입 경로가 많은 순서</p>
+                    </div>
+                    {analytics.acquisition.length === 0 ? (
+                      <p className="rounded-xl bg-[#faf8fc] p-6 text-center text-sm text-[#81768c]">아직 유입 경로 데이터가 없습니다.</p>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="w-full min-w-[680px] text-left text-xs">
+                          <thead className="text-[#81768c]">
+                            <tr className="border-b border-[#eee8f2]">
+                              <th className="py-3 pr-3 font-semibold">채널</th>
+                              <th className="py-3 pr-3 font-semibold">소스 / 매체</th>
+                              <th className="py-3 pr-3 font-semibold">캠페인</th>
+                              <th className="py-3 pr-3 text-right font-semibold">세션</th>
+                              <th className="py-3 pr-3 text-right font-semibold">방문자</th>
+                              <th className="py-3 text-right font-semibold">페이지 조회</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {analytics.acquisition.map((item, index) => (
+                              <tr key={`${item.channel}-${item.sourceMedium}-${item.campaign}-${index}`} className="border-b border-[#f3eff5] last:border-0">
+                                <td className="py-3 pr-3 font-semibold text-[#292238]">{item.channel}</td>
+                                <td className="py-3 pr-3 text-[#665675]">{item.sourceMedium}</td>
+                                <td className="py-3 pr-3 text-[#81768c]">{item.campaign === "(not set)" ? "-" : item.campaign}</td>
+                                <td className="py-3 pr-3 text-right font-bold tabular-nums text-[#292238]">{number(item.sessions)}</td>
+                                <td className="py-3 pr-3 text-right tabular-nums text-[#665675]">{number(item.users)}</td>
+                                <td className="py-3 text-right tabular-nums text-[#665675]">{number(item.pageViews)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                    <p className="mt-3 text-xs leading-5 text-[#9a8da5]">
+                      소스 / 매체 예시: google / organic은 구글 검색, naver / organic은 네이버 검색, instagram / social은 인스타그램 유입입니다. (direct) / (none)은 직접 접속 또는 출처를 확인할 수 없는 방문입니다.
+                    </p>
                   </div>
                 </>
               ) : (
