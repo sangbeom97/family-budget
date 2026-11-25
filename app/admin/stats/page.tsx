@@ -27,6 +27,12 @@ type RevenueTrend = {
   estimated_monthly_revenue: number;
 };
 
+type AnalyticsData = {
+  summary: { totalUsers: number; sessions: number; pageViews: number };
+  daily: { date: string; users: number; sessions: number; pageViews: number }[];
+  period: string;
+};
+
 const number = (value: number) => Number(value || 0).toLocaleString("ko-KR");
 const won = (value: number) => `${number(value)}원`;
 
@@ -37,6 +43,9 @@ export default function AdminStatsPage() {
   const [error, setError] = useState("");
   const [revenueTrend, setRevenueTrend] = useState<RevenueTrend[]>([]);
   const [trendError, setTrendError] = useState("");
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [analyticsError, setAnalyticsError] = useState("");
 
   const loadStats = useCallback(async () => {
     setLoading(true);
@@ -58,6 +67,29 @@ export default function AdminStatsPage() {
     }
 
     setAuthorized(true);
+    setAnalyticsLoading(true);
+    setAnalyticsError("");
+    try {
+      const analyticsResponse = await fetch("/api/admin/analytics", {
+        headers: { Authorization: `Bearer ${sessionData.session.access_token}` },
+        cache: "no-store",
+      });
+      const analyticsResult = await analyticsResponse.json();
+      if (!analyticsResponse.ok) {
+        throw new Error(analyticsResult.error || "방문자 통계를 불러오지 못했습니다.");
+      }
+      setAnalytics(analyticsResult as AnalyticsData);
+    } catch (analyticsLoadError) {
+      setAnalytics(null);
+      setAnalyticsError(
+        analyticsLoadError instanceof Error
+          ? analyticsLoadError.message
+          : "방문자 통계를 불러오지 못했습니다.",
+      );
+    } finally {
+      setAnalyticsLoading(false);
+    }
+
     const { data, error: statsError } = await supabase.rpc("get_jellian_admin_stats");
     if (statsError) {
       setError(statsError.message);
@@ -128,6 +160,57 @@ export default function AdminStatsPage() {
                 <span className="rounded-full bg-[#f4edf8] px-3 py-1.5 text-sm font-bold text-[#80509c]">월 2,900원</span>
               </div>
               <p className="mt-3 text-xs text-[#9a8da5]">결제 시스템 연동 전이므로 아래 이용료는 실제 결제 매출이 아닌 예상 금액입니다. 모임원으로 참여하는 모임은 과금 집계에서 제외합니다.</p>
+            </section>
+
+            <section className="mb-5 rounded-2xl border border-[#eee8f2] bg-white p-5">
+              <div className="mb-4">
+                <h2 className="text-base font-extrabold text-[#292238]">웹사이트 방문 통계</h2>
+                <p className="mt-1 text-xs text-[#9a8da5]">Google Analytics · 최근 30일</p>
+              </div>
+              {analyticsLoading ? (
+                <p className="rounded-xl bg-[#faf8fc] p-8 text-center text-sm text-[#81768c]">방문자 통계를 불러오는 중입니다...</p>
+              ) : analyticsError ? (
+                <p className="rounded-xl bg-red-50 p-4 text-sm text-red-600">방문자 통계를 불러오지 못했습니다: {analyticsError}</p>
+              ) : analytics ? (
+                <>
+                  <div className="mb-5 grid gap-3 sm:grid-cols-3">
+                    {[
+                      { label: "방문자", value: analytics.summary.totalUsers },
+                      { label: "세션", value: analytics.summary.sessions },
+                      { label: "페이지 조회", value: analytics.summary.pageViews },
+                    ].map((item) => (
+                      <div key={item.label} className="rounded-xl bg-[#faf8fc] p-4">
+                        <p className="text-sm font-semibold text-[#81768c]">{item.label}</p>
+                        <p className="mt-2 text-2xl font-extrabold tabular-nums text-[#292238]">{number(item.value)}<span className="ml-1 text-sm font-semibold">회</span></p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={analytics.daily} margin={{ top: 12, right: 12, left: 8, bottom: 4 }}>
+                        <CartesianGrid stroke="#eee8f2" strokeDasharray="3 3" />
+                        <XAxis
+                          dataKey="date"
+                          tick={{ fill: "#81768c", fontSize: 10 }}
+                          tickFormatter={(value) => `${String(value).slice(4, 6)}/${String(value).slice(6, 8)}`}
+                          minTickGap={18}
+                        />
+                        <YAxis tick={{ fill: "#81768c", fontSize: 11 }} allowDecimals={false} width={42} />
+                        <Tooltip
+                          formatter={(value) => [number(Number(value)) + "회", "페이지 조회"]}
+                          labelFormatter={(label) => {
+                            const date = String(label);
+                            return `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`;
+                          }}
+                        />
+                        <Line type="monotone" dataKey="pageViews" name="페이지 조회" stroke="#399b83" strokeWidth={3} dot={false} activeDot={{ r: 5 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </>
+              ) : (
+                <p className="rounded-xl bg-[#faf8fc] p-8 text-center text-sm text-[#81768c]">방문 통계 데이터가 없습니다.</p>
+              )}
             </section>
 
             <section className="mb-5 rounded-2xl border border-[#eee8f2] bg-white p-5">
