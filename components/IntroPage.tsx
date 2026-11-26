@@ -180,6 +180,14 @@ export default function IntroPage() {
                 <span className="text-3xl">{emoji}</span>
                 <h3 className="mt-4 text-lg font-extrabold">{title}</h3>
                 <p className="mt-2 text-sm leading-7 text-[#81768c]">{description}</p>
+                {title === "부부·가족" && (
+                  <Link
+                    href="/couple-budget"
+                    className="mt-4 inline-flex items-center gap-1 text-sm font-extrabold text-[#9145c9] hover:underline"
+                  >
+                    부부 가계부 자세히 보기 <span aria-hidden="true">→</span>
+                  </Link>
+                )}
               </article>
             ))}
           </div>
@@ -292,6 +300,14 @@ export default function IntroPage() {
           >
             무료로 시작하기 <span aria-hidden="true">→</span>
           </Link>
+          <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-bold text-white">
+            <Link href="/couple-budget" className="underline decoration-white/50 underline-offset-4 hover:decoration-white">
+              부부 가계부 안내
+            </Link>
+            <Link href="/blog" className="underline decoration-white/50 underline-offset-4 hover:decoration-white">
+              사용 가이드 보기
+            </Link>
+          </div>
           <p className="mt-5 text-xs text-white/70">현재 웹 버전 이용 가능 · 모바일 앱 준비 중</p>
         </div>
       </section>
