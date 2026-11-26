@@ -145,6 +145,15 @@ export default function Header() {
           )}
 
           {isLoggedIn && (
+            <Link
+              href="/account"
+              className="rounded-full px-3 py-2 text-sm font-semibold text-[#4e5968] transition-colors hover:bg-[#f2f4f6]"
+            >
+              계정 관리
+            </Link>
+          )}
+
+          {isLoggedIn && (
             <button
               onClick={handleSignOut}
               className="rounded-full bg-[#f04452] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#d93644]"
