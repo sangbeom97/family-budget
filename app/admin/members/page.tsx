@@ -11,6 +11,8 @@ type AdminMember = {
   nickname: string | null;
   created_at: string;
   group_count: number;
+  account_status: "active" | "expelled" | "blacklisted";
+  status_reason: string | null;
 };
 
 type MemberPageData = {
@@ -31,6 +33,7 @@ export default function AdminPage() {
   const [page, setPage] = useState(1);
   const [stats, setStats] = useState({ total: 0, groupMembers: 0, filtered: 0 });
   const [error, setError] = useState("");
+  const [updatingMemberId, setUpdatingMemberId] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -85,6 +88,45 @@ export default function AdminPage() {
   useEffect(() => {
     loadMembers();
   }, [loadMembers]);
+
+  const changeMemberStatus = async (
+    member: AdminMember,
+    status: "active" | "expelled" | "blacklisted",
+  ) => {
+    const actionLabel = status === "expelled" ? "제명" : status === "blacklisted" ? "블랙리스트 등록" : "이용 허용";
+    const reason = status === "active"
+      ? null
+      : window.prompt(`${member.nickname || member.email || "회원"} 회원의 ${actionLabel} 사유를 입력해 주세요. (선택)`, "");
+
+    if (status !== "active" && reason === null) return;
+    if (!window.confirm(`${member.nickname || member.email || "선택한 회원"}을(를) ${actionLabel} 처리할까요?${status === "active" ? "" : "\\n기존 가계부 데이터는 삭제되지 않습니다."}`)) return;
+
+    setUpdatingMemberId(member.id);
+    setError("");
+    try {
+      const { data } = await supabase.auth.getSession();
+      const accessToken = data.session?.access_token;
+      if (!accessToken) throw new Error("로그인 세션이 만료되었습니다. 다시 로그인해 주세요.");
+
+      const response = await fetch("/api/admin/members/status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ userId: member.id, status, reason }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "회원 상태 변경에 실패했습니다.");
+
+      await loadMembers();
+      window.alert(`${actionLabel} 처리가 완료되었습니다.`);
+    } catch (changeError) {
+      setError(changeError instanceof Error ? changeError.message : "회원 상태 변경에 실패했습니다.");
+    } finally {
+      setUpdatingMemberId(null);
+    }
+  };
 
   const totalPages = Math.max(1, Math.ceil(stats.filtered / PAGE_SIZE));
   const formatDate = (value: string) =>
@@ -141,9 +183,9 @@ export default function AdminPage() {
                 </div>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[650px] text-left text-sm">
+                <table className="w-full min-w-[900px] text-left text-sm">
                   <thead className="bg-[#fbf9fc] text-xs font-bold text-[#81768c]">
-                    <tr><th className="px-5 py-3">회원</th><th className="px-5 py-3">이메일</th><th className="px-5 py-3">가입일</th><th className="px-5 py-3 text-right">가입 그룹</th></tr>
+                    <tr><th className="px-5 py-3">회원</th><th className="px-5 py-3">이메일</th><th className="px-5 py-3">가입일</th><th className="px-5 py-3 text-right">가입 그룹</th><th className="px-5 py-3">상태</th><th className="px-5 py-3">관리</th></tr>
                   </thead>
                   <tbody className="divide-y divide-[#f2edf5]">
                     {members.map((member) => (
@@ -152,9 +194,33 @@ export default function AdminPage() {
                         <td className="px-5 py-4 text-[#665675]">{member.email || "-"}</td>
                         <td className="px-5 py-4 text-[#81768c]">{formatDate(member.created_at)}</td>
                         <td className="px-5 py-4 text-right font-semibold tabular-nums text-[#665675]">{member.group_count}개</td>
+                        <td className="px-5 py-4">
+                          <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ${
+                            member.account_status === "active"
+                              ? "bg-emerald-50 text-emerald-700"
+                              : member.account_status === "expelled"
+                                ? "bg-amber-50 text-amber-700"
+                                : "bg-red-50 text-red-700"
+                          }`}>
+                            {member.account_status === "active" ? "정상" : member.account_status === "expelled" ? "제명" : "블랙리스트"}
+                          </span>
+                          {member.status_reason && <p className="mt-1 max-w-40 truncate text-xs text-[#81768c]" title={member.status_reason}>{member.status_reason}</p>}
+                        </td>
+                        <td className="px-5 py-4">
+                          {member.account_status === "active" ? (
+                            <div className="flex gap-2">
+                              <button disabled={updatingMemberId === member.id} onClick={() => changeMemberStatus(member, "expelled")} className="rounded-lg border border-amber-200 px-2.5 py-1.5 text-xs font-bold text-amber-700 disabled:opacity-40">제명</button>
+                              <button disabled={updatingMemberId === member.id} onClick={() => changeMemberStatus(member, "blacklisted")} className="rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-bold text-red-700 disabled:opacity-40">블랙리스트</button>
+                            </div>
+                          ) : (
+                            <button disabled={updatingMemberId === member.id} onClick={() => changeMemberStatus(member, "active")} className="rounded-lg border border-[#e9e2ef] px-2.5 py-1.5 text-xs font-bold text-[#665675] disabled:opacity-40">
+                              {updatingMemberId === member.id ? "처리 중..." : "이용 허용"}
+                            </button>
+                          )}
+                        </td>
                       </tr>
                     ))}
-                    {members.length === 0 && <tr><td colSpan={4} className="px-5 py-12 text-center text-sm text-[#81768c]">검색 결과가 없습니다.</td></tr>}
+                    {members.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-sm text-[#81768c]">검색 결과가 없습니다.</td></tr>}
                   </tbody>
                 </table>
               </div>
