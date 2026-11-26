@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "신혼부부 공동 가계부 | 부부 생활비 함께 관리하기 - 젤리안",
+  title: "부부 가계부 추천 | 공동 생활비 함께 관리하기 - 젤리안",
   description:
-    "신혼부부와 맞벌이 부부를 위한 공동 가계부 가이드. 생활비와 개인 지출을 구분하고 수입·지출, 월별 예산과 저축을 함께 관리하는 방법을 알아보세요.",
+    "부부가 함께 사용하는 공동 가계부 젤리안. 맞벌이 부부 생활비부터 수입, 고정지출, 변동지출, 용돈, 저축과 월별 예산까지 함께 기록하고 관리하세요.",
   keywords: [
     "신혼부부 가계부",
     "부부 가계부",
+    "커플 가계부",
     "공동 가계부",
     "맞벌이 부부 가계부",
     "부부 생활비 관리",
@@ -83,7 +84,7 @@ export default function CoupleBudgetPage() {
             JELLIAN · COUPLE BUDGET GUIDE
           </p>
           <h1 className="mt-6 max-w-3xl text-3xl font-black leading-tight tracking-tight sm:text-5xl">
-            신혼부부 공동 가계부,
+            부부 가계부,
             <span className="mt-2 block bg-gradient-to-r from-[#8528e8] to-[#f34d9a] bg-clip-text text-transparent">
               둘이 함께 기록하고 함께 관리해요.
             </span>
