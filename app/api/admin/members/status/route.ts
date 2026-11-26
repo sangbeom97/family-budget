@@ -33,9 +33,15 @@ export async function POST(request: Request) {
       return Response.json({ error: "로그인 인증이 만료되었거나 유효하지 않습니다." }, { status: 401 });
     }
 
-    const { data: isAdmin, error: adminCheckError } = await authClient.rpc("is_jellian_admin");
-    if (adminCheckError || isAdmin !== true) {
-      return Response.json({ error: "관리자 계정만 이용할 수 있습니다." }, { status: 403 });
+    const [
+      { data: isAdmin, error: adminCheckError },
+      { data: isActive, error: activeCheckError },
+    ] = await Promise.all([
+      authClient.rpc("is_jellian_admin"),
+      authClient.rpc("is_account_active"),
+    ]);
+    if (adminCheckError || activeCheckError || isAdmin !== true || isActive !== true) {
+      return Response.json({ error: "정상 이용 중인 관리자 계정만 이용할 수 있습니다." }, { status: 403 });
     }
 
     const body = await request.json().catch(() => null) as {
