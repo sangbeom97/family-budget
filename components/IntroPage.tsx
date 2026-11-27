@@ -318,6 +318,9 @@ export default function IntroPage() {
         <Link href="/blog" className="mt-3 inline-block font-semibold text-[#8e42c8] hover:underline">
           사용 가이드 보기
         </Link>
+        <Link href="/articles" className="mt-3 ml-4 inline-block font-semibold text-[#8e42c8] hover:underline">
+          부부 생활비 관리 팁
+        </Link>
       </footer>
     </main>
   );
